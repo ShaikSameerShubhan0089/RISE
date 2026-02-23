@@ -1,0 +1,652 @@
+[
+    {
+        "path": "analysis_output.txt",
+        "size": 3442,
+        "type": "txt"
+    },
+    {
+        "path": "analyze_data.py",
+        "size": 1808,
+        "type": "py"
+    },
+    {
+        "path": "analyze_data_final.py",
+        "size": 1104,
+        "type": "py"
+    },
+    {
+        "path": "analyze_db_schema.py",
+        "size": 2677,
+        "type": "py"
+    },
+    {
+        "path": "api_endpoints_extraction.md",
+        "size": 4794,
+        "type": "md"
+    },
+    {
+        "path": "api_test_results.txt",
+        "size": 159,
+        "type": "txt"
+    },
+    {
+        "path": "check_corr.py",
+        "size": 283,
+        "type": "py"
+    },
+    {
+        "path": "check_dataset.py",
+        "size": 526,
+        "type": "py"
+    },
+    {
+        "path": "check_dev_status.py",
+        "size": 155,
+        "type": "py"
+    },
+    {
+        "path": "check_excel_final.py",
+        "size": 1320,
+        "type": "py"
+    },
+    {
+        "path": "check_high_risk.py",
+        "size": 453,
+        "type": "py"
+    },
+    {
+        "path": "check_metrics.py",
+        "size": 731,
+        "type": "py"
+    },
+    {
+        "path": "check_probs.py",
+        "size": 956,
+        "type": "py"
+    },
+    {
+        "path": "check_risk_sheet.py",
+        "size": 166,
+        "type": "py"
+    },
+    {
+        "path": "check_xgb.py",
+        "size": 66,
+        "type": "py"
+    },
+    {
+        "path": "clean_dataset.py",
+        "size": 3743,
+        "type": "py"
+    },
+    {
+        "path": "dataset_columns.txt",
+        "size": 1836,
+        "type": "txt"
+    },
+    {
+        "path": "db_schema_analysis.json",
+        "size": 68457,
+        "type": "json"
+    },
+    {
+        "path": "db_schema_summary.md",
+        "size": 12673,
+        "type": "md"
+    },
+    {
+        "path": "debug_data.py",
+        "size": 1772,
+        "type": "py"
+    },
+    {
+        "path": "debug_load.txt",
+        "size": 20780,
+        "type": "txt"
+    },
+    {
+        "path": "debug_merge.txt",
+        "size": 1463,
+        "type": "txt"
+    },
+    {
+        "path": "debug_ml_imports.py",
+        "size": 1118,
+        "type": "py"
+    },
+    {
+        "path": "debug_output.txt",
+        "size": 5416,
+        "type": "txt"
+    },
+    {
+        "path": "debug_sheets.txt",
+        "size": 7764,
+        "type": "txt"
+    },
+    {
+        "path": "discover_cols.py",
+        "size": 389,
+        "type": "py"
+    },
+    {
+        "path": "dump_stats.py",
+        "size": 1197,
+        "type": "py"
+    },
+    {
+        "path": "excel_analysis.txt",
+        "size": 8046,
+        "type": "txt"
+    },
+    {
+        "path": "extract_api_endpoints.py",
+        "size": 2368,
+        "type": "py"
+    },
+    {
+        "path": "generate_stats_table.py",
+        "size": 1420,
+        "type": "py"
+    },
+    {
+        "path": "inspect_dataset.py",
+        "size": 881,
+        "type": "py"
+    },
+    {
+        "path": "inspect_excel.py",
+        "size": 1312,
+        "type": "py"
+    },
+    {
+        "path": "inspect_excel_refined.py",
+        "size": 1487,
+        "type": "py"
+    },
+    {
+        "path": "locate_dq.py",
+        "size": 382,
+        "type": "py"
+    },
+    {
+        "path": "map_repo.py",
+        "size": 1052,
+        "type": "py"
+    },
+    {
+        "path": "README.md",
+        "size": 6134,
+        "type": "md"
+    },
+    {
+        "path": "requirements.txt",
+        "size": 815,
+        "type": "txt"
+    },
+    {
+        "path": "stats_output.json",
+        "size": 1630,
+        "type": "json"
+    },
+    {
+        "path": "test_api.py",
+        "size": 1560,
+        "type": "py"
+    },
+    {
+        "path": "test_awc_features.py",
+        "size": 2526,
+        "type": "py"
+    },
+    {
+        "path": "test_dashboard_api.py",
+        "size": 1270,
+        "type": "py"
+    },
+    {
+        "path": "test_results.txt",
+        "size": 5856,
+        "type": "txt"
+    },
+    {
+        "path": "test_users.txt",
+        "size": 258,
+        "type": "txt"
+    },
+    {
+        "path": "verify_cleaned_data.py",
+        "size": 1405,
+        "type": "py"
+    },
+    {
+        "path": "verify_score_fix.py",
+        "size": 3223,
+        "type": "py"
+    },
+    {
+        "path": "backend/.env",
+        "size": 483,
+        "type": "env"
+    },
+    {
+        "path": "backend/auth.py",
+        "size": 5323,
+        "type": "py"
+    },
+    {
+        "path": "backend/check_user_jurisdictions.py",
+        "size": 714,
+        "type": "py"
+    },
+    {
+        "path": "backend/database.py",
+        "size": 1586,
+        "type": "py"
+    },
+    {
+        "path": "backend/debug_district.py",
+        "size": 2021,
+        "type": "py"
+    },
+    {
+        "path": "backend/debug_output.txt",
+        "size": 3150,
+        "type": "txt"
+    },
+    {
+        "path": "backend/debug_referrals.py",
+        "size": 1889,
+        "type": "py"
+    },
+    {
+        "path": "backend/debug_referrals_api.py",
+        "size": 1700,
+        "type": "py"
+    },
+    {
+        "path": "backend/debug_referrals_api_v3.py",
+        "size": 1989,
+        "type": "py"
+    },
+    {
+        "path": "backend/jurisdiction_check.txt",
+        "size": 6100,
+        "type": "txt"
+    },
+    {
+        "path": "backend/main.py",
+        "size": 4152,
+        "type": "py"
+    },
+    {
+        "path": "backend/migrate_db.py",
+        "size": 840,
+        "type": "py"
+    },
+    {
+        "path": "backend/models.py",
+        "size": 20358,
+        "type": "py"
+    },
+    {
+        "path": "backend/rbac.py",
+        "size": 11083,
+        "type": "py"
+    },
+    {
+        "path": "backend/README.md",
+        "size": 4845,
+        "type": "md"
+    },
+    {
+        "path": "backend/run.py",
+        "size": 1179,
+        "type": "py"
+    },
+    {
+        "path": "backend/schemas.py",
+        "size": 10116,
+        "type": "py"
+    },
+    {
+        "path": "backend/v3_debug_output.txt",
+        "size": 3900,
+        "type": "txt"
+    },
+    {
+        "path": "backend/v3_final_debug.txt",
+        "size": 3890,
+        "type": "txt"
+    },
+    {
+        "path": "backend/__init__.py",
+        "size": 43,
+        "type": "py"
+    },
+    {
+        "path": "backend/middleware/audit.py",
+        "size": 3398,
+        "type": "py"
+    },
+    {
+        "path": "backend/middleware/disclaimer.py",
+        "size": 1170,
+        "type": "py"
+    },
+    {
+        "path": "backend/middleware/__init__.py",
+        "size": 46,
+        "type": "py"
+    },
+    {
+        "path": "backend/routers/assessments.py",
+        "size": 3959,
+        "type": "py"
+    },
+    {
+        "path": "backend/routers/auth.py",
+        "size": 19406,
+        "type": "py"
+    },
+    {
+        "path": "backend/routers/children.py",
+        "size": 10376,
+        "type": "py"
+    },
+    {
+        "path": "backend/routers/dashboard.py",
+        "size": 40629,
+        "type": "py"
+    },
+    {
+        "path": "backend/routers/interventions.py",
+        "size": 6637,
+        "type": "py"
+    },
+    {
+        "path": "backend/routers/predictions.py",
+        "size": 16996,
+        "type": "py"
+    },
+    {
+        "path": "backend/routers/referrals.py",
+        "size": 8467,
+        "type": "py"
+    },
+    {
+        "path": "backend/routers/__init__.py",
+        "size": 43,
+        "type": "py"
+    },
+    {
+        "path": "backend/tests/test_child_prediction.py",
+        "size": 1891,
+        "type": "py"
+    },
+    {
+        "path": "database/schema.sql",
+        "size": 19081,
+        "type": "sql"
+    },
+    {
+        "path": "database/seed_data.sql",
+        "size": 13436,
+        "type": "sql"
+    },
+    {
+        "path": "docs/project_documentation.md",
+        "size": 5402,
+        "type": "md"
+    },
+    {
+        "path": "frontend/package-lock.json",
+        "size": 222095,
+        "type": "json"
+    },
+    {
+        "path": "frontend/package.json",
+        "size": 1090,
+        "type": "json"
+    },
+    {
+        "path": "frontend/postcss.config.js",
+        "size": 98,
+        "type": "js"
+    },
+    {
+        "path": "frontend/README.md",
+        "size": 3446,
+        "type": "md"
+    },
+    {
+        "path": "frontend/tailwind.config.js",
+        "size": 929,
+        "type": "js"
+    },
+    {
+        "path": "frontend/vite.config.js",
+        "size": 295,
+        "type": "js"
+    },
+    {
+        "path": "frontend/src/App.jsx",
+        "size": 5018,
+        "type": "jsx"
+    },
+    {
+        "path": "frontend/src/main.jsx",
+        "size": 477,
+        "type": "jsx"
+    },
+    {
+        "path": "frontend/src/components/Layout.jsx",
+        "size": 382,
+        "type": "jsx"
+    },
+    {
+        "path": "frontend/src/components/ProtectedRoute.jsx",
+        "size": 1240,
+        "type": "jsx"
+    },
+    {
+        "path": "frontend/src/components/Sidebar.jsx",
+        "size": 5172,
+        "type": "jsx"
+    },
+    {
+        "path": "frontend/src/components/dashboard/ChildDetailsModal.jsx",
+        "size": 12984,
+        "type": "jsx"
+    },
+    {
+        "path": "frontend/src/components/dashboard/ChildGrowthChart.jsx",
+        "size": 12734,
+        "type": "jsx"
+    },
+    {
+        "path": "frontend/src/components/dashboard/ChildRegistrationForm.jsx",
+        "size": 14743,
+        "type": "jsx"
+    },
+    {
+        "path": "frontend/src/components/dashboard/ChildrenTable.jsx",
+        "size": 9266,
+        "type": "jsx"
+    },
+    {
+        "path": "frontend/src/components/dashboard/DashboardCharts.jsx",
+        "size": 6573,
+        "type": "jsx"
+    },
+    {
+        "path": "frontend/src/components/dashboard/InterventionsTable.jsx",
+        "size": 10374,
+        "type": "jsx"
+    },
+    {
+        "path": "frontend/src/components/dashboard/SummaryCards.jsx",
+        "size": 1721,
+        "type": "jsx"
+    },
+    {
+        "path": "frontend/src/components/dashboard/UsersTable.jsx",
+        "size": 12607,
+        "type": "jsx"
+    },
+    {
+        "path": "frontend/src/context/AuthContext.jsx",
+        "size": 2129,
+        "type": "jsx"
+    },
+    {
+        "path": "frontend/src/pages/Analytics.jsx",
+        "size": 13376,
+        "type": "jsx"
+    },
+    {
+        "path": "frontend/src/pages/Assessments.jsx",
+        "size": 21580,
+        "type": "jsx"
+    },
+    {
+        "path": "frontend/src/pages/ChildrenManagement.jsx",
+        "size": 7884,
+        "type": "jsx"
+    },
+    {
+        "path": "frontend/src/pages/Login.jsx",
+        "size": 5360,
+        "type": "jsx"
+    },
+    {
+        "path": "frontend/src/pages/Referrals.jsx",
+        "size": 15452,
+        "type": "jsx"
+    },
+    {
+        "path": "frontend/src/pages/UserManagement.jsx",
+        "size": 26570,
+        "type": "jsx"
+    },
+    {
+        "path": "frontend/src/pages/dashboards/AnganwadiWorkerDashboard.jsx",
+        "size": 27991,
+        "type": "jsx"
+    },
+    {
+        "path": "frontend/src/pages/dashboards/Dashboard.jsx",
+        "size": 1361,
+        "type": "jsx"
+    },
+    {
+        "path": "frontend/src/pages/dashboards/DistrictOfficerDashboard.jsx",
+        "size": 7787,
+        "type": "jsx"
+    },
+    {
+        "path": "frontend/src/pages/dashboards/ParentDashboard.jsx",
+        "size": 62056,
+        "type": "jsx"
+    },
+    {
+        "path": "frontend/src/pages/dashboards/StateAdminDashboard.jsx",
+        "size": 9392,
+        "type": "jsx"
+    },
+    {
+        "path": "frontend/src/pages/dashboards/SupervisorDashboard.jsx",
+        "size": 8240,
+        "type": "jsx"
+    },
+    {
+        "path": "frontend/src/pages/dashboards/SystemAdminDashboard.jsx",
+        "size": 13841,
+        "type": "jsx"
+    },
+    {
+        "path": "frontend/src/utils/api.js",
+        "size": 5251,
+        "type": "js"
+    },
+    {
+        "path": "ml/feature_engineering.py",
+        "size": 10971,
+        "type": "py"
+    },
+    {
+        "path": "ml/generate_ml_dashboard.py",
+        "size": 4203,
+        "type": "py"
+    },
+    {
+        "path": "ml/intervention_planner.py",
+        "size": 43212,
+        "type": "py"
+    },
+    {
+        "path": "ml/synthetic_data_generator.py",
+        "size": 9635,
+        "type": "py"
+    },
+    {
+        "path": "ml/test_classifier.py",
+        "size": 4421,
+        "type": "py"
+    },
+    {
+        "path": "ml/test_escalation.py",
+        "size": 5322,
+        "type": "py"
+    },
+    {
+        "path": "ml/train_classifier.py",
+        "size": 4545,
+        "type": "py"
+    },
+    {
+        "path": "ml/train_escalation.py",
+        "size": 5850,
+        "type": "py"
+    },
+    {
+        "path": "ml/train_models.py",
+        "size": 7938,
+        "type": "py"
+    },
+    {
+        "path": "ml/__init__.py",
+        "size": 14,
+        "type": "py"
+    },
+    {
+        "path": "ml/evaluation/ML_DASHBOARD.md",
+        "size": 1418,
+        "type": "md"
+    },
+    {
+        "path": "ml/evaluation/classifier/test_report.json",
+        "size": 668,
+        "type": "json"
+    },
+    {
+        "path": "ml/models/autism_risk_classifier.py",
+        "size": 21872,
+        "type": "py"
+    },
+    {
+        "path": "ml/models/risk_escalation_predictor.py",
+        "size": 10774,
+        "type": "py"
+    },
+    {
+        "path": "ml/models/__init__.py",
+        "size": 21,
+        "type": "py"
+    },
+    {
+        "path": "ml/models/saved/classifier/training_meta.json",
+        "size": 1094,
+        "type": "json"
+    }
+]

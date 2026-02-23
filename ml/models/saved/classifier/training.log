@@ -1,0 +1,10 @@
+2026-02-20 05:26:18,560 [INFO] ============================================================
+2026-02-20 05:26:18,561 [INFO] TRAINING STARTED: Autism Risk Classifier (Model A)
+2026-02-20 05:26:18,562 [INFO] ============================================================
+2026-02-20 05:26:18,633 [INFO] Loaded 3500 records from ml/data/cleaned_client_data.csv
+2026-02-20 05:26:18,633 [INFO] Performing clinical feature engineering...
+2026-02-20 05:26:27,769 [INFO] Dataset split: Train=2380, Val=420, Test=700
+2026-02-20 05:26:27,770 [INFO] Starting XGBoost training with imbalance handling...
+2026-02-20 05:26:29,840 [INFO] Generating learning curves...
+2026-02-20 05:26:31,668 [INFO] SUCCESS: Model and reports saved.
+2026-02-20 05:26:31,677 [INFO] ============================================================

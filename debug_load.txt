@@ -1,0 +1,318 @@
+
+--- load_models called at 2026-02-20 08:37:16.130191 ---
+DEBUG: ML_MODEL_PATH env: ../ml/models
+DEBUG: Resolved model_path: C:\Users\S Sameer\Desktop\autism - Copy\ml\models
+DEBUG: Checking Model A file: C:\Users\S Sameer\Desktop\autism - Copy\ml\models\autism_risk_classifier_v1.pkl (Exists: False)
+DEBUG: Checking Model B file: C:\Users\S Sameer\Desktop\autism - Copy\ml\models\risk_escalation_predictor_v1.pkl (Exists: False)
+
+--- load_models called at 2026-02-20 08:37:46.559480 ---
+DEBUG: ML_MODEL_PATH env: ../ml/models
+DEBUG: Resolved model_path: C:\Users\S Sameer\Desktop\autism - Copy\ml\models
+DEBUG: Checking Model A file: C:\Users\S Sameer\Desktop\autism - Copy\ml\models\autism_risk_classifier_v1.pkl (Exists: False)
+DEBUG: Checking Model B file: C:\Users\S Sameer\Desktop\autism - Copy\ml\models\risk_escalation_predictor_v1.pkl (Exists: False)
+
+--- load_models called at 2026-02-20 08:39:11.167233 ---
+DEBUG: ML_MODEL_PATH env: ../ml/models/saved
+DEBUG: Resolved model_path: C:\Users\S Sameer\Desktop\autism - Copy\ml\models\saved
+DEBUG: Checking Model A file: C:\Users\S Sameer\Desktop\autism - Copy\ml\models\saved\autism_risk_classifier_v1.pkl (Exists: True)
+DEBUG: Checking Model B file: C:\Users\S Sameer\Desktop\autism - Copy\ml\models\saved\risk_escalation_predictor_v1.pkl (Exists: False)
+DEBUG: Model A loaded successfully!
+
+--- load_models called at 2026-02-20 08:40:38.602706 ---
+DEBUG: ML_MODEL_PATH env: ../ml/models/saved
+DEBUG: Resolved model_path: C:\Users\S Sameer\Desktop\autism - Copy\ml\models\saved
+DEBUG: Checking Model A file: C:\Users\S Sameer\Desktop\autism - Copy\ml\models\saved\autism_risk_classifier_v1.pkl (Exists: True)
+DEBUG: Checking Model B file: C:\Users\S Sameer\Desktop\autism - Copy\ml\models\saved\risk_escalation_predictor_v1.pkl (Exists: False)
+DEBUG: Model A loaded successfully!
+
+--- load_models called at 2026-02-20 08:41:12.224606 ---
+DEBUG: ML_MODEL_PATH env: ../ml/models/saved
+DEBUG: Resolved model_path: C:\Users\S Sameer\Desktop\autism - Copy\ml\models\saved
+DEBUG: Checking Model A file: C:\Users\S Sameer\Desktop\autism - Copy\ml\models\saved\autism_risk_classifier_v1.pkl (Exists: True)
+DEBUG: Checking Model B file: C:\Users\S Sameer\Desktop\autism - Copy\ml\models\saved\risk_escalation_predictor_v1.pkl (Exists: False)
+DEBUG: Model A loaded successfully!
+
+--- load_models called at 2026-02-20 08:42:01.079269 ---
+DEBUG: ML_MODEL_PATH env: ../ml/models/saved
+DEBUG: Resolved model_path: C:\Users\S Sameer\Desktop\autism - Copy\ml\models\saved
+DEBUG: Checking Model A file: C:\Users\S Sameer\Desktop\autism - Copy\ml\models\saved\autism_risk_classifier_v1.pkl (Exists: True)
+DEBUG: Checking Model B file: C:\Users\S Sameer\Desktop\autism - Copy\ml\models\saved\risk_escalation_predictor_v1.pkl (Exists: False)
+DEBUG: Model A loaded successfully!
+
+--- load_models called at 2026-02-20 08:43:59.773239 ---
+DEBUG: ML_MODEL_PATH env: ../ml/models/saved
+DEBUG: Resolved model_path: C:\Users\S Sameer\Desktop\autism - Copy\ml\models\saved
+DEBUG: Checking Model A file: C:\Users\S Sameer\Desktop\autism - Copy\ml\models\saved\autism_risk_classifier_v1.pkl (Exists: True)
+DEBUG: Checking Model B file: C:\Users\S Sameer\Desktop\autism - Copy\ml\models\saved\risk_escalation_predictor_v1.pkl (Exists: False)
+DEBUG: Model A loaded successfully!
+DEBUG: Top-level Error: SQL expression element or literal value expected, got <models.Assessment object at 0x0000021B75EA8980>.
+Traceback (most recent call last):
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\sql\coercions.py", line 804, in _literal_coercion
+    return expr._bind_param(operator, element, type_=bindparam_type)
+           ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\sql\elements.py", line 4669, in _bind_param
+    return BindParameter(
+        self.key,
+    ...<5 lines>...
+        expanding=expanding,
+    )
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\sql\elements.py", line 2055, in __init__
+    self.type = _compared_to_type.coerce_compared_value(
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        _compared_to_operator, check_value
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\sql\type_api.py", line 1065, in coerce_compared_value
+    _coerced_type = _resolve_value_to_type(value)
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\sql\sqltypes.py", line 3911, in _resolve_value_to_type
+    raise exc.ArgumentError(
+        "Object %r is not legal as a SQL literal value" % (value,)
+    )
+sqlalchemy.exc.ArgumentError: Object <models.Assessment object at 0x0000021B75EA8980> is not legal as a SQL literal value
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\S Sameer\Desktop\autism - Copy\backend\routers\predictions.py", line 159, in generate_risk_prediction
+    if not check_assessment_access(current_user, assessment, db):
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\S Sameer\Desktop\autism - Copy\backend\rbac.py", line 156, in check_assessment_access
+    models.Assessment.assessment_id == assessment_id
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\sql\operators.py", line 584, in __eq__
+    return self.operate(eq, other)
+           ~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\attributes.py", line 453, in operate
+    return op(self.comparator, *other, **kwargs)  # type: ignore[no-any-return]  # noqa: E501
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\sql\operators.py", line 584, in __eq__
+    return self.operate(eq, other)
+           ~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\properties.py", line 479, in operate
+    return op(self.__clause_element__(), *other, **kwargs)  # type: ignore[no-any-return]  # noqa: E501
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\sql\annotation.py", line 371, in __eq__
+    return self.__element.__class__.__eq__(self, other)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\sql\operators.py", line 584, in __eq__
+    return self.operate(eq, other)
+           ~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\sql\elements.py", line 1535, in operate
+    return op(self.comparator, *other, **kwargs)  # type: ignore[no-any-return]  # noqa: E501
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\sql\operators.py", line 584, in __eq__
+    return self.operate(eq, other)
+           ~~~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\sql\type_api.py", line 210, in operate
+    return op_fn(self.expr, op, *other, **addtl_kw)
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\sql\default_comparator.py", line 120, in _boolean_compare
+    obj = coercions.expect(
+        roles.BinaryElementRole, element=obj, operator=op, expr=expr
+    )
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\sql\coercions.py", line 396, in expect
+    resolved = impl._literal_coercion(
+        element, argname=argname, **kw
+    )
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\sql\coercions.py", line 806, in _literal_coercion
+    self._raise_for_expected(element, err=err)
+    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\sql\coercions.py", line 785, in _raise_for_expected
+    return super()._raise_for_expected(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        element, argname=argname, resolved=resolved, advice=advice, **kw
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\sql\coercions.py", line 519, in _raise_for_expected
+    raise exc.ArgumentError(msg, code=code) from err
+sqlalchemy.exc.ArgumentError: SQL expression element or literal value expected, got <models.Assessment object at 0x0000021B75EA8980>.
+DEBUG: raw_data: N/A
+
+--- load_models called at 2026-02-20 08:44:57.112132 ---
+DEBUG: ML_MODEL_PATH env: ../ml/models/saved
+DEBUG: Resolved model_path: C:\Users\S Sameer\Desktop\autism - Copy\ml\models\saved
+DEBUG: Checking Model A file: C:\Users\S Sameer\Desktop\autism - Copy\ml\models\saved\autism_risk_classifier_v1.pkl (Exists: True)
+DEBUG: Checking Model B file: C:\Users\S Sameer\Desktop\autism - Copy\ml\models\saved\risk_escalation_predictor_v1.pkl (Exists: False)
+DEBUG: Model A loaded successfully!
+DEBUG: Top-level Error: 'child_id' is an invalid keyword argument for ModelPrediction
+Traceback (most recent call last):
+  File "C:\Users\S Sameer\Desktop\autism - Copy\backend\routers\predictions.py", line 233, in generate_risk_prediction
+    new_pred = models.ModelPrediction(
+        assessment_id=assessment_id,
+    ...<5 lines>...
+        status="Final"
+    )
+  File "<string>", line 4, in __init__
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\state.py", line 596, in _initialize_instance
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\util\langhelpers.py", line 224, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\state.py", line 594, in _initialize_instance
+    manager.original_init(*mixed[1:], **kwargs)
+    ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\decl_base.py", line 2179, in _declarative_constructor
+    raise TypeError(
+        "%r is an invalid keyword argument for %s" % (k, cls_.__name__)
+    )
+TypeError: 'child_id' is an invalid keyword argument for ModelPrediction
+DEBUG: raw_data: {"gross_motor_dq": 85.0, "fine_motor_dq": 82.0, "language_dq": 65.0, "cognitive_dq": 78.0, "socio_emotional_dq": 70.0, "composite_dq": 76.0, "gross_motor_delay": 0, "fine_motor_delay": 0, "language_delay": 1, "cognitive_delay": 0, "socio_emotional_delay": 0, "delayed_domains": 1, "adhd_risk": 0, "behavior_risk": 0, "attention_score": 70.0, "behavior_score": 15.0, "stunting": 0, "wasting": 0, "anemia": 0, "nutrition_score": 75.0, "caregiver_engagement_score": 80.0, "language_exposure_score": 70.0, "parent_child_interaction_score": 75.0, "stimulation_score": 75.0, "age_months": 49, "gender_encoded": 1, "scii": 29.75, "nsi": 0.24, "erm": 75.25, "dbs": 0.2}
+
+--- load_models called at 2026-02-20 09:11:42.889791 ---
+DEBUG: ML_MODEL_PATH env: ../ml/models/saved
+DEBUG: Resolved model_path: C:\Users\S Sameer\Desktop\autism - Copy\ml\models\saved
+DEBUG: Checking Model A file: C:\Users\S Sameer\Desktop\autism - Copy\ml\models\saved\autism_risk_classifier_v1.pkl (Exists: True)
+DEBUG: Checking Model B file: C:\Users\S Sameer\Desktop\autism - Copy\ml\models\saved\risk_escalation_predictor_v1.pkl (Exists: False)
+DEBUG: Model A loaded successfully!
+
+--- load_models called at 2026-02-20 09:11:44.422105 ---
+DEBUG: Top-level Error: 'ModelPrediction' object has no attribute 'predicted_class'
+Traceback (most recent call last):
+  File "C:\Users\S Sameer\Desktop\autism - Copy\backend\routers\predictions.py", line 174, in generate_risk_prediction
+    return await _predict_model_a(assessment, lang, db)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\S Sameer\Desktop\autism - Copy\backend\routers\predictions.py", line 274, in _predict_model_a
+    return await format_prediction_response(new_pred, lang, db)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\S Sameer\Desktop\autism - Copy\backend\routers\predictions.py", line 326, in format_prediction_response
+    prediction.predicted_class,
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'ModelPrediction' object has no attribute 'predicted_class'. Did you mean: 'predicted_risk_class'?
+
+--- load_models called at 2026-02-20 09:12:14.160541 ---
+DEBUG: Top-level Error: 503: Model B weights not loaded
+Traceback (most recent call last):
+  File "C:\Users\S Sameer\Desktop\autism - Copy\backend\routers\predictions.py", line 176, in generate_risk_prediction
+    return await _predict_model_b(assessment, lang, db)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\S Sameer\Desktop\autism - Copy\backend\routers\predictions.py", line 279, in _predict_model_b
+    raise HTTPException(status_code=503, detail="Model B weights not loaded")
+fastapi.exceptions.HTTPException: 503: Model B weights not loaded
+
+--- load_models called at 2026-02-20 09:19:23.278141 ---
+
+--- load_models called at 2026-02-20 09:19:23.333329 ---
+DEBUG: Top-level Error: 'ModelPrediction' object has no attribute 'predicted_class'
+Traceback (most recent call last):
+  File "C:\Users\S Sameer\Desktop\autism - Copy\backend\routers\predictions.py", line 174, in generate_risk_prediction
+    return await _predict_model_a(assessment, lang, db)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\S Sameer\Desktop\autism - Copy\backend\routers\predictions.py", line 274, in _predict_model_a
+    return await format_prediction_response(new_pred, lang, db)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\S Sameer\Desktop\autism - Copy\backend\routers\predictions.py", line 326, in format_prediction_response
+    prediction.predicted_class,
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'ModelPrediction' object has no attribute 'predicted_class'. Did you mean: 'predicted_risk_class'?
+
+--- load_models called at 2026-02-20 09:20:22.613014 ---
+
+--- load_models called at 2026-02-20 09:20:22.647777 ---
+DEBUG: Top-level Error: 'ModelPrediction' object has no attribute 'predicted_class'
+Traceback (most recent call last):
+  File "C:\Users\S Sameer\Desktop\autism - Copy\backend\routers\predictions.py", line 174, in generate_risk_prediction
+    return await _predict_model_a(assessment, lang, db)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\S Sameer\Desktop\autism - Copy\backend\routers\predictions.py", line 274, in _predict_model_a
+    return await format_prediction_response(new_pred, lang, db)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\S Sameer\Desktop\autism - Copy\backend\routers\predictions.py", line 326, in format_prediction_response
+    prediction.predicted_class,
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'ModelPrediction' object has no attribute 'predicted_class'. Did you mean: 'predicted_risk_class'?
+
+--- load_models called at 2026-02-20 09:41:42.970286 ---
+DEBUG: ML_MODEL_PATH env: ../ml/models/saved
+DEBUG: Resolved model_path: C:\Users\S Sameer\Desktop\autism - Copy\ml\models\saved
+DEBUG: Checking Model A file: C:\Users\S Sameer\Desktop\autism - Copy\ml\models\saved\autism_risk_classifier_v1.pkl (Exists: True)
+DEBUG: Checking Model B file: C:\Users\S Sameer\Desktop\autism - Copy\ml\models\saved\risk_escalation_predictor_v1.pkl (Exists: False)
+DEBUG: Model A loaded successfully!
+
+--- load_models called at 2026-02-20 09:41:44.439310 ---
+
+--- load_models called at 2026-02-20 18:01:14.343231 ---
+DEBUG: ML_MODEL_PATH env: ../ml/models/saved
+DEBUG: Resolved model_path: C:\Users\S Sameer\Desktop\autism - Copy\ml\models\saved
+DEBUG: Checking Model A file: C:\Users\S Sameer\Desktop\autism - Copy\ml\models\saved\autism_risk_classifier_v1.pkl (Exists: True)
+DEBUG: Checking Model B file: C:\Users\S Sameer\Desktop\autism - Copy\ml\models\saved\risk_escalation_predictor_v1.pkl (Exists: False)
+DEBUG: Model A loaded successfully!
+
+--- load_models called at 2026-02-20 18:01:15.834870 ---
+
+--- load_models called at 2026-02-20 18:02:34.743651 ---
+
+--- load_models called at 2026-02-20 18:02:34.787599 ---
+
+--- load_models called at 2026-02-20 18:06:57.889048 ---
+DEBUG: ML_MODEL_PATH env: ../ml/models/saved
+DEBUG: Resolved model_path: C:\Users\S Sameer\Desktop\autism - Copy\ml\models\saved
+DEBUG: Checking Model A file: C:\Users\S Sameer\Desktop\autism - Copy\ml\models\saved\autism_risk_classifier_v1.pkl (Exists: True)
+DEBUG: Checking Model B file: C:\Users\S Sameer\Desktop\autism - Copy\ml\models\saved\risk_escalation_predictor_v1.pkl (Exists: False)
+DEBUG: Model A loaded successfully!
+
+--- load_models called at 2026-02-20 18:06:59.037139 ---
+
+--- load_models called at 2026-02-20 18:09:26.830620 ---
+
+--- load_models called at 2026-02-20 18:09:26.878625 ---
+
+--- load_models called at 2026-02-20 18:10:44.682026 ---
+
+--- load_models called at 2026-02-20 18:10:44.721346 ---
+
+--- load_models called at 2026-02-20 18:45:59.263820 ---
+DEBUG: ML_MODEL_PATH env: ../ml/models/saved
+DEBUG: Resolved model_path: C:\Users\S Sameer\Desktop\autism - Copy\ml\models\saved
+DEBUG: Checking Model A file: C:\Users\S Sameer\Desktop\autism - Copy\ml\models\saved\autism_risk_classifier_v1.pkl (Exists: True)
+DEBUG: Checking Model B file: C:\Users\S Sameer\Desktop\autism - Copy\ml\models\saved\risk_escalation_predictor_v1.pkl (Exists: False)
+DEBUG: Model A loaded successfully!
+
+--- load_models called at 2026-02-20 18:46:01.113439 ---
+
+--- load_models called at 2026-02-20 18:46:03.215748 ---
+
+--- load_models called at 2026-02-20 18:46:03.355828 ---
+
+--- load_models called at 2026-02-20 18:49:49.209218 ---
+DEBUG: ML_MODEL_PATH env: ../ml/models/saved
+DEBUG: Resolved model_path: C:\Users\S Sameer\Desktop\autism - Copy\ml\models\saved
+DEBUG: Checking Model A file: C:\Users\S Sameer\Desktop\autism - Copy\ml\models\saved\autism_risk_classifier_v1.pkl (Exists: True)
+DEBUG: Checking Model B file: C:\Users\S Sameer\Desktop\autism - Copy\ml\models\saved\risk_escalation_predictor_v1.pkl (Exists: False)
+DEBUG: Model A loaded successfully!
+
+--- load_models called at 2026-02-20 18:49:50.718390 ---
+
+--- load_models called at 2026-02-20 18:49:52.793465 ---
+
+--- load_models called at 2026-02-20 18:49:52.836712 ---
+
+--- load_models called at 2026-02-20 19:04:27.081389 ---
+
+--- load_models called at 2026-02-20 19:04:27.115694 ---
+
+--- load_models called at 2026-02-20 20:25:47.030959 ---
+
+--- load_models called at 2026-02-20 20:25:47.076452 ---
+
+--- load_models called at 2026-02-21 19:43:07.120131 ---
+DEBUG: ML_MODEL_PATH env: ../ml/models/saved
+DEBUG: Resolved model_path: C:\Users\S Sameer\Desktop\autism - Copy\ml\models\saved
+DEBUG: Checking Model A file: C:\Users\S Sameer\Desktop\autism - Copy\ml\models\saved\autism_risk_classifier_v1.pkl (Exists: True)
+DEBUG: Checking Model B file: C:\Users\S Sameer\Desktop\autism - Copy\ml\models\saved\risk_escalation_predictor_v1.pkl (Exists: False)
+DEBUG: Model A loaded successfully!
+
+--- load_models called at 2026-02-21 19:43:08.785135 ---
+
+--- load_models called at 2026-02-21 19:44:30.875025 ---
+
+--- load_models called at 2026-02-21 19:44:30.919790 ---
+
+--- load_models called at 2026-02-21 19:55:29.624354 ---
+DEBUG: ML_MODEL_PATH env: ../ml/models/saved
+DEBUG: Resolved model_path: C:\Users\S Sameer\Desktop\autism - Copy\ml\models\saved
+DEBUG: Checking Model A file: C:\Users\S Sameer\Desktop\autism - Copy\ml\models\saved\autism_risk_classifier_v1.pkl (Exists: True)
+DEBUG: Checking Model B file: C:\Users\S Sameer\Desktop\autism - Copy\ml\models\saved\risk_escalation_predictor_v1.pkl (Exists: False)
+DEBUG: Model A loaded successfully!
+
+--- load_models called at 2026-02-21 19:55:31.147202 ---
+
+--- load_models called at 2026-02-21 20:47:06.291403 ---
+
+--- load_models called at 2026-02-21 20:47:06.339531 ---

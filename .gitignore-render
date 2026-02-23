@@ -1,0 +1,83 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+venv/
+ENV/
+env/
+.venv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Environment
+.env
+.env.local
+.env.*.local
+!.env.example
+!.env.render
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Logs
+*.log
+logs/
+debug_*.txt
+
+# Node (Frontend)
+frontend/node_modules/
+frontend/dist/
+frontend/.env.local
+frontend/.env.*.local
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# ML Models - IMPORTANT: Don't ignore these for Render!
+# !ml/models/saved/
+# !ml/models/saved/*.pkl
+
+# Temp files
+*.tmp
+*.temp
+.temp/
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Build artifacts
+*.whl
+*.tar.gz

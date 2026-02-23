@@ -1,0 +1,6 @@
+system_admin | 1 | admin@cdss.gov.in
+state_admin | 3 | state_admin@example.com
+district_officer | 4 | district_admin_1@example.com
+supervisor | 5 | mandal_admin_1@example.com
+anganwadi_worker | 2 | worker@awc001.gov.in
+parent | 1152 | parent_1@gmail.com

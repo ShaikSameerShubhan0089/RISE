@@ -1,0 +1,6 @@
+system_admin C=200 R=200 
+state_admin C=200 R=200 
+district_officer C=200 R=200 
+supervisor C=200 R=200 
+anganwadi_worker C=200 R=200 
+parent C=200 R=200 

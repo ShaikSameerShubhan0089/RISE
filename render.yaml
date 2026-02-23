@@ -1,0 +1,59 @@
+services:
+  # PostgreSQL Database
+  - type: pserv
+    name: autism-cdss-db
+    env: docker
+    dockerfilePath: ./Dockerfile.db
+    envVars:
+      - key: POSTGRES_DB
+        value: autism_cdss
+      - key: POSTGRES_USER
+        value: postgres
+      - key: POSTGRES_PASSWORD
+        sync: false
+
+  # FastAPI Backend
+  - type: web
+    name: autism-cdss-api
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: cd backend && uvicorn main:app --host 0.0.0.0 --port $PORT
+    plan: standard
+    envVars:
+      - key: DATABASE_URL
+        fromService:
+          name: autism-cdss-db
+          type: pserv
+          property: connectionString
+      - key: DATABASE_URL
+        value: postgresql://postgres:${POSTGRES_PASSWORD}@autism-cdss-db:5432/autism_cdss
+      - key: JWT_SECRET
+        sync: false
+      - key: JWT_ALGORITHM
+        value: HS256
+      - key: JWT_EXPIRATION
+        value: 1440
+      - key: API_HOST
+        value: 0.0.0.0
+      - key: API_PORT
+        value: 8000
+      - key: API_RELOAD
+        value: "False"
+      - key: CORS_ORIGINS
+        value: https://yourdomain.com,https://www.yourdomain.com
+      - key: ML_MODEL_PATH
+        value: ./ml/models/saved/
+      - key: LOG_LEVEL
+        value: INFO
+
+  # React Frontend
+  - type: web
+    name: autism-cdss-frontend
+    runtime: node
+    buildCommand: npm install && npm run build
+    startCommand: npm run preview
+    staticSite: true
+    buildDir: frontend/dist
+    envVars:
+      - key: VITE_API_URL
+        value: https://autism-cdss-api.onrender.com/api

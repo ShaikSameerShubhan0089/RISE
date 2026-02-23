@@ -1,0 +1,43 @@
+{
+    "timestamp": "2026-02-20T05:26:31.636691",
+    "model_type": "XGBClassifier",
+    "features": [
+        "gross_motor_dq",
+        "fine_motor_dq",
+        "language_dq",
+        "cognitive_dq",
+        "socio_emotional_dq",
+        "composite_dq",
+        "gross_motor_delay",
+        "fine_motor_delay",
+        "language_delay",
+        "cognitive_delay",
+        "socio_emotional_delay",
+        "delayed_domains",
+        "adhd_risk",
+        "behavior_risk",
+        "attention_score",
+        "behavior_score",
+        "stunting",
+        "wasting",
+        "anemia",
+        "nutrition_score",
+        "caregiver_engagement_score",
+        "language_exposure_score",
+        "parent_child_interaction_score",
+        "stimulation_score",
+        "age_months",
+        "gender_encoded",
+        "scii",
+        "nsi",
+        "erm",
+        "dbs"
+    ],
+    "train_size": 2380,
+    "val_size": 420,
+    "final_metrics": {
+        "logloss": 0.5370642459707423,
+        "auc": 0.7157632939876041,
+        "error": 0.28095238095238095
+    }
+}
