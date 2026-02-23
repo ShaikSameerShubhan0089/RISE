@@ -12,11 +12,11 @@ services:
       - key: POSTGRES_PASSWORD
         sync: false
 
-  # FastAPI Backend
+  # FastAPI Backend + React Frontend (Combined Service)
   - type: web
     name: autism-cdss-api
     runtime: python
-    buildCommand: pip install -r requirements.txt
+    buildCommand: cd frontend && npm install && npm run build && cd .. && mkdir -p backend/static && cp -r frontend/dist/* backend/static/ && pip install -r requirements.txt
     startCommand: cd backend && uvicorn main:app --host 0.0.0.0 --port $PORT
     plan: standard
     envVars:
@@ -46,14 +46,4 @@ services:
       - key: LOG_LEVEL
         value: INFO
 
-  # React Frontend
-  - type: web
-    name: autism-cdss-frontend
-    runtime: node
-    buildCommand: npm install && npm run build
-    startCommand: npm run preview
-    staticSite: true
-    buildDir: frontend/dist
-    envVars:
-      - key: VITE_API_URL
-        value: https://autism-cdss-api.onrender.com/api
+
