@@ -1,11 +1,12 @@
 """
 FastAPI Main Application
-Autism Risk Stratification CDSS Backend
+Autism Risk Stratification CDSS Backend + Frontend
 """
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, FileResponse
+from fastapi.staticfiles import StaticFiles
 import os
 import sys
 from pathlib import Path
@@ -24,8 +25,6 @@ from middleware.audit import log_request
 # Import routers
 from routers import auth, children, assessments, predictions, referrals, interventions, dashboard
 
-load_dotenv()
-
 # Create FastAPI app
 app = FastAPI(
     title="Autism Risk Stratification CDSS API",
@@ -35,8 +34,13 @@ app = FastAPI(
     redoc_url="/api/redoc"
 )
 
+# -----------------------------
 # CORS Configuration
-origins = os.getenv("CORS_ORIGINS", "http://localhost:3000").split(",")
+# -----------------------------
+origins = os.getenv(
+    "CORS_ORIGINS",
+    "http://localhost:3000,https://child-development-portal.onrender.com"
+).split(",")
 
 app.add_middleware(
     CORSMiddleware,
@@ -46,29 +50,27 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Add audit logging middleware
+# -----------------------------
+# Audit Logging Middleware
+# -----------------------------
 @app.middleware("http")
 async def audit_middleware(request: Request, call_next):
     return await log_request(request, call_next)
 
-
-# Health check endpoint
+# -----------------------------
+# API Endpoints
+# -----------------------------
 @app.get("/api/health")
 async def health_check():
-    """Health check endpoint"""
     db_status = check_db_connection()
-    
     return {
         "status": "healthy" if db_status else "unhealthy",
         "database": "connected" if db_status else "disconnected",
         "version": "1.0.0"
     }
 
-
-# Clinical disclaimer endpoint
 @app.get("/api/disclaimer")
 async def get_disclaimer():
-    """Get clinical disclaimer text"""
     return {
         "disclaimer": (
             "This tool provides autism risk stratification based on structured "
@@ -77,7 +79,6 @@ async def get_disclaimer():
             "developmental specialist."
         )
     }
-
 
 # Include routers
 app.include_router(auth.router, prefix="/api/auth", tags=["Authentication"])
@@ -88,11 +89,44 @@ app.include_router(referrals.router, prefix="/api/referrals", tags=["Referrals"]
 app.include_router(interventions.router, prefix="/api/interventions", tags=["Interventions"])
 app.include_router(dashboard.router, prefix="/api/dashboard", tags=["Dashboard"])
 
+# -----------------------------
+# Serve React Frontend
+# -----------------------------
+STATIC_DIR = backend_dir / "static"
 
-# Global exception handler
+if STATIC_DIR.exists():
+
+    # Serve static assets (Vite build)
+    if (STATIC_DIR / "assets").exists():
+        app.mount(
+            "/assets",
+            StaticFiles(directory=STATIC_DIR / "assets"),
+            name="assets"
+        )
+
+    @app.get("/{full_path:path}")
+    async def serve_react_app(full_path: str):
+        """
+        Serve React SPA for all non-API routes
+        """
+        # Prevent overriding API routes
+        if full_path.startswith("api"):
+            return JSONResponse(status_code=404, content={"detail": "Not Found"})
+
+        file_path = STATIC_DIR / full_path
+
+        # If file exists, serve it
+        if file_path.exists() and file_path.is_file():
+            return FileResponse(file_path)
+
+        # Otherwise serve index.html (SPA fallback)
+        return FileResponse(STATIC_DIR / "index.html")
+
+# -----------------------------
+# Global Exception Handler
+# -----------------------------
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
-    """Handle unexpected errors"""
     return JSONResponse(
         status_code=500,
         content={
@@ -101,36 +135,37 @@ async def global_exception_handler(request: Request, exc: Exception):
         }
     )
 
-
-# Startup event
+# -----------------------------
+# Startup Event
+# -----------------------------
 @app.on_event("startup")
 async def startup_event():
-    """Initialize database and load ML models on startup"""
     print("=" * 60)
     print("Starting Autism Risk Stratification CDSS API")
     print("=" * 60)
-    
-    # Check database connection
+
     if check_db_connection():
         print("✓ Database connection successful")
     else:
         print("✗ Database connection failed")
-    
-    print(f"✓ API server ready")
-    print(f"  Docs: http://localhost:8000/api/docs")
+
+    print("✓ API server ready")
+    print("Docs available at: /api/docs")
     print("=" * 60)
 
-
-# Shutdown event
+# -----------------------------
+# Shutdown Event
+# -----------------------------
 @app.on_event("shutdown")
 async def shutdown_event():
-    """Cleanup on shutdown"""
     print("Shutting down CDSS API...")
 
-
+# -----------------------------
+# Local Development Run
+# -----------------------------
 if __name__ == "__main__":
     import uvicorn
-    
+
     uvicorn.run(
         "main:app",
         host=os.getenv("API_HOST", "0.0.0.0"),
