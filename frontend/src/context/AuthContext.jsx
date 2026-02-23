@@ -17,16 +17,25 @@ export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
 
     // Initialize auth state from localStorage
-    useEffect(() => {
+useEffect(() => {
+    try {
         const storedToken = localStorage.getItem('token');
         const storedUser = localStorage.getItem('user');
 
-        if (storedToken && storedUser) {
+        if (storedToken && storedUser && storedUser !== "undefined") {
             setToken(storedToken);
             setUser(JSON.parse(storedUser));
+        } else {
+            localStorage.removeItem('user');
         }
-        setLoading(false);
-    }, []);
+    } catch (error) {
+        console.error("Error parsing stored user:", error);
+        localStorage.removeItem('user');
+        localStorage.removeItem('token');
+    }
+
+    setLoading(false);
+}, []);
 
     const login = async (email, password) => {
         try {
