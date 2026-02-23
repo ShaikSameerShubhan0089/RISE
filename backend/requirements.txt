@@ -1,0 +1,51 @@
+# Python Dependencies for Autism Risk Stratification CDSS
+
+# Core ML & Data Science
+numpy>=1.24.0
+pandas>=2.0.0
+scikit-learn>=1.3.0
+xgboost>=2.0.0
+shap>=0.42.0
+
+# Data Visualization
+matplotlib>=3.7.0
+seaborn>=0.12.0
+
+# Backend Framework
+fastapi>=0.104.0
+uvicorn[standard]>=0.24.0
+python-multipart>=0.0.6
+
+# Database
+psycopg2-binary>=2.9.9
+SQLAlchemy>=2.0.0
+alembic>=1.12.0
+pymysql>=1.1.0  # For local development with MySQL (optional)
+
+# Authentication & Security
+python-jose[cryptography]>=3.3.0
+passlib[bcrypt]>=1.7.4
+python-dotenv>=1.0.0
+pydantic>=2.5.0
+pydantic-settings>=2.1.0
+
+# API & HTTP
+httpx>=0.25.0
+aiofiles>=23.2.0
+
+# Date & Time
+python-dateutil>=2.8.2
+
+# Utilities
+pyyaml>=6.0.1
+click>=8.1.7
+
+# Testing
+pytest>=7.4.0
+pytest-asyncio>=0.21.0
+pytest-cov>=4.1.0
+
+# Code Quality
+black>=23.0.0
+flake8>=6.1.0
+mypy>=1.7.0
