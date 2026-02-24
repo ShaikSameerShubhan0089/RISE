@@ -5,11 +5,18 @@ def migrate():
     print("Checking for missing columns...")
     with engine.connect() as conn:
         try:
-            # Check if column exists
-            result = conn.execute(text("SHOW COLUMNS FROM children LIKE 'caregiver_additional_info'"))
+            # Check if column exists (PostgreSQL compatible)
+            query = text("""
+                SELECT column_name 
+                FROM information_schema.columns 
+                WHERE table_name='children' AND column_name='caregiver_additional_info'
+            """)
+            result = conn.execute(query)
+            
             if not result.fetchone():
                 print("Adding 'caregiver_additional_info' to 'children' table...")
-                conn.execute(text("ALTER TABLE children ADD COLUMN caregiver_additional_info TEXT AFTER caregiver_email"))
+                # PostgreSQL doesn't support 'AFTER' clause
+                conn.execute(text("ALTER TABLE children ADD COLUMN caregiver_additional_info TEXT"))
                 conn.commit()
                 print("✓ Migration successful")
             else:

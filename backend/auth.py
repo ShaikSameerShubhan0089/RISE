@@ -98,7 +98,8 @@ def authenticate_user(db: Session, email: str, password: str) -> Optional[models
     Returns:
         User object if authentication successful, None otherwise
     """
-    user = db.query(models.User).filter(models.User.email == email).first()
+    from sqlalchemy import func
+    user = db.query(models.User).filter(func.lower(models.User.email) == func.lower(email)).first()
     
     if not user:
         return None

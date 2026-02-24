@@ -15,7 +15,7 @@ load_dotenv()
 # Database URL from environment
 DATABASE_URL = os.getenv(
     "DATABASE_URL",
-    "mysql+pymysql://root:password@localhost:3306/autism_cdss"
+    "postgresql://postgres:password@localhost:5432/autism_cdss"
 )
 
 # Create engine

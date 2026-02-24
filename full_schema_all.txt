@@ -1,0 +1,228 @@
+
+--- TABLE: states ---
+state_id: BIGINT
+state_name: TEXT
+created_at: TIMESTAMP
+
+--- TABLE: districts ---
+district_id: BIGINT
+state_id: BIGINT
+district_name: TEXT
+created_at: TIMESTAMP
+
+--- TABLE: mandals ---
+mandal_id: BIGINT
+district_id: BIGINT
+mandal_name: TEXT
+created_at: TIMESTAMP
+
+--- TABLE: anganwadi_centers ---
+center_id: BIGINT
+mandal_id: BIGINT
+center_code: TEXT
+center_name: TEXT
+address: TEXT
+contact_number: TEXT
+created_at: TIMESTAMP
+
+--- TABLE: children ---
+child_id: BIGINT
+unique_child_code: TEXT
+first_name: TEXT
+last_name: TEXT
+dob: DATE
+gender: TEXT
+center_id: BIGINT
+caregiver_name: TEXT
+caregiver_relationship: TEXT
+caregiver_education: TEXT
+caregiver_phone: TEXT
+caregiver_email: TEXT
+caregiver_additional_info: TEXT
+enrollment_date: DATE
+status: TEXT
+created_at: TIMESTAMP
+updated_at: TIMESTAMP
+
+--- TABLE: assessments ---
+assessment_id: BIGINT
+child_id: BIGINT
+assessment_cycle: BIGINT
+assessment_date: DATE
+age_months: BIGINT
+gross_motor_dq: DOUBLE PRECISION
+fine_motor_dq: DOUBLE PRECISION
+language_dq: DOUBLE PRECISION
+cognitive_dq: DOUBLE PRECISION
+socio_emotional_dq: DOUBLE PRECISION
+composite_dq: DOUBLE PRECISION
+gross_motor_delay: BIGINT
+fine_motor_delay: BIGINT
+language_delay: BIGINT
+cognitive_delay: BIGINT
+socio_emotional_delay: BIGINT
+delayed_domains: DOUBLE PRECISION
+autism_screen_flag: DOUBLE PRECISION
+adhd_risk: DOUBLE PRECISION
+behavior_risk: DOUBLE PRECISION
+attention_score: DOUBLE PRECISION
+behavior_score: DOUBLE PRECISION
+stunting: DOUBLE PRECISION
+wasting: DOUBLE PRECISION
+anemia: DOUBLE PRECISION
+nutrition_score: DOUBLE PRECISION
+stimulation_score: DOUBLE PRECISION
+caregiver_engagement_score: DOUBLE PRECISION
+language_exposure_score: DOUBLE PRECISION
+parent_child_interaction_score: DOUBLE PRECISION
+assessed_by: BIGINT
+notes: TEXT
+created_at: TIMESTAMP
+
+--- TABLE: referrals ---
+referral_id: BIGINT
+assessment_id: BIGINT
+child_id: BIGINT
+risk_level_at_referral: TEXT
+referral_reason: TEXT
+referral_generated: BIGINT
+auto_generated: BIGINT
+referral_date: DATE
+expected_completion_date: DATE
+completion_date: DATE
+referred_to: TEXT
+specialist_type: TEXT
+facility_name: TEXT
+facility_contact: TEXT
+status: TEXT
+referral_completed: BIGINT
+outcome_summary: TEXT
+diagnosis_received: TEXT
+created_by: BIGINT
+updated_by: BIGINT
+created_at: TIMESTAMP
+updated_at: TIMESTAMP
+
+--- TABLE: interventions ---
+intervention_id: BIGINT
+child_id: BIGINT
+referral_id: BIGINT
+intervention_type: TEXT
+intervention_category: TEXT
+intervention_description: TEXT
+start_date: DATE
+end_date: DATE
+planned_duration_weeks: BIGINT
+actual_duration_weeks: BIGINT
+total_sessions_planned: BIGINT
+sessions_completed: BIGINT
+compliance_percentage: DOUBLE PRECISION
+improvement_status: TEXT
+delay_reduction_months: DOUBLE PRECISION
+outcome_notes: TEXT
+provider_name: TEXT
+provider_contact: TEXT
+created_by: BIGINT
+created_at: TIMESTAMP
+updated_at: TIMESTAMP
+
+--- TABLE: users ---
+user_id: BIGINT
+full_name: TEXT
+email: TEXT
+password_hash: TEXT
+role: TEXT
+state_id: DOUBLE PRECISION
+district_id: DOUBLE PRECISION
+mandal_id: DOUBLE PRECISION
+center_id: DOUBLE PRECISION
+status: TEXT
+email_verified: BIGINT
+last_login: TIMESTAMP
+created_at: TIMESTAMP
+updated_at: TIMESTAMP
+
+--- TABLE: audit_logs ---
+log_id: BIGINT
+user_id: DOUBLE PRECISION
+action: TEXT
+entity_type: TEXT
+entity_id: DOUBLE PRECISION
+request_method: TEXT
+request_path: TEXT
+request_body: TEXT
+response_status: BIGINT
+ip_address: TEXT
+user_agent: TEXT
+timestamp: TIMESTAMP
+
+--- TABLE: district_summary ---
+summary_id: BIGINT
+district_id: BIGINT
+report_month: DATE
+total_children: BIGINT
+total_assessments: BIGINT
+low_risk: BIGINT
+moderate_risk: BIGINT
+high_risk: BIGINT
+referral_completion_rate: DOUBLE PRECISION
+risk_escalation_rate: DOUBLE PRECISION
+improvement_rate: DOUBLE PRECISION
+active_interventions: BIGINT
+completed_interventions: BIGINT
+average_assessment_delay_days: DOUBLE PRECISION
+percentage_on_time_assessments: DOUBLE PRECISION
+created_at: TEXT
+
+--- TABLE: engineered_features ---
+feature_id: BIGINT
+assessment_id: BIGINT
+social_communication_impairment_index: DOUBLE PRECISION
+neurodevelopmental_severity_index: DOUBLE PRECISION
+environmental_risk_modifier: DOUBLE PRECISION
+delay_burden_score: DOUBLE PRECISION
+dq_delta: DOUBLE PRECISION
+behavior_delta: DOUBLE PRECISION
+socio_emotional_delta: DOUBLE PRECISION
+environmental_delta: DOUBLE PRECISION
+delay_delta: BIGINT
+nutrition_delta: DOUBLE PRECISION
+days_since_last_assessment: DOUBLE PRECISION
+created_at: TIMESTAMP
+
+--- TABLE: model_predictions ---
+prediction_id: BIGINT
+assessment_id: BIGINT
+model_version: TEXT
+prediction_timestamp: TIMESTAMP
+low_probability: DOUBLE PRECISION
+moderate_probability: DOUBLE PRECISION
+high_probability: DOUBLE PRECISION
+predicted_risk_class: TEXT
+combined_high_probability: DOUBLE PRECISION
+risk_tier: TEXT
+clinical_action: TEXT
+escalation_probability: DOUBLE PRECISION
+predicted_escalation: DOUBLE PRECISION
+model_confidence: DOUBLE PRECISION
+calibration_applied: BIGINT
+created_at: TIMESTAMP
+
+--- TABLE: parent_child_mapping ---
+mapping_id: BIGINT
+user_id: BIGINT
+child_id: BIGINT
+relationship_type: TEXT
+is_primary_contact: BIGINT
+created_at: TIMESTAMP
+
+--- TABLE: shap_explanations ---
+shap_id: BIGINT
+prediction_id: BIGINT
+feature_name: TEXT
+feature_value: DOUBLE PRECISION
+shap_value: DOUBLE PRECISION
+contribution_rank: BIGINT
+interpretation: TEXT
+impact_direction: TEXT
+created_at: TEXT

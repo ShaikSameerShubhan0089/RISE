@@ -127,11 +127,15 @@ if STATIC_DIR.exists():
 # -----------------------------
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
+    import traceback
+    print(f"ERROR: Exception during {request.method} {request.url.path}")
+    traceback.print_exc()
     return JSONResponse(
         status_code=500,
         content={
             "detail": "An internal server error occurred",
-            "type": str(type(exc).__name__)
+            "type": str(type(exc).__name__),
+            "error": str(exc)
         }
     )
 

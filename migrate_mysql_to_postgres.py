@@ -7,9 +7,17 @@ Migrates all data from local MySQL to Render PostgreSQL
 import os
 import sys
 import pandas as pd
-from sqlalchemy import create_engine, inspect, text
-from typing import Dict, List
+from sqlalchemy import create_engine, inspect, text, Boolean
+from typing import Dict, List, Any
 import time
+
+# Add backend to path for model imports
+backend_dir = os.path.join(os.getcwd(), 'backend')
+if backend_dir not in sys.path:
+    sys.path.insert(0, backend_dir)
+
+import models
+from database import Base
 
 class MigrationManager:
     def __init__(self, mysql_url: str, postgres_url: str):
@@ -30,38 +38,26 @@ class MigrationManager:
         """Connect to MySQL"""
         try:
             self.log("Connecting to MySQL (source)...", "STEP")
-            self.mysql_engine = create_engine(
-                self.mysql_url,
-                echo=False,
-                pool_pre_ping=True
-            )
-            
+            self.mysql_engine = create_engine(self.mysql_url, echo=False, pool_pre_ping=True)
             with self.mysql_engine.connect() as conn:
                 conn.execute(text("SELECT 1"))
-            
-            self.log("✓ Connected to MySQL successfully", "SUCCESS")
+            self.log("OK: Connected to MySQL successfully", "SUCCESS")
             return True
         except Exception as e:
-            self.log(f"✗ Failed to connect to MySQL: {e}", "ERROR")
+            self.log(f"ERROR: Failed to connect to MySQL: {e}", "ERROR")
             return False
     
     def connect_postgres(self) -> bool:
         """Connect to PostgreSQL"""
         try:
             self.log("Connecting to PostgreSQL (destination)...", "STEP")
-            self.postgres_engine = create_engine(
-                self.postgres_url,
-                echo=False,
-                pool_pre_ping=True
-            )
-            
+            self.postgres_engine = create_engine(self.postgres_url, echo=False, pool_pre_ping=True)
             with self.postgres_engine.connect() as conn:
                 conn.execute(text("SELECT 1"))
-            
-            self.log("✓ Connected to PostgreSQL successfully", "SUCCESS")
+            self.log("OK: Connected to PostgreSQL successfully", "SUCCESS")
             return True
         except Exception as e:
-            self.log(f"✗ Failed to connect to PostgreSQL: {e}", "ERROR")
+            self.log(f"ERROR: Failed to connect to PostgreSQL: {e}", "ERROR")
             return False
     
     def get_tables(self, engine) -> List[str]:
@@ -78,214 +74,92 @@ class MigrationManager:
         except Exception as e:
             self.log(f"Error counting records in {table}: {e}", "WARNING")
             return 0
-    
+
+    def _get_boolean_cols(self, table_name: str) -> List[str]:
+        """Identify boolean columns for a table from SQLAlchemy models"""
+        try:
+            for table in Base.metadata.tables.values():
+                if table.fullname == table_name:
+                    return [c.name for c in table.columns if isinstance(c.type, Boolean)]
+            return []
+        except Exception as e:
+            self.log(f"Error identifying boolean columns for {table_name}: {e}", "WARNING")
+            return []
+
     def migrate_table(self, table: str) -> bool:
         """Migrate single table from MySQL to PostgreSQL"""
         try:
-            # Get record count before
             mysql_count = self.get_record_count(self.mysql_engine, table)
-            
-            # Read from MySQL
             self.log(f"  Reading {table}... ({mysql_count} records)", "INFO")
             df = pd.read_sql(f"SELECT * FROM {table}", self.mysql_engine)
             
-            if len(df) == 0:
-                self.log(f"  Skipping empty table: {table}", "INFO")
-                return True
-            
-            # Write to PostgreSQL
+            # Boolean casting for Postgres compatibility
+            boolean_cols = self._get_boolean_cols(table)
+            if boolean_cols:
+                for col in boolean_cols:
+                    if col in df.columns:
+                        df[col] = df[col].map({1: True, 0: False, 1.0: True, 0.0: False, True: True, False: False, None: None})
+
             self.log(f"  Writing {table}...", "INFO")
-            df.to_sql(
-                table,
-                self.postgres_engine,
-                if_exists='replace',  # Replace existing data
-                index=False,
-                method='multi',
-                chunksize=1000
-            )
+            df.to_sql(table, self.postgres_engine, if_exists='append', index=False, method='multi', chunksize=1000)
             
-            # Verify count
             postgres_count = self.get_record_count(self.postgres_engine, table)
-            
             if postgres_count == mysql_count:
-                self.log(f"✓ {table}: {mysql_count} records", "SUCCESS")
+                self.log(f"OK: {table}: {mysql_count} records", "SUCCESS")
                 return True
             else:
-                self.log(
-                    f"⚠ {table}: MySQL={mysql_count}, PostgreSQL={postgres_count}",
-                    "WARNING"
-                )
+                self.log(f"WARNING: {table}: MySQL={mysql_count}, PostgreSQL={postgres_count}", "WARNING")
                 return False
-            
         except Exception as e:
-            self.log(f"✗ Failed to migrate {table}: {e}", "ERROR")
+            import traceback
+            self.log(f"ERROR: Failed to migrate {table}: {e}", "ERROR")
+            traceback.print_exc()
             return False
     
     def get_table_order(self, tables: List[str]) -> List[str]:
-        """
-        Return tables in order of dependencies
-        (foreign keys must be migrated after parent tables)
-        """
         dependency_order = [
             'states', 'districts', 'mandals', 'anganwadi_centers',
-            'children', 'assessments', 'predictions',
-            'referrals', 'interventions', 'users', 'audit_logs'
+            'users', 'children', 'assessments', 'engineered_features', 
+            'model_predictions', 'referrals', 'interventions', 
+            'audit_logs', 'parent_child_mapping', 'district_summary'
         ]
-        
-        # Return only existing tables in correct order
-        ordered = [t for t in dependency_order if t in tables]
-        
-        # Add any tables not in our predefined order
+        skip_tables = ['shap_explanations']
+        ordered = [t for t in dependency_order if t in tables and t not in skip_tables]
         for table in tables:
-            if table not in ordered:
+            if table not in ordered and table not in skip_tables:
                 ordered.append(table)
-        
         return ordered
     
     def run_migration(self) -> bool:
-        """Execute full migration"""
-        print("=" * 80)
-        print("MYSQL TO POSTGRESQL MIGRATION")
-        print("=" * 80)
-        print()
-        
-        # Connect to both databases
-        if not self.connect_mysql():
-            return False
-        
-        if not self.connect_postgres():
-            return False
-        
-        # Get tables
-        self.log("Fetching table list from MySQL...", "STEP")
+        if not self.connect_mysql() or not self.connect_postgres(): return False
         mysql_tables = self.get_tables(self.mysql_engine)
-        self.log(f"Found {len(mysql_tables)} tables", "INFO")
-        print()
-        
-        # Order tables by dependencies
         ordered_tables = self.get_table_order(mysql_tables)
-        
-        # Pre-migration counts
-        print("PRE-MIGRATION RECORD COUNTS (MySQL):")
-        print("-" * 80)
-        mysql_totals = {}
-        for table in ordered_tables:
-            count = self.get_record_count(self.mysql_engine, table)
-            mysql_totals[table] = count
-            print(f"  {table:30s}: {count:8d}")
-        
-        total_mysql = sum(mysql_totals.values())
-        print(f"  {'TOTAL':30s}: {total_mysql:8d}")
-        print()
-        
-        # Migrate tables
-        print("MIGRATING DATA:")
-        print("-" * 80)
         
         successful = 0
         failed = 0
-        
         for i, table in enumerate(ordered_tables, 1):
-            print(f"{i}/{len(ordered_tables)} {table}")
-            if self.migrate_table(table):
-                successful += 1
-            else:
-                failed += 1
+            if self.migrate_table(table): successful += 1
+            else: failed += 1
         
-        print()
-        print("=" * 80)
-        print("POST-MIGRATION RECORD COUNTS (PostgreSQL):")
-        print("-" * 80)
-        
-        postgres_totals = {}
-        for table in ordered_tables:
-            count = self.get_record_count(self.postgres_engine, table)
-            postgres_totals[table] = count
-            match = "✓" if count == mysql_totals.get(table, 0) else "⚠"
-            print(f"  {match} {table:30s}: {count:8d}")
-        
-        total_postgres = sum(postgres_totals.values())
-        print(f"  {'TOTAL':30s}: {total_postgres:8d}")
-        print()
-        
-        # Summary
-        print("=" * 80)
-        print("MIGRATION SUMMARY")
-        print("=" * 80)
-        print(f"Tables processed:    {len(ordered_tables)}")
-        print(f"Successful:          {successful}")
-        print(f"Failed:              {failed}")
-        print(f"MySQL total records: {total_mysql}")
-        print(f"PostgreSQL total:    {total_postgres}")
-        
-        if failed == 0 and total_mysql == total_postgres:
-            print("\n✓ MIGRATION SUCCESSFUL!")
-            print("\nNext steps:")
-            print("1. Update API environment variable:")
-            print("   DATABASE_URL=postgresql://postgres:PASSWORD@host:5432/autism_cdss")
-            print("2. Restart API service on Render")
-            print("3. Test: curl https://api-url.com/api/health")
-            return True
-        else:
-            print("\n✗ MIGRATION INCOMPLETE - Please review errors above")
-            return False
-    
-    def save_log(self, filename: str = "migration.log"):
-        """Save migration log to file"""
-        with open(filename, 'w') as f:
-            f.write('\n'.join(self.migration_log))
-        self.log(f"Migration log saved to {filename}", "INFO")
+        return failed == 0
 
+    def save_log(self, filename: str = "migration.log"):
+        with open(filename, 'w') as f: f.write('\n'.join(self.migration_log))
 
 def main():
-    """Main entry point"""
-    
-    # Configuration
     MYSQL_URL = "mysql+pymysql://root:Lead%400089@localhost:3306/autism_cdss"
-    POSTGRES_URL = "postgresql://autism_cdss_user:zWDZ11QmvrYr9UCO5nyZHmZTSlLP3sZm@dpg-d6e8m90gjchc738hvvo0-a.oregon-postgres.render.com/autism_cdss?sslmode=require"
-    
-    print("""
-    ╔════════════════════════════════════════════════════════════════════════╗
-    ║         MYSQL TO POSTGRESQL MIGRATION TOOL                             ║
-    ║                                                                        ║
-    ║  This script will migrate all data from local MySQL to Render         ║
-    ║  PostgreSQL. Make sure:                                              ║
-    ║  1. MySQL is running locally                                         ║
-    ║  2. PostgreSQL database exists on Render                             ║
-    ║  3. Update POSTGRES_URL with actual password                         ║
-    ║  4. API server is stopped (optional but recommended)                 ║
-    ║  5. You have a backup of both databases                              ║
-    ║                                                                        ║
-    ╚════════════════════════════════════════════════════════════════════════╝
-    """)
-    
-    # Prompt for confirmation
-    response = input("Continue with migration? (yes/no): ").strip().lower()
-    if response != 'yes':
-        print("Migration cancelled.")
+    POSTGRES_URL = os.getenv("DATABASE_URL")
+    if not POSTGRES_URL:
+        print("DATABASE_URL not found in environment!")
         return
     
-    # Prompt for PostgreSQL password
-    postgres_password = input("Enter PostgreSQL password (from Render): ").strip()
-    if not postgres_password:
-        print("✗ PostgreSQL password required")
-        return
-    
-    # Update connection string
-    POSTGRES_URL = POSTGRES_URL.replace("PASSWORD", postgres_password)
-    
-    # Run migration
     manager = MigrationManager(MYSQL_URL, POSTGRES_URL)
-    success = manager.run_migration()
-    
-    # Save log
-    manager.save_log("migration.log")
-    
-    if success:
+    if manager.run_migration():
+        print("MIGRATION SUCCESSFUL!")
         sys.exit(0)
     else:
+        print("MIGRATION FAILED!")
         sys.exit(1)
-
 
 if __name__ == "__main__":
     main()

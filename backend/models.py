@@ -243,17 +243,10 @@ class ModelPrediction(Base):
 class SHAPExplanation(Base):
     __tablename__ = "shap_explanations"
     
-    shap_id = Column(Integer, primary_key=True, index=True)
-    prediction_id = Column(Integer, ForeignKey("model_predictions.prediction_id", ondelete="CASCADE"), nullable=False)
-    
-    feature_name = Column(String(150), nullable=False)
+    prediction_id = Column(Integer, ForeignKey("model_predictions.prediction_id", ondelete="CASCADE"), primary_key=True)
+    feature_name = Column(String(100), primary_key=True)
     feature_value = Column(Float)
     shap_value = Column(Float, nullable=False)
-    contribution_rank = Column(Integer, CheckConstraint("contribution_rank >= 1 AND contribution_rank <= 5"))
-    
-    interpretation = Column(Text)
-    impact_direction = Column(String(20), CheckConstraint("impact_direction IN ('Increases Risk', 'Decreases Risk')"))
-    
     created_at = Column(DateTime, default=func.now())
     
     # Relationships
@@ -389,9 +382,9 @@ class ParentChildMapping(Base):
     is_primary_contact = Column(Boolean, default=False)
     created_at = Column(DateTime, default=func.now())
     
-    __table_args__ = (
-        UniqueConstraint('user_id', 'child_id', name='uq_user_child'),
-    )
+    # __table_args__ = (
+    #     UniqueConstraint('user_id', 'child_id', name='uq_user_child'),
+    # )
     
     # Relationships
     user = relationship("User", back_populates="parent_mappings")

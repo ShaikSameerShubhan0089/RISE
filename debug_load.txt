@@ -1,0 +1,449 @@
+
+--- load_models called at 2026-02-24 15:34:27.715697 ---
+DEBUG: ML_MODEL_PATH env: ../ml/models/saved
+DEBUG: Resolved model_path: C:\Users\S Sameer\Desktop\autism - Copy\ml\models\saved
+DEBUG: Checking Model A file: C:\Users\S Sameer\Desktop\autism - Copy\ml\models\saved\autism_risk_classifier_v1.pkl (Exists: True)
+DEBUG: Checking Model B file: C:\Users\S Sameer\Desktop\autism - Copy\ml\models\saved\risk_escalation_predictor_v1.pkl (Exists: False)
+DEBUG: Model A loaded successfully!
+
+--- load_models called at 2026-02-24 15:34:29.297229 ---
+
+--- load_models called at 2026-02-25 00:09:08.910095 ---
+DEBUG: ML_MODEL_PATH env: ../ml/models/saved
+DEBUG: Resolved model_path: C:\Users\S Sameer\Desktop\autism - Copy\ml\models\saved
+DEBUG: Checking Model A file: C:\Users\S Sameer\Desktop\autism - Copy\ml\models\saved\autism_risk_classifier_v1.pkl (Exists: True)
+DEBUG: Checking Model B file: C:\Users\S Sameer\Desktop\autism - Copy\ml\models\saved\risk_escalation_predictor_v1.pkl (Exists: False)
+DEBUG: Model A loaded successfully!
+DEBUG: Top-level Error: (psycopg2.errors.UniqueViolation) duplicate key value violates unique constraint "model_predictions_pkey"
+DETAIL:  Key (prediction_id)=(1) already exists.
+
+[SQL: INSERT INTO model_predictions (assessment_id, model_version, prediction_timestamp, low_probability, moderate_probability, high_probability, predicted_risk_class, combined_high_probability, risk_tier, clinical_action, escalation_probability, predicted_escalation, model_confidence, calibration_applied, created_at) VALUES (%(assessment_id)s, %(model_version)s, now(), %(low_probability)s, %(moderate_probability)s, %(high_probability)s, %(predicted_risk_class)s, %(combined_high_probability)s, %(risk_tier)s, %(clinical_action)s, %(escalation_probability)s, %(predicted_escalation)s, %(model_confidence)s, %(calibration_applied)s, now()) RETURNING model_predictions.prediction_id, model_predictions.prediction_timestamp, model_predictions.created_at]
+[parameters: {'assessment_id': 2, 'model_version': 'Model A v1.0', 'low_probability': None, 'moderate_probability': None, 'high_probability': 0.4055311381816864, 'predicted_risk_class': 'Low', 'combined_high_probability': 0.4055311381816864, 'risk_tier': 'Low Risk', 'clinical_action': 'Routine Monitoring', 'escalation_probability': None, 'predicted_escalation': None, 'model_confidence': None, 'calibration_applied': True}]
+(Background on this error at: https://sqlalche.me/e/20/gkpj)
+Traceback (most recent call last):
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+psycopg2.errors.UniqueViolation: duplicate key value violates unique constraint "model_predictions_pkey"
+DETAIL:  Key (prediction_id)=(1) already exists.
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\S Sameer\Desktop\autism - Copy\backend\routers\predictions.py", line 174, in generate_risk_prediction
+    return await _predict_model_a(assessment, lang, db)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\S Sameer\Desktop\autism - Copy\backend\routers\predictions.py", line 259, in _predict_model_a
+    db.commit()
+    ~~~~~~~~~^^
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\session.py", line 2030, in commit
+    trans.commit(_to_root=True)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "<string>", line 2, in commit
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\state_changes.py", line 137, in _go
+    ret_value = fn(self, *arg, **kw)
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\session.py", line 1311, in commit
+    self._prepare_impl()
+    ~~~~~~~~~~~~~~~~~~^^
+  File "<string>", line 2, in _prepare_impl
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\state_changes.py", line 137, in _go
+    ret_value = fn(self, *arg, **kw)
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\session.py", line 1286, in _prepare_impl
+    self.session.flush()
+    ~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\session.py", line 4331, in flush
+    self._flush(objects)
+    ~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\session.py", line 4466, in _flush
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\util\langhelpers.py", line 224, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\session.py", line 4427, in _flush
+    flush_context.execute()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\unitofwork.py", line 466, in execute
+    rec.execute(self)
+    ~~~~~~~~~~~^^^^^^
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\unitofwork.py", line 642, in execute
+    util.preloaded.orm_persistence.save_obj(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self.mapper,
+        ^^^^^^^^^^^^
+        uow.states_for_mapper_hierarchy(self.mapper, False, False),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        uow,
+        ^^^^
+    )
+    ^
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\persistence.py", line 93, in save_obj
+    _emit_insert_statements(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        base_mapper,
+        ^^^^^^^^^^^^
+    ...<3 lines>...
+        insert,
+        ^^^^^^^
+    )
+    ^
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\persistence.py", line 1233, in _emit_insert_statements
+    result = connection.execute(
+        statement,
+        params,
+        execution_options=execution_options,
+    )
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1419, in execute
+    return meth(
+        self,
+        distilled_parameters,
+        execution_options or NO_OPTIONS,
+    )
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\sql\elements.py", line 527, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self, distilled_params, execution_options
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1641, in _execute_clauseelement
+    ret = self._execute_context(
+        dialect,
+    ...<8 lines>...
+        cache_hit=cache_hit,
+    )
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^
+        dialect, context, statement, parameters
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        e, str_statement, effective_parameters, cursor, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 2363, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+sqlalchemy.exc.IntegrityError: (psycopg2.errors.UniqueViolation) duplicate key value violates unique constraint "model_predictions_pkey"
+DETAIL:  Key (prediction_id)=(1) already exists.
+
+[SQL: INSERT INTO model_predictions (assessment_id, model_version, prediction_timestamp, low_probability, moderate_probability, high_probability, predicted_risk_class, combined_high_probability, risk_tier, clinical_action, escalation_probability, predicted_escalation, model_confidence, calibration_applied, created_at) VALUES (%(assessment_id)s, %(model_version)s, now(), %(low_probability)s, %(moderate_probability)s, %(high_probability)s, %(predicted_risk_class)s, %(combined_high_probability)s, %(risk_tier)s, %(clinical_action)s, %(escalation_probability)s, %(predicted_escalation)s, %(model_confidence)s, %(calibration_applied)s, now()) RETURNING model_predictions.prediction_id, model_predictions.prediction_timestamp, model_predictions.created_at]
+[parameters: {'assessment_id': 2, 'model_version': 'Model A v1.0', 'low_probability': None, 'moderate_probability': None, 'high_probability': 0.4055311381816864, 'predicted_risk_class': 'Low', 'combined_high_probability': 0.4055311381816864, 'risk_tier': 'Low Risk', 'clinical_action': 'Routine Monitoring', 'escalation_probability': None, 'predicted_escalation': None, 'model_confidence': None, 'calibration_applied': True}]
+(Background on this error at: https://sqlalche.me/e/20/gkpj)
+
+--- load_models called at 2026-02-25 00:53:19.487306 ---
+DEBUG: Top-level Error: (psycopg2.errors.UniqueViolation) duplicate key value violates unique constraint "model_predictions_pkey"
+DETAIL:  Key (prediction_id)=(1) already exists.
+
+[SQL: INSERT INTO model_predictions (assessment_id, model_version, prediction_timestamp, low_probability, moderate_probability, high_probability, predicted_risk_class, combined_high_probability, risk_tier, clinical_action, escalation_probability, predicted_escalation, model_confidence, calibration_applied, created_at) VALUES (%(assessment_id)s, %(model_version)s, now(), %(low_probability)s, %(moderate_probability)s, %(high_probability)s, %(predicted_risk_class)s, %(combined_high_probability)s, %(risk_tier)s, %(clinical_action)s, %(escalation_probability)s, %(predicted_escalation)s, %(model_confidence)s, %(calibration_applied)s, now()) RETURNING model_predictions.prediction_id, model_predictions.prediction_timestamp, model_predictions.created_at]
+[parameters: {'assessment_id': 2, 'model_version': 'Model A v1.0', 'low_probability': None, 'moderate_probability': None, 'high_probability': 0.6354206204414368, 'predicted_risk_class': 'High', 'combined_high_probability': 0.6354206204414368, 'risk_tier': 'High Risk', 'clinical_action': 'Urgent Clinical Referral', 'escalation_probability': None, 'predicted_escalation': None, 'model_confidence': None, 'calibration_applied': True}]
+(Background on this error at: https://sqlalche.me/e/20/gkpj)
+Traceback (most recent call last):
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+psycopg2.errors.UniqueViolation: duplicate key value violates unique constraint "model_predictions_pkey"
+DETAIL:  Key (prediction_id)=(1) already exists.
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\S Sameer\Desktop\autism - Copy\backend\routers\predictions.py", line 174, in generate_risk_prediction
+    return await _predict_model_a(assessment, lang, db)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\S Sameer\Desktop\autism - Copy\backend\routers\predictions.py", line 259, in _predict_model_a
+    db.commit()
+    ~~~~~~~~~^^
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\session.py", line 2030, in commit
+    trans.commit(_to_root=True)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "<string>", line 2, in commit
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\state_changes.py", line 137, in _go
+    ret_value = fn(self, *arg, **kw)
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\session.py", line 1311, in commit
+    self._prepare_impl()
+    ~~~~~~~~~~~~~~~~~~^^
+  File "<string>", line 2, in _prepare_impl
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\state_changes.py", line 137, in _go
+    ret_value = fn(self, *arg, **kw)
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\session.py", line 1286, in _prepare_impl
+    self.session.flush()
+    ~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\session.py", line 4331, in flush
+    self._flush(objects)
+    ~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\session.py", line 4466, in _flush
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\util\langhelpers.py", line 224, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\session.py", line 4427, in _flush
+    flush_context.execute()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\unitofwork.py", line 466, in execute
+    rec.execute(self)
+    ~~~~~~~~~~~^^^^^^
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\unitofwork.py", line 642, in execute
+    util.preloaded.orm_persistence.save_obj(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self.mapper,
+        ^^^^^^^^^^^^
+        uow.states_for_mapper_hierarchy(self.mapper, False, False),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        uow,
+        ^^^^
+    )
+    ^
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\persistence.py", line 93, in save_obj
+    _emit_insert_statements(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        base_mapper,
+        ^^^^^^^^^^^^
+    ...<3 lines>...
+        insert,
+        ^^^^^^^
+    )
+    ^
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\persistence.py", line 1233, in _emit_insert_statements
+    result = connection.execute(
+        statement,
+        params,
+        execution_options=execution_options,
+    )
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1419, in execute
+    return meth(
+        self,
+        distilled_parameters,
+        execution_options or NO_OPTIONS,
+    )
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\sql\elements.py", line 527, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self, distilled_params, execution_options
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1641, in _execute_clauseelement
+    ret = self._execute_context(
+        dialect,
+    ...<8 lines>...
+        cache_hit=cache_hit,
+    )
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^
+        dialect, context, statement, parameters
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        e, str_statement, effective_parameters, cursor, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 2363, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+sqlalchemy.exc.IntegrityError: (psycopg2.errors.UniqueViolation) duplicate key value violates unique constraint "model_predictions_pkey"
+DETAIL:  Key (prediction_id)=(1) already exists.
+
+[SQL: INSERT INTO model_predictions (assessment_id, model_version, prediction_timestamp, low_probability, moderate_probability, high_probability, predicted_risk_class, combined_high_probability, risk_tier, clinical_action, escalation_probability, predicted_escalation, model_confidence, calibration_applied, created_at) VALUES (%(assessment_id)s, %(model_version)s, now(), %(low_probability)s, %(moderate_probability)s, %(high_probability)s, %(predicted_risk_class)s, %(combined_high_probability)s, %(risk_tier)s, %(clinical_action)s, %(escalation_probability)s, %(predicted_escalation)s, %(model_confidence)s, %(calibration_applied)s, now()) RETURNING model_predictions.prediction_id, model_predictions.prediction_timestamp, model_predictions.created_at]
+[parameters: {'assessment_id': 2, 'model_version': 'Model A v1.0', 'low_probability': None, 'moderate_probability': None, 'high_probability': 0.6354206204414368, 'predicted_risk_class': 'High', 'combined_high_probability': 0.6354206204414368, 'risk_tier': 'High Risk', 'clinical_action': 'Urgent Clinical Referral', 'escalation_probability': None, 'predicted_escalation': None, 'model_confidence': None, 'calibration_applied': True}]
+(Background on this error at: https://sqlalche.me/e/20/gkpj)
+
+--- load_models called at 2026-02-25 00:56:26.467783 ---
+DEBUG: ML_MODEL_PATH env: ../ml/models/saved
+DEBUG: Resolved model_path: C:\Users\S Sameer\Desktop\autism - Copy\ml\models\saved
+DEBUG: Checking Model A file: C:\Users\S Sameer\Desktop\autism - Copy\ml\models\saved\autism_risk_classifier_v1.pkl (Exists: True)
+DEBUG: Checking Model B file: C:\Users\S Sameer\Desktop\autism - Copy\ml\models\saved\risk_escalation_predictor_v1.pkl (Exists: False)
+DEBUG: Model A loaded successfully!
+DEBUG: Top-level Error: (psycopg2.errors.UniqueViolation) duplicate key value violates unique constraint "model_predictions_pkey"
+DETAIL:  Key (prediction_id)=(2) already exists.
+
+[SQL: INSERT INTO model_predictions (assessment_id, model_version, prediction_timestamp, low_probability, moderate_probability, high_probability, predicted_risk_class, combined_high_probability, risk_tier, clinical_action, escalation_probability, predicted_escalation, model_confidence, calibration_applied, created_at) VALUES (%(assessment_id)s, %(model_version)s, now(), %(low_probability)s, %(moderate_probability)s, %(high_probability)s, %(predicted_risk_class)s, %(combined_high_probability)s, %(risk_tier)s, %(clinical_action)s, %(escalation_probability)s, %(predicted_escalation)s, %(model_confidence)s, %(calibration_applied)s, now()) RETURNING model_predictions.prediction_id, model_predictions.prediction_timestamp, model_predictions.created_at]
+[parameters: {'assessment_id': 3, 'model_version': 'Model A v1.0', 'low_probability': None, 'moderate_probability': None, 'high_probability': 0.5603398680686951, 'predicted_risk_class': 'High', 'combined_high_probability': 0.5603398680686951, 'risk_tier': 'High Risk', 'clinical_action': 'Urgent Clinical Referral', 'escalation_probability': None, 'predicted_escalation': None, 'model_confidence': None, 'calibration_applied': True}]
+(Background on this error at: https://sqlalche.me/e/20/gkpj)
+Traceback (most recent call last):
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+psycopg2.errors.UniqueViolation: duplicate key value violates unique constraint "model_predictions_pkey"
+DETAIL:  Key (prediction_id)=(2) already exists.
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\S Sameer\Desktop\autism - Copy\backend\routers\predictions.py", line 174, in generate_risk_prediction
+    return await _predict_model_a(assessment, lang, db)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\S Sameer\Desktop\autism - Copy\backend\routers\predictions.py", line 258, in _predict_model_a
+    db.commit()
+    ~~~~~~~~~^^
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\session.py", line 2030, in commit
+    trans.commit(_to_root=True)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "<string>", line 2, in commit
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\state_changes.py", line 137, in _go
+    ret_value = fn(self, *arg, **kw)
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\session.py", line 1311, in commit
+    self._prepare_impl()
+    ~~~~~~~~~~~~~~~~~~^^
+  File "<string>", line 2, in _prepare_impl
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\state_changes.py", line 137, in _go
+    ret_value = fn(self, *arg, **kw)
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\session.py", line 1286, in _prepare_impl
+    self.session.flush()
+    ~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\session.py", line 4331, in flush
+    self._flush(objects)
+    ~~~~~~~~~~~^^^^^^^^^
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\session.py", line 4466, in _flush
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\util\langhelpers.py", line 224, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\session.py", line 4427, in _flush
+    flush_context.execute()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\unitofwork.py", line 466, in execute
+    rec.execute(self)
+    ~~~~~~~~~~~^^^^^^
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\unitofwork.py", line 642, in execute
+    util.preloaded.orm_persistence.save_obj(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self.mapper,
+        ^^^^^^^^^^^^
+        uow.states_for_mapper_hierarchy(self.mapper, False, False),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        uow,
+        ^^^^
+    )
+    ^
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\persistence.py", line 93, in save_obj
+    _emit_insert_statements(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        base_mapper,
+        ^^^^^^^^^^^^
+    ...<3 lines>...
+        insert,
+        ^^^^^^^
+    )
+    ^
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\orm\persistence.py", line 1233, in _emit_insert_statements
+    result = connection.execute(
+        statement,
+        params,
+        execution_options=execution_options,
+    )
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1419, in execute
+    return meth(
+        self,
+        distilled_parameters,
+        execution_options or NO_OPTIONS,
+    )
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\sql\elements.py", line 527, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self, distilled_params, execution_options
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1641, in _execute_clauseelement
+    ret = self._execute_context(
+        dialect,
+    ...<8 lines>...
+        cache_hit=cache_hit,
+    )
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1846, in _execute_context
+    return self._exec_single_context(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^
+        dialect, context, statement, parameters
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1986, in _exec_single_context
+    self._handle_dbapi_exception(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        e, str_statement, effective_parameters, cursor, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 2363, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\base.py", line 1967, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\S Sameer\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\sqlalchemy\engine\default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+sqlalchemy.exc.IntegrityError: (psycopg2.errors.UniqueViolation) duplicate key value violates unique constraint "model_predictions_pkey"
+DETAIL:  Key (prediction_id)=(2) already exists.
+
+[SQL: INSERT INTO model_predictions (assessment_id, model_version, prediction_timestamp, low_probability, moderate_probability, high_probability, predicted_risk_class, combined_high_probability, risk_tier, clinical_action, escalation_probability, predicted_escalation, model_confidence, calibration_applied, created_at) VALUES (%(assessment_id)s, %(model_version)s, now(), %(low_probability)s, %(moderate_probability)s, %(high_probability)s, %(predicted_risk_class)s, %(combined_high_probability)s, %(risk_tier)s, %(clinical_action)s, %(escalation_probability)s, %(predicted_escalation)s, %(model_confidence)s, %(calibration_applied)s, now()) RETURNING model_predictions.prediction_id, model_predictions.prediction_timestamp, model_predictions.created_at]
+[parameters: {'assessment_id': 3, 'model_version': 'Model A v1.0', 'low_probability': None, 'moderate_probability': None, 'high_probability': 0.5603398680686951, 'predicted_risk_class': 'High', 'combined_high_probability': 0.5603398680686951, 'risk_tier': 'High Risk', 'clinical_action': 'Urgent Clinical Referral', 'escalation_probability': None, 'predicted_escalation': None, 'model_confidence': None, 'calibration_applied': True}]
+(Background on this error at: https://sqlalche.me/e/20/gkpj)
+
+--- load_models called at 2026-02-25 00:59:38.614672 ---
+DEBUG: ML_MODEL_PATH env: ../ml/models/saved
+DEBUG: Resolved model_path: C:\Users\S Sameer\Desktop\autism - Copy\ml\models\saved
+DEBUG: Checking Model A file: C:\Users\S Sameer\Desktop\autism - Copy\ml\models\saved\autism_risk_classifier_v1.pkl (Exists: True)
+DEBUG: Checking Model B file: C:\Users\S Sameer\Desktop\autism - Copy\ml\models\saved\risk_escalation_predictor_v1.pkl (Exists: False)
+DEBUG: Model A loaded successfully!
+
+--- load_models called at 2026-02-25 00:59:43.890276 ---
+
+--- load_models called at 2026-02-25 01:03:08.209928 ---
+
+--- load_models called at 2026-02-25 01:03:12.036586 ---

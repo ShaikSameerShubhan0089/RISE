@@ -184,16 +184,15 @@ async def generate_risk_prediction(
 
 async def _predict_model_a(assessment, lang, db):
     """Helper for Model A prediction"""
-    def is_delay(val): return 1 if (val is not None and val < 70) else 0
-    
-    delays = [
-        is_delay(assessment.gross_motor_dq),
-        is_delay(assessment.fine_motor_dq),
-        is_delay(assessment.language_dq),
-        is_delay(assessment.cognitive_dq),
-        is_delay(assessment.socio_emotional_dq)
+    # Calculate delayed domains if not provided
+    delay_fields = [
+        assessment.gross_motor_delay,
+        assessment.fine_motor_delay,
+        assessment.language_delay,
+        assessment.cognitive_delay,
+        assessment.socio_emotional_delay
     ]
-    delayed_domains = sum(delays)
+    delayed_domains = sum(1 for d in delay_fields if d)
     
     child = db.query(models.Child).filter(models.Child.child_id == assessment.child_id).first()
     gender_binary = 1 if (child and child.gender == "Male") else 0
@@ -205,19 +204,19 @@ async def _predict_model_a(assessment, lang, db):
         'cognitive_dq': assessment.cognitive_dq,
         'socio_emotional_dq': assessment.socio_emotional_dq,
         'composite_dq': assessment.composite_dq,
-        'gross_motor_delay': delays[0],
-        'fine_motor_delay': delays[1],
-        'language_delay': delays[2],
-        'cognitive_delay': delays[3],
-        'socio_emotional_delay': delays[4],
+        'gross_motor_delay': assessment.gross_motor_delay or False,
+        'fine_motor_delay': assessment.fine_motor_delay or False,
+        'language_delay': assessment.language_delay or False,
+        'cognitive_delay': assessment.cognitive_delay or False,
+        'socio_emotional_delay': assessment.socio_emotional_delay or False,
         'delayed_domains': delayed_domains,
-        'adhd_risk': 1 if assessment.adhd_risk else 0,
-        'behavior_risk': 1 if assessment.behavior_risk else 0,
+        'adhd_risk': assessment.adhd_risk or False,
+        'behavior_risk': assessment.behavior_risk or False,
         'attention_score': assessment.attention_score or 70.0,
         'behavior_score': assessment.behavior_score or 15.0,
-        'stunting': 1 if assessment.stunting else 0,
-        'wasting': 1 if assessment.wasting else 0,
-        'anemia': 1 if assessment.anemia else 0,
+        'stunting': assessment.stunting or False,
+        'wasting': assessment.wasting or False,
+        'anemia': assessment.anemia or False,
         'nutrition_score': assessment.nutrition_score or 75.0,
         'caregiver_engagement_score': assessment.caregiver_engagement_score or 70.0,
         'language_exposure_score': assessment.language_exposure_score or 70.0,
