@@ -37,17 +37,16 @@ app = FastAPI(
 # -----------------------------
 # CORS Configuration
 # -----------------------------
-origins = os.getenv(
-    "CORS_ORIGINS",
-    "http://localhost:3000,https://child-development-portal.onrender.com"
-).split(",")
+# Read from .env
+cors_origins_env = os.getenv("CORS_ORIGINS", "")
+origins = [origin.strip() for origin in cors_origins_env.split(",") if origin.strip()]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_origins=origins,        # must match frontend domain(s)
+    allow_credentials=True,       # allow cookies
+    allow_methods=["*"],          # GET, POST, etc.
+    allow_headers=["*"],          # Authorization, Content-Type, etc.
 )
 
 # -----------------------------
