@@ -242,7 +242,7 @@ def main():
     
     # Configuration
     MYSQL_URL = "mysql+pymysql://root:Lead%400089@localhost:3306/autism_cdss"
-    POSTGRES_URL = "postgresql://postgres:PASSWORD@autism-cdss-db.onrender.com:5432/autism_cdss"
+    POSTGRES_URL = "postgresql://autism_cdss_user:zWDZ11QmvrYr9UCO5nyZHmZTSlLP3sZm@dpg-d6e8m90gjchc738hvvo0-a.oregon-postgres.render.com/autism_cdss?sslmode=require"
     
     print("""
     ╔════════════════════════════════════════════════════════════════════════╗
