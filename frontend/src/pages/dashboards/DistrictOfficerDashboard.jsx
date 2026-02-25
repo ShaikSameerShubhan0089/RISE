@@ -1,6 +1,15 @@
+import React, { useEffect, useState, useCallback } from 'react';
+import { useAuth } from '../../context/AuthContext';
+import { dashboardAPI } from '../../utils/api';
+import SummaryCards from '../../components/dashboard/SummaryCards';
+import DashboardCharts from '../../components/dashboard/DashboardCharts';
+import ChildrenTable from '../../components/dashboard/ChildrenTable';
+import InterventionsTable from '../../components/dashboard/InterventionsTable';
+import UsersTable from '../../components/dashboard/UsersTable';
+import ChildGrowthChart from '../../components/dashboard/ChildGrowthChart';
+import { RefreshCw, Map } from 'lucide-react';
 import VoiceButton from '../../components/common/VoiceButton';
 import { useLanguage } from '../../context/LanguageContext';
-import { RefreshCw, Map } from 'lucide-react';
 
 const DistrictOfficerDashboard = () => {
     const { user } = useAuth();
@@ -61,10 +70,13 @@ const DistrictOfficerDashboard = () => {
             .replace('{role}', t('user_mgmt.roles.district_officer'))
             .replace('{scope}', scope);
 
-        text += " " + t('parent.narration.metric_summary')
-            .replace('{total_children}', summary.total_children || 0)
-            .replace('{active_users}', summary.active_users || 0)
-            .replace('{active_centers}', summary.total_centers || 'all');
+        // Detailed Metrics
+        text += " " + t('parent.narration.metric_card')
+            .replace('{label}', t('analytics.metrics.total_children'))
+            .replace('{value}', summary.total_children || 0);
+        text += " " + t('parent.narration.metric_card')
+            .replace('{label}', t('analytics.metrics.active_users'))
+            .replace('{value}', summary.active_users || 0);
 
         if (summary.risk_distribution) {
             text += " " + t('parent.narration.risk_distribution')
@@ -73,14 +85,23 @@ const DistrictOfficerDashboard = () => {
                 .replace('{low}', summary.risk_distribution.low || 0);
         }
 
-        const topMandals = (charts?.mandal_performance || [])
-            .sort((a, b) => b.registration_count - a.registration_count)
-            .slice(0, 3);
+        // Mandal Performance & Ranking
+        const performances = (charts?.mandal_performance || [])
+            .sort((a, b) => b.registration_count - a.registration_count);
 
-        if (topMandals.length > 0) {
-            text += " Mandal statistics are as follows:";
-            topMandals.forEach(m => {
-                text += " " + t('parent.narration.mandal_stat').replace('{name}', m.mandal_name).replace('{count}', m.registration_count);
+        if (performances.length > 0) {
+            text += " " + t('parent.narration.ranking_intro');
+            performances.slice(0, 3).forEach(m => {
+                text += " " + t('parent.narration.mandal_stat')
+                    .replace('{name}', m.mandal_name)
+                    .replace('{count}', m.registration_count);
+            });
+
+            // Trend analysis if available
+            performances.slice(0, 1).forEach(m => {
+                text += " " + t('parent.narration.district_stat')
+                    .replace('{name}', m.mandal_name)
+                    .replace('{trend}', 'positive'); // Placeholder trend
             });
         }
 

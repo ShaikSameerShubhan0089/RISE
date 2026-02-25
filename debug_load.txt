@@ -7,3 +7,11 @@ DEBUG: Checking Model B file: C:\Users\S Sameer\Desktop\autism - Copy\ml\models\
 DEBUG: Model A loaded successfully!
 
 --- load_models called at 2026-02-25 15:51:02.654888 ---
+
+--- load_models called at 2026-02-25 16:49:37.105374 ---
+
+--- load_models called at 2026-02-25 16:49:41.586329 ---
+
+--- load_models called at 2026-02-25 17:03:54.738988 ---
+
+--- load_models called at 2026-02-25 17:03:59.197913 ---

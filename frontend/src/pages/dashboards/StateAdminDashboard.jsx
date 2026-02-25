@@ -1,6 +1,15 @@
+import React, { useEffect, useState, useCallback } from 'react';
+import { useAuth } from '../../context/AuthContext';
+import { dashboardAPI } from '../../utils/api';
+import SummaryCards from '../../components/dashboard/SummaryCards';
+import DashboardCharts from '../../components/dashboard/DashboardCharts';
+import ChildrenTable from '../../components/dashboard/ChildrenTable';
+import InterventionsTable from '../../components/dashboard/InterventionsTable';
+import UsersTable from '../../components/dashboard/UsersTable';
+import ChildGrowthChart from '../../components/dashboard/ChildGrowthChart';
+import { Globe } from 'lucide-react';
 import VoiceButton from '../../components/common/VoiceButton';
 import { useLanguage } from '../../context/LanguageContext';
-import { Globe } from 'lucide-react';
 
 const StateAdminDashboard = () => {
     const { user } = useAuth();
@@ -84,10 +93,13 @@ const StateAdminDashboard = () => {
             .replace('{role}', t('user_mgmt.roles.state_admin'))
             .replace('{scope}', scope);
 
-        text += " " + t('parent.narration.metric_summary')
-            .replace('{total_children}', summary.total_children || 0)
-            .replace('{active_users}', summary.active_users || 0)
-            .replace('{active_centers}', summary.total_centers || 'all');
+        // State-wide Metrics
+        text += " " + t('parent.narration.metric_card')
+            .replace('{label}', t('analytics.metrics.total_children'))
+            .replace('{value}', summary.total_children || 0);
+        text += " " + t('parent.narration.metric_card')
+            .replace('{label}', t('analytics.metrics.active_users'))
+            .replace('{value}', summary.active_users || 0);
 
         if (summary.risk_distribution) {
             text += " " + t('parent.narration.risk_distribution')
@@ -96,14 +108,16 @@ const StateAdminDashboard = () => {
                 .replace('{low}', summary.risk_distribution.low || 0);
         }
 
-        const topDistricts = (charts?.district_performance || [])
-            .sort((a, b) => b.registration_count - a.registration_count)
-            .slice(0, 3);
+        // District Performance Summary
+        const districtScores = (charts?.district_performance || [])
+            .sort((a, b) => b.registration_count - a.registration_count);
 
-        if (topDistricts.length > 0) {
-            text += " Top performing districts include:";
-            topDistricts.forEach(d => {
-                text += ` ${d.district_name} with ${d.registration_count} registrations.`;
+        if (districtScores.length > 0) {
+            text += " " + t('parent.narration.ranking_intro');
+            districtScores.slice(0, 3).forEach(d => {
+                text += " " + t('parent.narration.performance_item')
+                    .replace('{name}', d.district_name)
+                    .replace('{count}', d.registration_count);
             });
         }
 

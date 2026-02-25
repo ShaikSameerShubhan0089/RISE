@@ -375,11 +375,18 @@ export const translations = {
                 intervention_row: 'Intervention type {type}, status is {status}, with {compliance} percent compliance.',
                 admin_hello: 'Hello {name}. You are viewing the {role} dashboard for {scope}.',
                 metric_summary: 'Overall metrics: {total_children} total children, {active_users} active users, and {active_centers} centers.',
+                metric_card: 'The {label} is {value}.',
                 risk_distribution: 'The current risk distribution across your jurisdiction is: {high} high risk, {moderate} moderate concern, and {low} low risk children.',
                 flagged_centers: 'There are {count} centers requiring immediate clinical supervision.',
+                high_risk_list_intro: 'Children currently identified at high risk include:',
+                child_record: 'Child {name}, with unique code {code}, currently at {tier} level.',
+                center_bottleneck: 'Center {name} has {count} pending referrals, indicating a potential bottleneck.',
+                ranking_intro: 'Jurisdictional registration rankings include:',
+                performance_item: '{name} with {count} total registrations.',
                 mandal_stat: 'Mandal {name} has {count} total registrations.',
                 district_stat: 'District {name} shows a {trend} trend in risk prevalence.',
-                system_health: 'System status is {status}. Backend API and Database are fully connected.'
+                system_health: 'System status is {status}. Backend API and Database are fully connected.',
+                system_audit: 'System Health Audit: Backend API at {api} is {api_status}. Database {db} is {db_status}.'
             }
         }
     },
@@ -744,11 +751,18 @@ export const translations = {
                 intervention_row: 'హస్తక్షేప రకం {type}, స్థితి {status}, {compliance} శాతం అనుసరణతో.',
                 admin_hello: 'నమస్కారం {name}. మీరు {scope} కోసం {role} డ్యాష్‌బోర్డ్‌ను చూస్తున్నారు.',
                 metric_summary: 'మొత్తం గణాంకాలు: {total_children} మంది పిల్లలు, {active_users} యాక్టివ్ యూజర్లు మరియు {active_centers} సెంటర్లు.',
+                metric_card: '{label} సంఖ్య {value} గా ఉంది.',
                 risk_distribution: 'మీ పరిధిలో ప్రస్తుత రిస్క్ పంపిణీ: {high} మంది హై రిస్క్, {moderate} మంది మోడరేట్ మరియు {low} మంది తక్కువ రిస్క్ పిల్లలు.',
                 flagged_centers: 'తక్షణ క్లినికల్ పర్యవేక్షణ అవసరమైన {count} సెంటర్లు ఉన్నవి.',
+                high_risk_list_intro: 'ప్రస్తుతం హై రిస్క్‌లో ఉన్న పిల్లల జాబితా:',
+                child_record: 'శిశువు {name}, కోడ్ {code}, ప్రస్తుతం {tier} స్థాయిలో ఉన్నారు.',
+                center_bottleneck: '{name} సెంటర్లో {count} పెండింగ్ రిఫరల్స్ ఉన్నాయి, ఇది పనిభారాన్ని సూచిస్తుంది.',
+                ranking_intro: 'రిజిస్ట్రేషన్ల వారీగా పరిధి ర్యాంకింగ్‌లు:',
+                performance_item: '{name} లో మొత్తం {count} రిజిస్ట్రేషన్లు.',
                 mandal_stat: '{name} మండలంలో మొత్తం {count} రిజిస్ట్రేషన్లు ఉన్నాయి.',
                 district_stat: '{name} జిల్లా రిస్క్ ప్రాబల్యంలో {trend} ధోరణిని చూపుతోంది.',
-                system_health: 'సిస్టమ్ స్థితి {status}. బ్యాకెండ్ API మరియు డేటాబేస్ పూర్తిగా అనుసంధానించబడ్డాయి.'
+                system_health: 'సిస్టమ్ స్థితి {status}. బ్యాకెండ్ API మరియు డేటాబేస్ పూర్తిగా అనుసంధానించబడ్డాయి.',
+                system_audit: 'సిస్టమ్ హెల్త్ ఆడిట్: బ్యాకెండ్ API {api} స్థితి {api_status}. డేటాబేస్ {db} స్థితి {db_status}.'
             }
         }
     },
@@ -1105,11 +1119,18 @@ export const translations = {
                 intervention_row: 'हस्तक्षेप प्रकार {type}, स्थिति {status} है, {compliance} प्रतिशत अनुपालन के साथि।',
                 admin_hello: 'नमस्ते {name}। आप {scope} के लिए {role} डैशबोर्ड देख रहे हैं।',
                 metric_summary: 'कुल मेट्रिक्स: {total_children} कुल बच्चे, {active_users} सक्रिय उपयोगकर्ता और {active_centers} केंद्र।',
+                metric_card: '{label} की संख्या {value} है।',
                 risk_distribution: 'आपके अधिकार क्षेत्र में वर्तमान जोखिम वितरण है: {high} उच्च जोखिम, {moderate} मध्यम चिंता, और {low} कम जोखिम वाले बच्चे।',
                 flagged_centers: 'तत्काल क्लिनिकल पर्यवेक्षण की आवश्यकता वाले {count} केंद्र हैं।',
+                high_risk_list_intro: 'वर्तमान में उच्च जोखिम वाले बच्चों की सूची:',
+                child_record: 'बच्चा {name}, कोड {code}, वर्तमान में {tier} स्तर पर है।',
+                center_bottleneck: 'केंद्र {name} में {count} लंबित रेफरल हैं, जो संभावित कार्यभार को दर्शाता है।',
+                ranking_intro: 'क्षेत्रीय पंजीकरण रैंकिंग इस प्रकार है:',
+                performance_item: '{name} में कुल {count} पंजीकरण।',
                 mandal_stat: 'मंडल {name} में कुल {count} पंजीकरण हैं।',
                 district_stat: 'जिला {name} जोखिम व्यापकता में {trend} रुझान दिखाता है।',
-                system_health: 'सिस्टम की स्थिति {status} है। बैकएंड एपीआई और डेटाबेस पूरी तरह से जुड़े हुए हैं।'
+                system_health: 'सिस्टम की स्थिति {status} है। बैकएंड एपीआई और डेटाबेस पूरी तरह से जुड़े हुए हैं।',
+                system_audit: 'सिस्टम हेल्थ ऑडिट: {api} पर बैकएंड एपीआई {api_status} है। डेटाबेस {db} {db_status} है।'
             }
         }
     },
@@ -1465,11 +1486,18 @@ export const translations = {
                 intervention_row: 'ಹಸ್ತಕ್ಷೇಪ ಪ್ರಕಾರ {type}, ಸ್ಥಿತಿ {status}, {compliance} ಪ್ರತಿಶತ ಅನುಸರಣೆಯೊಂದಿಗೆ.',
                 admin_hello: 'ನಮಸ್ಕಾರ {name}. ನೀವು {scope} ಗಾಗಿ {role} ಡ್ಯಾಶ್‌ಬೋರ್ಡ್ ವೀಕ್ಷಿಸುತ್ತಿದ್ದೀರಿ.',
                 metric_summary: 'ಒಟ್ಟಾರೆ ಅಂಕಿಅಂಶಗಳು: {total_children} ಒಟ್ಟು ಮಕ್ಕಳು, {active_users} ಸಕ್ರಿಯ ಬಳಕೆದಾರರು ಮತ್ತು {active_centers} ಕೇಂದ್ರಗಳು.',
+                metric_card: '{label} ಸಂಖ್ಯೆಯು {value} ಆಗಿದೆ.',
                 risk_distribution: 'ನಿಮ್ಮ ವ್ಯಾಪ್ತಿಯಲ್ಲಿ ಪ್ರಸ್ತುತ ಅಪಾಯದ ವಿತರಣೆ: {high} ಹೆಚ್ಚಿನ ಅಪಾಯ, {moderate} ಸಾಧಾರಣ ಕಾಳಜಿ ಮತ್ತು {low} ಕಡಿಮೆ ಅಪಾಯದ ಮಕ್ಕಳು.',
                 flagged_centers: 'ತಕ್ಷಣದ ಕ್ಲಿನಿಕಲ್ ಮೇಲ್ವಿಚಾರಣೆಯ ಅಗತ್ಯವಿರುವ {count} ಕೇಂದ್ರಗಳಿವೆ.',
+                high_risk_list_intro: 'ಪ್ರಸ್ತುತ ಹೆಚ್ಚಿನ ಅಪಾಯದಲ್ಲಿರುವ ಮಕ್ಕಳ ಪಟ್ಟಿ:',
+                child_record: 'ಮಗು {name}, ಕೋಡ್ {code}, ಪ್ರಸ್ತುತ {tier} ಮಟ್ಟದಲ್ಲಿದೆ.',
+                center_bottleneck: 'ಕೇಂದ್ರ {name} ನಲ್ಲಿ {count} ಬಾಕಿ ಇರುವ ಉಲ್ಲೇಖಗಳಿವೆ, ಇದು ಕೆಲಸದ ಒತ್ತಡವನ್ನು ಸೂಚಿಸುತ್ತದೆ.',
+                ranking_intro: 'ಪ್ರಾದೇಶಿಕ ನೋಂದಣಿ ಶ್ರೇಯಾಂಕಗಳು ಈ ಕೆಳಗಿನಂತಿವೆ:',
+                performance_item: '{name} ನಲ್ಲಿ ಒಟ್ಟು {count} ನೋಂದಣಿಗಳು.',
                 mandal_stat: '{name} ಮಂಡಲದಲ್ಲಿ ಒಟ್ಟು {count} ನೋಂದಣಿಗಳಿವೆ.',
                 district_stat: '{name} ಜಿಲ್ಲೆಯು ಅಪಾಯದ ಹರಡುವಿಕೆಯಲ್ಲಿ {trend} ಪ್ರವೃತ್ತಿಯನ್ನು ತೋರಿಸುತ್ತದೆ.',
-                system_health: 'ಸಿಸ್ಟಮ್ ಸ್ಥಿತಿ {status} ಆಗಿದೆ. ಬ್ಯಾಕೆಂಡ್ API ಮತ್ತು ಡೇಟಾಬೇಸ್ ಸಂಪೂರ್ಣವಾಗಿ ಸಂಪರ್ಕಗೊಂಡಿವೆ.'
+                system_health: 'ಸಸ್ಟಮ್ ಸ್ಥಿತಿ {status} ಆಗಿದೆ. ಬ್ಯಾಕೆಂಡ್ API ಮತ್ತು ಡೇಟಾಬೇಸ್ ಸಂಪೂರ್ಣವಾಗಿ ಸಂಪರ್ಕಗೊಂಡಿವೆ.',
+                system_audit: 'ಸಿಸ್ಟಮ್ ಹೆಲ್ತ್ ಆಡಿಟ್: {api} ನಲ್ಲಿ ಬ್ಯಾಕೆಂಡ್ API {api_status} ಆಗಿದೆ. ಡೇಟಾಬೇಸ್ {db} {db_status} ಆಗಿದೆ.'
             }
         }
     }

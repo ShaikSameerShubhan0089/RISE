@@ -1,6 +1,15 @@
+import React, { useEffect, useState, useCallback } from 'react';
+import { useAuth } from '../../context/AuthContext';
+import { dashboardAPI } from '../../utils/api';
+import SummaryCards from '../../components/dashboard/SummaryCards';
+import DashboardCharts from '../../components/dashboard/DashboardCharts';
+import ChildrenTable from '../../components/dashboard/ChildrenTable';
+import InterventionsTable from '../../components/dashboard/InterventionsTable';
+import UsersTable from '../../components/dashboard/UsersTable';
+import ChildGrowthChart from '../../components/dashboard/ChildGrowthChart';
+import { RefreshCw, LayoutDashboard } from 'lucide-react';
 import VoiceButton from '../../components/common/VoiceButton';
 import { useLanguage } from '../../context/LanguageContext';
-import { RefreshCw, LayoutDashboard } from 'lucide-react';
 
 const SupervisorDashboard = () => {
     const { user } = useAuth();
@@ -61,10 +70,13 @@ const SupervisorDashboard = () => {
             .replace('{role}', t('user_mgmt.roles.supervisor'))
             .replace('{scope}', scope);
 
-        text += " " + t('parent.narration.metric_summary')
-            .replace('{total_children}', summary.total_children || 0)
-            .replace('{active_users}', summary.active_users || 0)
-            .replace('{active_centers}', centers.length);
+        // Detailed Metrics
+        text += " " + t('parent.narration.metric_card')
+            .replace('{label}', t('analytics.metrics.total_children'))
+            .replace('{value}', summary.total_children || 0);
+        text += " " + t('parent.narration.metric_card')
+            .replace('{label}', t('analytics.metrics.active_users'))
+            .replace('{value}', summary.active_users || 0);
 
         if (summary.risk_distribution) {
             text += " " + t('parent.narration.risk_distribution')
@@ -73,16 +85,26 @@ const SupervisorDashboard = () => {
                 .replace('{low}', summary.risk_distribution.low || 0);
         }
 
-        const highRiskCenters = (charts?.center_performance || [])
-            .filter(c => c.high_risk_count > 0)
-            .sort((a, b) => b.high_risk_count - a.high_risk_count)
-            .slice(0, 3);
+        // Center Performance & Ranking
+        const performances = (charts?.center_performance || [])
+            .sort((a, b) => b.total_registrations - a.total_registrations);
 
-        if (highRiskCenters.length > 0) {
-            text += " " + t('parent.narration.flagged_centers').replace('{count}', highRiskCenters.length);
-            highRiskCenters.forEach(c => {
-                text += ` Center ${c.center_name} has ${c.high_risk_count} children in high risk tier.`;
+        if (performances.length > 0) {
+            text += " " + t('parent.narration.ranking_intro');
+            performances.slice(0, 3).forEach(p => {
+                text += " " + t('parent.narration.performance_item')
+                    .replace('{name}', p.center_name)
+                    .replace('{count}', p.total_registrations);
             });
+
+            const bottleneck = performances.filter(p => (p.pending_referrals || 0) > 5);
+            if (bottleneck.length > 0) {
+                bottleneck.slice(0, 2).forEach(p => {
+                    text += " " + t('parent.narration.center_bottleneck')
+                        .replace('{name}', p.center_name)
+                        .replace('{count}', p.pending_referrals);
+                });
+            }
         }
 
         return text;

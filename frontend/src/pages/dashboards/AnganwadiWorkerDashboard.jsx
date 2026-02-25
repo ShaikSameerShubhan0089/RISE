@@ -1,3 +1,17 @@
+import React, { useEffect, useState } from 'react';
+import { useAuth } from '../../context/AuthContext';
+import { dashboardAPI, usersAPI } from '../../utils/api';
+import SummaryCards from '../../components/dashboard/SummaryCards';
+import ChildrenTable from '../../components/dashboard/ChildrenTable';
+import InterventionsTable from '../../components/dashboard/InterventionsTable';
+import UsersTable from '../../components/dashboard/UsersTable';
+import ChildGrowthChart from '../../components/dashboard/ChildGrowthChart';
+import {
+    BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Cell,
+    PieChart, Pie, ResponsiveContainer,
+} from 'recharts';
+import { Plus, UserPlus, ClipboardList, X, Eye, EyeOff, AlertCircle, CheckCircle2 } from 'lucide-react';
+import ChildRegistrationForm from '../../components/dashboard/ChildRegistrationForm';
 import VoiceButton from '../../components/common/VoiceButton';
 import { useLanguage } from '../../context/LanguageContext';
 
@@ -126,10 +140,14 @@ const AnganwadiWorkerDashboard = () => {
             .replace('{role}', t('user_mgmt.roles.anganwadi_worker'))
             .replace('{scope}', user?.center_name || 'your center');
 
-        text += " " + t('parent.narration.metric_summary')
-            .replace('{total_children}', summary.total_children || 0)
-            .replace('{active_users}', summary.active_users || 0)
-            .replace('{active_centers}', 1);
+        // Detailed Metric Cards
+        text += " " + t('parent.narration.metric_card')
+            .replace('{label}', t('analytics.metrics.total_children'))
+            .replace('{value}', summary.total_children || 0);
+
+        text += " " + t('parent.narration.metric_card')
+            .replace('{label}', t('analytics.metrics.total_predictions'))
+            .replace('{value}', summary.total_predictions || 0);
 
         const riskCounts = { high: 0, moderate: 0, low: 0 };
         children.forEach(c => {
@@ -146,9 +164,12 @@ const AnganwadiWorkerDashboard = () => {
 
         const highRisk = children.filter(c => (c.risk_tier || '').toLowerCase().includes('high'));
         if (highRisk.length > 0) {
-            text += " " + t('parent.narration.insight_intro');
+            text += " " + t('parent.narration.high_risk_list_intro');
             highRisk.forEach(c => {
-                text += ` ${c.first_name} ${c.last_name || ''}, with unique code ${c.unique_child_code || 'N/A'}, is at ${c.risk_tier}.`;
+                text += " " + t('parent.narration.child_record')
+                    .replace('{name}', `${c.first_name} ${c.last_name || ''}`)
+                    .replace('{code}', c.unique_child_code || 'N/A')
+                    .replace('{tier}', c.risk_tier);
             });
         }
 
