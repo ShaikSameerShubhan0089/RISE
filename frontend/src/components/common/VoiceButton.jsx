@@ -10,26 +10,38 @@ const VoiceButton = ({ content, className = '' }) => {
     const { speak } = useLanguage();
     const [isSpeaking, setIsSpeaking] = useState(false);
 
-    const handleSpeak = () => {
+    const handleToggleSpeak = () => {
         if (!content) return;
 
-        setIsSpeaking(true);
-        speak(content);
+        if (isSpeaking) {
+            window.speechSynthesis.cancel();
+            setIsSpeaking(false);
+        } else {
+            setIsSpeaking(true);
+            speak(content);
 
-        // Browser Speech API doesn't always have a robust 'onend' across all browsers,
-        // but we can simulate the state change.
-        setTimeout(() => setIsSpeaking(false), 3000);
+            // Periodically check if speaking is finished
+            const checkSpeaking = setInterval(() => {
+                if (!window.speechSynthesis.speaking) {
+                    setIsSpeaking(false);
+                    clearInterval(checkSpeaking);
+                }
+            }, 500);
+        }
     };
 
     return (
         <button
-            onClick={handleSpeak}
+            onClick={handleToggleSpeak}
             disabled={!content}
-            className={`p-1.5 rounded-lg transition-colors hover:bg-indigo-50 text-indigo-600 disabled:opacity-30 disabled:cursor-not-allowed ${className}`}
-            title="Listen to data"
+            className={`p-1.5 rounded-lg transition-all active:scale-95 hover:bg-indigo-50 text-indigo-600 disabled:opacity-30 disabled:cursor-not-allowed ${className}`}
+            title={isSpeaking ? "Stop listening" : "Listen to page summary"}
         >
             {isSpeaking ? (
-                <VolumeX className="w-4 h-4 animate-pulse" />
+                <div className="flex items-center gap-1">
+                    <VolumeX className="w-4 h-4 animate-bounce" />
+                    <span className="text-[10px] font-bold uppercase tracking-tighter">Stop</span>
+                </div>
             ) : (
                 <Volume2 className="w-4 h-4" />
             )}

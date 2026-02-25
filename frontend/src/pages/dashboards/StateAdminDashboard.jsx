@@ -1,15 +1,10 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import { useAuth } from '../../context/AuthContext';
-import { dashboardAPI } from '../../utils/api';
-import SummaryCards from '../../components/dashboard/SummaryCards';
-import DashboardCharts from '../../components/dashboard/DashboardCharts';
-import ChildrenTable from '../../components/dashboard/ChildrenTable';
-import InterventionsTable from '../../components/dashboard/InterventionsTable';
-import UsersTable from '../../components/dashboard/UsersTable';
-import ChildGrowthChart from '../../components/dashboard/ChildGrowthChart';
+import VoiceButton from '../../components/common/VoiceButton';
+import { useLanguage } from '../../context/LanguageContext';
+import { Globe } from 'lucide-react';
 
 const StateAdminDashboard = () => {
     const { user } = useAuth();
+    const { t } = useLanguage();
 
     // Filters
     const [districts, setDistricts] = useState([]);
@@ -77,24 +72,48 @@ const StateAdminDashboard = () => {
         fetchData();
     }, [fetchData]);
 
+    const getPageSummary = () => {
+        const scope = selectedMandal
+            ? mandals.find(m => m.mandal_id === parseInt(selectedMandal))?.mandal_name
+            : selectedDistrict
+                ? districts.find(d => d.district_id === parseInt(selectedDistrict))?.district_name
+                : "the entire State";
+
+        let text = t('parent.narration.admin_hello')
+            .replace('{name}', user?.full_name || '')
+            .replace('{role}', t('user_mgmt.roles.state_admin'))
+            .replace('{scope}', scope);
+
+        text += " " + t('parent.narration.metric_summary')
+            .replace('{total_children}', summary.total_children || 0)
+            .replace('{active_users}', summary.active_users || 0)
+            .replace('{active_centers}', summary.total_centers || 'all');
+
+        if (summary.risk_distribution) {
+            text += " " + t('parent.narration.risk_distribution')
+                .replace('{high}', summary.risk_distribution.high || 0)
+                .replace('{moderate}', (summary.risk_distribution.moderate || 0) + (summary.risk_distribution.mild || 0))
+                .replace('{low}', summary.risk_distribution.low || 0);
+        }
+
+        const topDistricts = (charts?.district_performance || [])
+            .sort((a, b) => b.registration_count - a.registration_count)
+            .slice(0, 3);
+
+        if (topDistricts.length > 0) {
+            text += " Top performing districts include:";
+            topDistricts.forEach(d => {
+                text += ` ${d.district_name} with ${d.registration_count} registrations.`;
+            });
+        }
+
+        return text;
+    };
+
     const handleReset = () => {
         setSelectedDistrict('');
         setSelectedMandal('');
     };
-
-    if (loading && !summary.total_children) return (
-        <div className="flex items-center justify-center h-64">
-            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600" />
-        </div>
-    );
-
-    const tabs = [
-        { id: 'analytics', label: '📊 Analytics' },
-        { id: 'children', label: '👶 Children' },
-        { id: 'interventions', label: '🏥 Interventions' },
-        { id: 'staff', label: '👥 Users & Staff' },
-        { id: 'growth', label: '📈 Growth' },
-    ];
 
     const currentScopeLabel = selectedMandal
         ? mandals.find(m => m.mandal_id === parseInt(selectedMandal))?.mandal_name
@@ -106,11 +125,22 @@ const StateAdminDashboard = () => {
         <div className="p-6 space-y-6">
             {/* Header & Global Filters */}
             <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
-                <div>
-                    <h1 className="text-2xl font-bold text-gray-900">State Admin Dashboard</h1>
-                    <p className="text-sm text-gray-500 mt-1">
-                        Welcome, {user?.full_name} — Viewing scope: <span className="font-semibold text-blue-600">{currentScopeLabel}</span>
-                    </p>
+                <div className="flex items-center gap-4">
+                    <div className="p-3 bg-blue-50 rounded-2xl">
+                        <Globe className="w-8 h-8 text-blue-600" />
+                    </div>
+                    <div>
+                        <div className="flex items-center gap-3">
+                            <h1 className="text-2xl font-bold text-gray-900">State Admin Dashboard</h1>
+                            <VoiceButton
+                                content={getPageSummary()}
+                                className="bg-blue-600 text-white shadow-lg hover:bg-blue-700"
+                            />
+                        </div>
+                        <p className="text-sm text-gray-500 mt-1">
+                            Welcome, {user?.full_name} — Viewing scope: <span className="font-semibold text-blue-600">{currentScopeLabel}</span>
+                        </p>
+                    </div>
                 </div>
 
                 <div className="flex flex-wrap items-center gap-4">
@@ -188,8 +218,8 @@ const StateAdminDashboard = () => {
                             key={t.id}
                             onClick={() => setTab(t.id)}
                             className={`px-4 py-2.5 text-sm font-medium rounded-t-lg transition-colors ${tab === t.id
-                                    ? 'bg-blue-600 text-white shadow-sm'
-                                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                                ? 'bg-blue-600 text-white shadow-sm'
+                                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
                                 }`}
                         >
                             {t.label}

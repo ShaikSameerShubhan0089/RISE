@@ -160,16 +160,63 @@ const Assessments = () => {
         </div>
     );
 
+    const getPageSummary = () => {
+        const child = children.find(c => c.child_id.toString() === selectedChildId);
+        let summary = t('parent.narration.assessment_portal')
+            .replace('{child}', child ? `${child.first_name} ${child.last_name}` : t('assessments.select_child'));
+
+        if (child) {
+            summary += " " + t('parent.narration.field_value').replace('{label}', 'Unique Code').replace('{value}', child.unique_child_code);
+        }
+
+        summary += " " + t('parent.narration.field_value').replace('{label}', t('assessments.model')).replace('{value}', modelType);
+
+        // Narrate Inputs if they exist
+        const fields = modelType === 'Model A' ?
+            ['gross_motor_dq', 'fine_motor_dq', 'language_dq', 'cognitive_dq', 'socio_emotional_dq', 'composite_dq'] :
+            ['gross_motor_dq', 'fine_motor_dq', 'language_dq', 'cognitive_dq', 'socio_emotional_dq', 'composite_dq'];
+
+        fields.forEach(f => {
+            if (formData[f]) {
+                summary += " " + t('parent.narration.score_label').replace('{label}', t(`parent.dq_labels.${f}`) || f).replace('{value}', formData[f]);
+            }
+        });
+
+        if (prediction) {
+            summary += " " + t('parent.narration.risk_summary').replace('{tier}', prediction.risk_tier);
+            if (prediction.clinical_summary) {
+                summary += " " + t('parent.narration.insight_intro') + " " + prediction.clinical_summary;
+            }
+
+            // Loop through SHAP features interpretaton
+            if (prediction.top_features?.length > 0) {
+                prediction.top_features.forEach(f => {
+                    summary += " " + t('parent.narration.shap_impact')
+                        .replace('{feature}', f.interpretation)
+                        .replace('{direction}', f.impact_direction);
+                });
+            }
+        }
+
+        return summary;
+    };
+
     return (
         <div className="p-6 space-y-6 max-w-5xl mx-auto">
-            <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-primary-100 rounded-xl flex items-center justify-center">
-                    <ClipboardList className="w-6 h-6 text-primary-600" />
+            <div className="flex items-center justify-between gap-4">
+                <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 bg-primary-100 rounded-xl flex items-center justify-center">
+                        <ClipboardList className="w-6 h-6 text-primary-600" />
+                    </div>
+                    <div>
+                        <h1 className="text-2xl font-bold text-gray-900">{t('assessments.title')}</h1>
+                        <p className="text-gray-500 text-sm">{t('assessments.sub')}</p>
+                    </div>
                 </div>
-                <div>
-                    <h1 className="text-2xl font-bold text-gray-900">{t('assessments.title')}</h1>
-                    <p className="text-gray-500 text-sm">{t('assessments.sub')}</p>
-                </div>
+                <VoiceButton
+                    content={getPageSummary()}
+                    className="bg-white border-2 border-primary-50 hover:bg-primary-50"
+                />
             </div>
 
             {!prediction ? (

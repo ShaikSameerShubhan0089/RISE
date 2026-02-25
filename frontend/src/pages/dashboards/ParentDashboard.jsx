@@ -112,6 +112,97 @@ const ParentDashboard = () => {
         selectedChild && i.child_name === `${selectedChild.first_name} ${selectedChild.last_name || ''}`.trim()
     );
 
+    const getPageSummary = () => {
+        if (!selectedChild) return "";
+
+        let summary = t('parent.narration.hello')
+            .replace('{name}', user?.full_name || '')
+            .replace('{child}', selectedChild.first_name);
+
+        // 1. Child Profile Details
+        summary += " " + t('parent.narration.details_header');
+        summary += " " + t('parent.narration.field_value').replace('{label}', t('parent.dob')).replace('{value}', selectedChild.dob);
+        summary += " " + t('parent.narration.field_value').replace('{label}', t('parent.gender')).replace('{value}', selectedChild.gender);
+        summary += " " + t('parent.narration.field_value').replace('{label}', t('parent.centre') || t('common.centre')).replace('{value}', selectedChild.center_name);
+        summary += " " + t('parent.narration.field_value').replace('{label}', t('parent.caregiver')).replace('{value}', selectedChild.caregiver_name);
+
+        // 2. AI Insights & Early Warning
+        if (growthData?.latest_prediction) {
+            const lp = growthData.latest_prediction;
+            summary += " " + t('parent.narration.risk_summary').replace('{tier}', lp.risk_tier);
+
+            if (lp.escalation_probability !== null) {
+                summary += " " + t('parent.narration.early_warning').replace('{prob}', (lp.escalation_probability * 100).toFixed(0));
+            }
+
+            if (lp.clinical_summary) {
+                summary += " " + t('parent.narration.insight_intro') + " " + lp.clinical_summary;
+            }
+
+            // Loop through SHAP features
+            if (lp.top_features?.length > 0) {
+                lp.top_features.forEach(f => {
+                    summary += " " + t('parent.narration.shap_impact')
+                        .replace('{feature}', f.interpretation)
+                        .replace('{direction}', f.impact_direction);
+                });
+            }
+
+            // Loop through Recommendations (Pathways)
+            if (lp.recommendations?.length > 0) {
+                lp.recommendations.forEach((rec, idx) => {
+                    summary += " " + t('parent.narration.rec_header').replace('{category}', rec.category);
+                    summary += " " + t('parent.narration.rec_priority').replace('{priority}', rec.priority);
+                    summary += " " + t('parent.narration.rec_objective').replace('{objective}', rec.objective);
+
+                    if (rec.daily_steps?.length > 0) {
+                        rec.daily_steps.forEach((step, sIdx) => {
+                            summary += " " + t('parent.narration.rec_step').replace('{num}', sIdx + 1).replace('{step}', step);
+                        });
+                    }
+                    summary += " " + t('parent.narration.rec_guide').replace('{guide}', rec.parent_guide);
+                });
+            }
+
+            if (lp.composite_dq) {
+                summary += " " + t('parent.narration.dq_trend').replace('{dq}', lp.composite_dq.toFixed(1));
+            }
+        }
+
+        // 3. DQ Metrics Progress (Pin-to-pin)
+        DQ_LINES.forEach(({ key }) => {
+            const pts = datapoints.filter(d => d[key] != null);
+            if (pts.length > 0) {
+                const latest = pts[pts.length - 1][key];
+                const label = t(`parent.dq_labels.${key}`) || key;
+                summary += " " + t('parent.narration.score_label').replace('{label}', label).replace('{value}', latest.toFixed(1));
+            }
+        });
+
+        // 4. Health Records (Latest 3)
+        if (datapoints.length > 0) {
+            const latestRecords = [...datapoints].reverse().slice(0, 3);
+            latestRecords.forEach(d => {
+                summary += " " + t('parent.narration.table_row_start').replace('{date}', d.assessment_date || 'N/A');
+                summary += " " + t('parent.narration.score_label').replace('{label}', 'Composite DQ').replace('{value}', d.composite_dq?.toFixed(1) || 'N/A');
+                summary += " " + t('parent.narration.field_value').replace('{label}', 'Delayed Domains').replace('{value}', d.delayed_domains || 0);
+            });
+        }
+
+        // 5. Interventions
+        if (childInterventions.length > 0) {
+            summary += " " + t('parent.narration.intervention_summary').replace('{count}', childInterventions.length);
+            childInterventions.forEach(i => {
+                summary += " " + t('parent.narration.intervention_row')
+                    .replace('{type}', i.intervention_type)
+                    .replace('{status}', i.improvement_status || 'In Progress')
+                    .replace('{compliance}', (i.compliance_percentage || 0).toFixed(0));
+            });
+        }
+
+        return summary;
+    };
+
     if (loading) return (
         <div className="flex items-center justify-center h-64">
             <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-purple-600" />
@@ -138,7 +229,7 @@ const ParentDashboard = () => {
                         <p className="text-purple-100 mt-1 text-sm">{t('parent.sub')}</p>
                     </div>
                     <VoiceButton
-                        content={`${t('parent.hero')}, ${user?.full_name}. ${t('parent.sub')}`}
+                        content={getPageSummary()}
                         className="bg-white/10 hover:bg-white/20 text-white"
                     />
                 </div>

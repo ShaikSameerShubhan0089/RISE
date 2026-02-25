@@ -83,6 +83,27 @@ const Referrals = () => {
         { label: t('referrals.status.cancelled'), value: 'Cancelled' }
     ];
 
+    const getPageSummary = () => {
+        const pending = referrals.filter(r => r.status === 'Pending').length;
+        const scheduled = referrals.filter(r => r.status === 'Scheduled').length;
+
+        let summary = t('parent.narration.referral_summary')
+            .replace('{count}', referrals.length)
+            .replace('{pending}', pending)
+            .replace('{scheduled}', scheduled);
+
+        if (referrals.length > 0) {
+            referrals.forEach(r => {
+                summary += " " + t('parent.narration.table_row_start').replace('{date}', r.created_at?.split('T')[0] || 'N/A');
+                summary += " " + t('parent.narration.field_value').replace('{label}', 'Child').replace('{value}', r.child_name);
+                summary += " " + t('parent.narration.field_value').replace('{label}', 'To').replace('{value}', r.referred_to || r.facility_name);
+                summary += " " + t('parent.narration.field_value').replace('{label}', 'Status').replace('{value}', r.status);
+            });
+        }
+
+        return summary;
+    };
+
     return (
         <div className="p-6 space-y-6">
             {/* Toast */}
@@ -116,7 +137,7 @@ const Referrals = () => {
                         />
                     </div>
                     <VoiceButton
-                        content={`${t('referrals.title')}. ${t('referrals.sub')}. ${referrals.length} ${t('common.referrals')} ${t('common.at')} ${t('common.total')}.`}
+                        content={getPageSummary()}
                     />
                     <button
                         onClick={fetchReferrals}

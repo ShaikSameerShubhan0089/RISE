@@ -1,15 +1,10 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import { useAuth } from '../../context/AuthContext';
-import { dashboardAPI } from '../../utils/api';
-import SummaryCards from '../../components/dashboard/SummaryCards';
-import DashboardCharts from '../../components/dashboard/DashboardCharts';
-import ChildrenTable from '../../components/dashboard/ChildrenTable';
-import InterventionsTable from '../../components/dashboard/InterventionsTable';
-import UsersTable from '../../components/dashboard/UsersTable';
-import ChildGrowthChart from '../../components/dashboard/ChildGrowthChart';
+import VoiceButton from '../../components/common/VoiceButton';
+import { useLanguage } from '../../context/LanguageContext';
+import { ShieldCheck } from 'lucide-react';
 
 const SystemAdminDashboard = () => {
     const { user } = useAuth();
+    const { t } = useLanguage();
 
     // ── Location filter state ──────────────────────────────────────────────
     const [districts, setDistricts] = useState([]);
@@ -89,6 +84,43 @@ const SystemAdminDashboard = () => {
         loadData(selectedDistrict, mandalId);
     };
 
+    const getPageSummary = () => {
+        const scope = selectedMandal
+            ? mandals.find(m => String(m.mandal_id) === selectedMandal)?.mandal_name
+            : selectedDistrict
+                ? districts.find(d => String(d.district_id) === selectedDistrict)?.district_name
+                : "the global System";
+
+        let text = t('parent.narration.admin_hello')
+            .replace('{name}', user?.full_name || '')
+            .replace('{role}', t('user_mgmt.roles.system_admin'))
+            .replace('{scope}', scope);
+
+        text += " " + t('parent.narration.metric_summary')
+            .replace('{total_children}', summary.total_children || 0)
+            .replace('{active_users}', summary.active_users || 0)
+            .replace('{active_centers}', summary.total_centers || 'all global');
+
+        if (summary.risk_distribution) {
+            text += " " + t('parent.narration.risk_distribution')
+                .replace('{high}', summary.risk_distribution.high || 0)
+                .replace('{moderate}', (summary.risk_distribution.moderate || 0) + (summary.risk_distribution.mild || 0))
+                .replace('{low}', summary.risk_distribution.low || 0);
+        }
+
+        const roleCounts = users.reduce((acc, u) => {
+            acc[u.role] = (acc[u.role] || 0) + 1;
+            return acc;
+        }, {});
+
+        text += " Global user distribution includes:";
+        Object.entries(roleCounts).forEach(([role, count]) => {
+            text += ` ${count} ${role.replace('_', ' ')}s,`;
+        });
+
+        return text;
+    };
+
     // ── Reset handler ──────────────────────────────────────────────────────
     const handleReset = () => {
         setSelectedDistrict('');
@@ -124,19 +156,26 @@ const SystemAdminDashboard = () => {
         <div className="p-6 space-y-6">
 
             {/* ── Header ───────────────────────────────────────────────── */}
-            <div className="flex flex-wrap items-start justify-between gap-4">
+            <div className="flex items-center gap-4">
+                <div className="p-3 bg-red-100 rounded-2xl">
+                    <ShieldCheck className="w-8 h-8 text-red-600" />
+                </div>
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900">System Admin Dashboard</h1>
+                    <div className="flex items-center gap-3">
+                        <h1 className="text-2xl font-bold text-gray-900">System Admin Dashboard</h1>
+                        <VoiceButton
+                            content={getPageSummary()}
+                            className="bg-red-600 text-white shadow-lg hover:bg-red-700"
+                        />
+                    </div>
                     <p className="text-sm text-gray-500 mt-1">
                         Welcome, {user?.full_name} — {scopeLabel}
                     </p>
                 </div>
-                <div className="bg-red-50 border border-red-200 rounded-lg px-4 py-2 text-sm text-red-700 font-medium">
-                    ⚡ System Administration
-                </div>
             </div>
-
-            {/* ── Location filter bar ───────────────────────────────────── */}
+            <div className="bg-red-50 border border-red-200 rounded-lg px-4 py-2 text-sm text-red-700 font-medium">
+                ⚡ System Administration
+            </div>
             <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
                 <div className="flex flex-wrap items-end gap-4">
 
@@ -204,67 +243,71 @@ const SystemAdminDashboard = () => {
             </div>
 
             {/* ── Empty state ───────────────────────────────────────────── */}
-            {!dataLoaded && !dataLoading && (
-                <div className="rounded-xl border-2 border-dashed border-gray-200 bg-gray-50 py-20 text-center">
-                    <span className="text-5xl">🗺️</span>
-                    <h2 className="mt-4 text-lg font-semibold text-gray-700">Select a district to view data</h2>
-                    <p className="mt-1 text-sm text-gray-500">
-                        Use the <strong>District</strong> dropdown above to load children, interventions, and analytics for that district.
-                    </p>
-                </div>
-            )}
+            {
+                !dataLoaded && !dataLoading && (
+                    <div className="rounded-xl border-2 border-dashed border-gray-200 bg-gray-50 py-20 text-center">
+                        <span className="text-5xl">🗺️</span>
+                        <h2 className="mt-4 text-lg font-semibold text-gray-700">Select a district to view data</h2>
+                        <p className="mt-1 text-sm text-gray-500">
+                            Use the <strong>District</strong> dropdown above to load children, interventions, and analytics for that district.
+                        </p>
+                    </div>
+                )
+            }
 
             {/* ── Dashboard content (shown only once a district is loaded) ── */}
-            {dataLoaded && (
-                <>
-                    <SummaryCards data={summary} />
+            {
+                dataLoaded && (
+                    <>
+                        <SummaryCards data={summary} />
 
-                    {/* System health bar */}
-                    <div className="bg-gradient-to-r from-gray-900 to-gray-800 rounded-xl p-5 text-white flex flex-wrap items-center justify-between gap-4">
-                        <div>
-                            <p className="text-sm text-gray-400">System Status</p>
-                            <p className="text-lg font-bold mt-0.5">✅ All Systems Operational</p>
+                        {/* System health bar */}
+                        <div className="bg-gradient-to-r from-gray-900 to-gray-800 rounded-xl p-5 text-white flex flex-wrap items-center justify-between gap-4">
+                            <div>
+                                <p className="text-sm text-gray-400">System Status</p>
+                                <p className="text-lg font-bold mt-0.5">✅ All Systems Operational</p>
+                            </div>
+                            <div className="text-right">
+                                <p className="text-sm text-gray-400">Scope</p>
+                                <p className="font-medium text-blue-300">{scopeLabel}</p>
+                            </div>
+                            <div className="text-right">
+                                <p className="text-sm text-gray-400">Backend API</p>
+                                <p className="font-medium text-green-400">localhost:8000 — Running</p>
+                            </div>
+                            <div className="text-right">
+                                <p className="text-sm text-gray-400">Database</p>
+                                <p className="font-medium text-green-400">PostgreSQL — Connected</p>
+                            </div>
                         </div>
-                        <div className="text-right">
-                            <p className="text-sm text-gray-400">Scope</p>
-                            <p className="font-medium text-blue-300">{scopeLabel}</p>
-                        </div>
-                        <div className="text-right">
-                            <p className="text-sm text-gray-400">Backend API</p>
-                            <p className="font-medium text-green-400">localhost:8000 — Running</p>
-                        </div>
-                        <div className="text-right">
-                            <p className="text-sm text-gray-400">Database</p>
-                            <p className="font-medium text-green-400">PostgreSQL — Connected</p>
-                        </div>
-                    </div>
 
-                    {/* Tabs */}
-                    <div className="border-b border-gray-200">
-                        <nav className="flex gap-1">
-                            {tabs.map(t => (
-                                <button
-                                    key={t.id}
-                                    onClick={() => setTab(t.id)}
-                                    className={`px-4 py-2.5 text-sm font-medium rounded-t-lg transition-colors ${tab === t.id
-                                        ? 'bg-blue-600 text-white'
-                                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
-                                        }`}
-                                >
-                                    {t.label}
-                                </button>
-                            ))}
-                        </nav>
-                    </div>
+                        {/* Tabs */}
+                        <div className="border-b border-gray-200">
+                            <nav className="flex gap-1">
+                                {tabs.map(t => (
+                                    <button
+                                        key={t.id}
+                                        onClick={() => setTab(t.id)}
+                                        className={`px-4 py-2.5 text-sm font-medium rounded-t-lg transition-colors ${tab === t.id
+                                            ? 'bg-blue-600 text-white'
+                                            : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                                            }`}
+                                    >
+                                        {t.label}
+                                    </button>
+                                ))}
+                            </nav>
+                        </div>
 
-                    {tab === 'charts' && <DashboardCharts data={charts} />}
-                    {tab === 'children' && <ChildrenTable data={children} />}
-                    {tab === 'interventions' && <InterventionsTable data={interventions} />}
-                    {tab === 'users' && <UsersTable data={users} />}
-                    {tab === 'growth' && <ChildGrowthChart children={children} />}
-                </>
-            )}
-        </div>
+                        {tab === 'charts' && <DashboardCharts data={charts} />}
+                        {tab === 'children' && <ChildrenTable data={children} />}
+                        {tab === 'interventions' && <InterventionsTable data={interventions} />}
+                        {tab === 'users' && <UsersTable data={users} />}
+                        {tab === 'growth' && <ChildGrowthChart children={children} />}
+                    </>
+                )
+            }
+        </div >
     );
 };
 

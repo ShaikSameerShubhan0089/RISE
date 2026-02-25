@@ -1,16 +1,10 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import { useAuth } from '../../context/AuthContext';
-import { dashboardAPI } from '../../utils/api';
-import SummaryCards from '../../components/dashboard/SummaryCards';
-import DashboardCharts from '../../components/dashboard/DashboardCharts';
-import ChildrenTable from '../../components/dashboard/ChildrenTable';
-import InterventionsTable from '../../components/dashboard/InterventionsTable';
-import UsersTable from '../../components/dashboard/UsersTable';
-import ChildGrowthChart from '../../components/dashboard/ChildGrowthChart';
-import { RefreshCw } from 'lucide-react';
+import VoiceButton from '../../components/common/VoiceButton';
+import { useLanguage } from '../../context/LanguageContext';
+import { RefreshCw, LayoutDashboard } from 'lucide-react';
 
 const SupervisorDashboard = () => {
     const { user } = useAuth();
+    const { t } = useLanguage();
 
     // ── Filter state ─────────────────────────────────────────────────────────
     const [centers, setCenters] = useState([]);
@@ -59,6 +53,41 @@ const SupervisorDashboard = () => {
     // Load all mandal data on mount
     useEffect(() => { loadData(''); }, [loadData]);
 
+    const getPageSummary = () => {
+        const scope = centers.find(c => String(c.center_id) === selectedCenter)?.center_name || 'the entire Mandal';
+
+        let text = t('parent.narration.admin_hello')
+            .replace('{name}', user?.full_name || '')
+            .replace('{role}', t('user_mgmt.roles.supervisor'))
+            .replace('{scope}', scope);
+
+        text += " " + t('parent.narration.metric_summary')
+            .replace('{total_children}', summary.total_children || 0)
+            .replace('{active_users}', summary.active_users || 0)
+            .replace('{active_centers}', centers.length);
+
+        if (summary.risk_distribution) {
+            text += " " + t('parent.narration.risk_distribution')
+                .replace('{high}', summary.risk_distribution.high || 0)
+                .replace('{moderate}', (summary.risk_distribution.moderate || 0) + (summary.risk_distribution.mild || 0))
+                .replace('{low}', summary.risk_distribution.low || 0);
+        }
+
+        const highRiskCenters = (charts?.center_performance || [])
+            .filter(c => c.high_risk_count > 0)
+            .sort((a, b) => b.high_risk_count - a.high_risk_count)
+            .slice(0, 3);
+
+        if (highRiskCenters.length > 0) {
+            text += " " + t('parent.narration.flagged_centers').replace('{count}', highRiskCenters.length);
+            highRiskCenters.forEach(c => {
+                text += ` Center ${c.center_name} has ${c.high_risk_count} children in high risk tier.`;
+            });
+        }
+
+        return text;
+    };
+
     const handleCenterChange = (e) => {
         const cid = e.target.value;
         setSelectedCenter(cid);
@@ -83,14 +112,30 @@ const SupervisorDashboard = () => {
     return (
         <div className="p-6 space-y-6">
             {/* Header */}
-            <div className="flex flex-wrap items-start justify-between gap-3">
-                <div>
-                    <h1 className="text-2xl font-bold text-gray-900">Supervisor Dashboard</h1>
-                    <p className="text-sm text-gray-500 mt-1">
-                        Welcome, <span className="font-medium">{user?.full_name}</span>
-                        {' '}— <span className="text-blue-600 font-medium">{scopeLabel}</span>
-                    </p>
+            <div className="relative overflow-hidden bg-gradient-to-r from-blue-600/90 to-indigo-700/90 rounded-2xl p-6 text-white flex flex-wrap justify-between items-center gap-4">
+                <div className="relative z-10">
+                    <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
+                            <LayoutDashboard className="w-6 h-6 text-white" />
+                        </div>
+                        <div>
+                            <div className="flex items-center gap-3">
+                                <h1 className="text-2xl font-bold">Supervisor Dashboard</h1>
+                                <VoiceButton
+                                    content={getPageSummary()}
+                                    className="bg-white/20 hover:bg-white/30 text-white border border-white/20"
+                                />
+                            </div>
+                            <p className="text-blue-100 text-sm mt-1">
+                                Welcome, <span className="font-semibold">{user?.full_name}</span> — {scopeLabel}
+                            </p>
+                        </div>
+                    </div>
                 </div>
+
+                {/* Decorative background shapes */}
+                <div className="absolute -right-10 -top-10 w-40 h-40 bg-white/10 rounded-full blur-3xl" />
+                <div className="absolute -left-10 -bottom-10 w-40 h-40 bg-indigo-400/20 rounded-full blur-3xl" />
             </div>
 
             {/* AWC Center filter bar */}

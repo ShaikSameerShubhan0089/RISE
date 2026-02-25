@@ -1,16 +1,10 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import { useAuth } from '../../context/AuthContext';
-import { dashboardAPI } from '../../utils/api';
-import SummaryCards from '../../components/dashboard/SummaryCards';
-import DashboardCharts from '../../components/dashboard/DashboardCharts';
-import ChildrenTable from '../../components/dashboard/ChildrenTable';
-import InterventionsTable from '../../components/dashboard/InterventionsTable';
-import UsersTable from '../../components/dashboard/UsersTable';
-import ChildGrowthChart from '../../components/dashboard/ChildGrowthChart';
-import { RefreshCw } from 'lucide-react';
+import VoiceButton from '../../components/common/VoiceButton';
+import { useLanguage } from '../../context/LanguageContext';
+import { RefreshCw, Map } from 'lucide-react';
 
 const DistrictOfficerDashboard = () => {
     const { user } = useAuth();
+    const { t } = useLanguage();
 
     // ── Filter state ────────────────────────────────────────────────────────
     const [mandals, setMandals] = useState([]);
@@ -59,6 +53,40 @@ const DistrictOfficerDashboard = () => {
     // Load all district data on mount
     useEffect(() => { loadData(''); }, [loadData]);
 
+    const getPageSummary = () => {
+        const scope = mandals.find(m => String(m.mandal_id) === selectedMandal)?.mandal_name || 'the entire District';
+
+        let text = t('parent.narration.admin_hello')
+            .replace('{name}', user?.full_name || '')
+            .replace('{role}', t('user_mgmt.roles.district_officer'))
+            .replace('{scope}', scope);
+
+        text += " " + t('parent.narration.metric_summary')
+            .replace('{total_children}', summary.total_children || 0)
+            .replace('{active_users}', summary.active_users || 0)
+            .replace('{active_centers}', summary.total_centers || 'all');
+
+        if (summary.risk_distribution) {
+            text += " " + t('parent.narration.risk_distribution')
+                .replace('{high}', summary.risk_distribution.high || 0)
+                .replace('{moderate}', (summary.risk_distribution.moderate || 0) + (summary.risk_distribution.mild || 0))
+                .replace('{low}', summary.risk_distribution.low || 0);
+        }
+
+        const topMandals = (charts?.mandal_performance || [])
+            .sort((a, b) => b.registration_count - a.registration_count)
+            .slice(0, 3);
+
+        if (topMandals.length > 0) {
+            text += " Mandal statistics are as follows:";
+            topMandals.forEach(m => {
+                text += " " + t('parent.narration.mandal_stat').replace('{name}', m.mandal_name).replace('{count}', m.registration_count);
+            });
+        }
+
+        return text;
+    };
+
     const handleMandalChange = (e) => {
         const mid = e.target.value;
         setSelectedMandal(mid);
@@ -83,14 +111,30 @@ const DistrictOfficerDashboard = () => {
     return (
         <div className="p-6 space-y-6">
             {/* Header */}
-            <div className="flex flex-wrap items-start justify-between gap-3">
-                <div>
-                    <h1 className="text-2xl font-bold text-gray-900">District Officer Dashboard</h1>
-                    <p className="text-sm text-gray-500 mt-1">
-                        Welcome, <span className="font-medium">{user?.full_name}</span>
-                        {' '}— <span className="text-blue-600 font-medium">{scopeLabel}</span>
-                    </p>
+            <div className="relative overflow-hidden bg-gradient-to-r from-teal-600 to-emerald-700 rounded-2xl p-6 text-white flex flex-wrap justify-between items-center gap-4">
+                <div className="relative z-10">
+                    <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm">
+                            <Map className="w-6 h-6 text-white" />
+                        </div>
+                        <div>
+                            <div className="flex items-center gap-3">
+                                <h1 className="text-2xl font-bold">District Officer Dashboard</h1>
+                                <VoiceButton
+                                    content={getPageSummary()}
+                                    className="bg-white/20 hover:bg-white/30 text-white border border-white/20"
+                                />
+                            </div>
+                            <p className="text-teal-50 text-sm mt-1">
+                                Welcome, <span className="font-semibold">{user?.full_name}</span> — {scopeLabel}
+                            </p>
+                        </div>
+                    </div>
                 </div>
+
+                {/* Decorative background shapes */}
+                <div className="absolute -right-10 -top-10 w-40 h-40 bg-white/10 rounded-full blur-3xl" />
+                <div className="absolute -left-10 -bottom-10 w-40 h-40 bg-emerald-400/20 rounded-full blur-3xl" />
             </div>
 
             {/* Mandal filter bar */}
