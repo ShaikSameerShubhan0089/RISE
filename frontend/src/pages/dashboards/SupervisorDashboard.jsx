@@ -121,14 +121,14 @@ const SupervisorDashboard = () => {
         loadData('');
     };
 
-    const scopeLabel = centers.find(c => String(c.center_id) === selectedCenter)?.center_name || 'All Centers';
+    const scopeLabel = centers.find(c => String(c.center_id) === selectedCenter)?.center_name || t('common.all_centers');
 
     const tabs = [
-        { id: 'charts', label: '📊 Analytics' },
-        { id: 'children', label: '👶 Children' },
-        { id: 'interventions', label: '🏥 Interventions' },
-        { id: 'staff', label: '👥 Staff' },
-        { id: 'growth', label: '📈 Growth' },
+        { id: 'charts', label: `📊 ${t('common.analytics')}` },
+        { id: 'children', label: `👶 ${t('common.children')}` },
+        { id: 'interventions', label: `🏥 ${t('common.interventions') || 'Interventions'}` },
+        { id: 'staff', label: `👥 ${t('common.users') || 'Staff'}` },
+        { id: 'growth', label: `📈 ${t('common.growth') || 'Growth'}` },
     ];
 
     return (
@@ -142,14 +142,14 @@ const SupervisorDashboard = () => {
                         </div>
                         <div>
                             <div className="flex items-center gap-3">
-                                <h1 className="text-2xl font-bold">Supervisor Dashboard</h1>
+                                <h1 className="text-2xl font-bold">{t('user_mgmt.roles.supervisor')} Dashboard</h1>
                                 <VoiceButton
                                     content={getPageSummary()}
                                     className="bg-white/20 hover:bg-white/30 text-white border border-white/20"
                                 />
                             </div>
                             <p className="text-blue-100 text-sm mt-1">
-                                Welcome, <span className="font-semibold">{user?.full_name}</span> — {scopeLabel}
+                                {t('common.welcome')}, <span className="font-semibold">{user?.full_name}</span> — {scopeLabel}
                             </p>
                         </div>
                     </div>
@@ -165,7 +165,7 @@ const SupervisorDashboard = () => {
                 <div className="flex flex-wrap items-end gap-4">
                     <div className="flex flex-col gap-1 min-w-[240px]">
                         <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
-                            Filter by AWC Center
+                            {t('common.select_center')}
                         </label>
                         {centersLoading ? (
                             <div className="h-9 bg-gray-100 rounded-lg animate-pulse" />
@@ -175,7 +175,7 @@ const SupervisorDashboard = () => {
                                 onChange={handleCenterChange}
                                 className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                             >
-                                <option value="">All Centers (Whole Mandal)</option>
+                                <option value="">{t('common.all_centers')}</option>
                                 {centers.map(c => (
                                     <option key={c.center_id} value={c.center_id}>
                                         {c.center_name} ({c.center_code})
@@ -189,19 +189,18 @@ const SupervisorDashboard = () => {
                             onClick={handleReset}
                             className="flex items-center gap-1.5 px-3 py-2 text-sm text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
                         >
-                            <RefreshCw className="w-3.5 h-3.5" /> Reset
+                            <RefreshCw className="w-3.5 h-3.5" /> {t('children.filters.reset')}
                         </button>
                     )}
                     {dataLoading && (
                         <div className="flex items-center gap-2 text-blue-600 text-sm">
                             <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600" />
-                            Loading…
+                            {t('common.loading')}
                         </div>
                     )}
-                    {/* Center count badge */}
                     {!centersLoading && centers.length > 0 && (
                         <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
-                            {centers.length} centers in your mandal
+                            {centers.length} {t('common.all_centers').toLowerCase()}
                         </span>
                     )}
                 </div>

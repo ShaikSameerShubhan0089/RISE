@@ -120,6 +120,8 @@ const Sidebar = () => {
                         <option value="te">తెలుగు</option>
                         <option value="hi">हिन्दी</option>
                         <option value="kn">ಕನ್ನಡ</option>
+                        <option value="ur">اردو</option>
+                        <option value="ta">தமிழ்</option>
                     </select>
                 </div>
 

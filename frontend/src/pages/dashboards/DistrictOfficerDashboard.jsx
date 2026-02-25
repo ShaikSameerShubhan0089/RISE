@@ -147,7 +147,7 @@ const DistrictOfficerDashboard = () => {
                                 />
                             </div>
                             <p className="text-teal-50 text-sm mt-1">
-                                Welcome, <span className="font-semibold">{user?.full_name}</span> — {scopeLabel}
+                                {t('common.welcome')}, <span className="font-semibold">{user?.full_name}</span> — {scopeLabel}
                             </p>
                         </div>
                     </div>
@@ -163,7 +163,7 @@ const DistrictOfficerDashboard = () => {
                 <div className="flex flex-wrap items-end gap-4">
                     <div className="flex flex-col gap-1 min-w-[220px]">
                         <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
-                            Filter by Mandal
+                            {t('common.select_mandal')}
                         </label>
                         {mandalsLoading ? (
                             <div className="h-9 bg-gray-100 rounded-lg animate-pulse" />

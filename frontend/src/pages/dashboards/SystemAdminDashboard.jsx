@@ -192,7 +192,7 @@ const SystemAdminDashboard = () => {
                         />
                     </div>
                     <p className="text-sm text-gray-500 mt-1">
-                        Welcome, {user?.full_name} — {scopeLabel}
+                        {t('common.welcome')}, {user?.full_name} — {scopeLabel}
                     </p>
                 </div>
             </div>

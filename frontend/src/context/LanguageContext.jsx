@@ -13,10 +13,13 @@ export const useLanguage = () => {
 
 export const LanguageProvider = ({ children }) => {
     const [language, setLanguage] = useState(localStorage.getItem('language') || 'en');
+    const isRTL = language === 'ur';
 
     useEffect(() => {
         localStorage.setItem('language', language);
-    }, [language]);
+        document.documentElement.dir = isRTL ? 'rtl' : 'ltr';
+        document.documentElement.lang = language;
+    }, [language, isRTL]);
 
     // Helper to get translated text
     const t = (path) => {
@@ -50,7 +53,9 @@ export const LanguageProvider = ({ children }) => {
             en: 'en-IN',
             te: 'te-IN',
             hi: 'hi-IN',
-            kn: 'kn-IN'
+            kn: 'kn-IN',
+            ur: 'ur-IN',
+            ta: 'ta-IN'
         };
         utterance.lang = langMap[language] || 'en-IN';
 
@@ -78,6 +83,7 @@ export const LanguageProvider = ({ children }) => {
     const value = {
         language,
         setLanguage,
+        isRTL,
         t,
         speak
     };

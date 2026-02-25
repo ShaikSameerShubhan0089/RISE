@@ -332,7 +332,9 @@ const ParentDashboard = () => {
                                 { id: 'en', label: 'English' },
                                 { id: 'te', label: 'తెలుగు' },
                                 { id: 'hi', label: 'हिन्दी' },
-                                { id: 'kn', label: 'ಕನ್ನಡ' }
+                                { id: 'kn', label: 'ಕನ್ನಡ' },
+                                { id: 'ur', label: 'اردو' },
+                                { id: 'ta', label: 'தமிழ்' }
                             ].map(l => (
                                 <button
                                     key={l.id}
@@ -512,15 +514,15 @@ const ParentDashboard = () => {
                                     <button
                                         onClick={() => exportCSV(`growth_${growthData?.unique_child_code}.csv`,
                                             datapoints.map(d => ({
-                                                Cycle: d.cycle, Date: d.assessment_date, 'Age(mo)': d.age_months,
+                                                [t('common.cycle')]: d.cycle, [t('parent.dob')]: d.assessment_date, [t('common.age_months')]: d.age_months,
                                                 'Composite DQ': d.composite_dq, 'Gross Motor': d.gross_motor_dq,
-                                                'Fine Motor': d.fine_motor_dq, Language: d.language_dq,
-                                                Cognitive: d.cognitive_dq, 'Socio-Emotional': d.socio_emotional_dq,
+                                                'Fine Motor': d.fine_motor_dq, 'Language': d.language_dq,
+                                                'Cognitive': d.cognitive_dq, 'Socio-Emotional': d.socio_emotional_dq,
                                             }))
                                         )}
                                         className="text-xs px-3 py-1.5 bg-purple-50 text-purple-700 border border-purple-200 rounded-lg hover:bg-purple-100"
                                     >
-                                        {t('common.export')}
+                                        {t('common.export_csv')}
                                     </button>
                                 </div>
 
@@ -588,7 +590,7 @@ const ParentDashboard = () => {
                                     )}
                                     className="text-xs px-3 py-1.5 bg-purple-50 text-purple-700 border border-purple-200 rounded-lg hover:bg-purple-100"
                                 >
-                                    ↓ Export CSV
+                                    {t('common.export_csv')}
                                 </button>
                             )}
                         </div>
@@ -707,7 +709,7 @@ const ParentDashboard = () => {
                                         <div className="bg-purple-50 border border-purple-200 rounded-xl p-5">
                                             <div className="flex justify-between items-start mb-3">
                                                 <h4 className="font-semibold text-purple-900">
-                                                    Latest Screening (Cycle {latest.cycle})
+                                                    {t('common.latest_screening')} ({t('common.cycle')} {latest.cycle})
                                                 </h4>
                                                 <VoiceButton content={`Latest screening highlights for cycle ${latest.cycle}. ${latest.autism_screen_flag ? 'Autism screen flagged.' : 'Autism screen clear.'} ${latest.adhd_risk ? 'ADHD risk detected.' : 'ADHD risk clear.'}`} />
                                             </div>

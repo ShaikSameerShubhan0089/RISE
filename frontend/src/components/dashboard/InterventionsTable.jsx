@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Search, Download, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useLanguage } from '../../context/LanguageContext';
 
 const PAGE_SIZE_OPTIONS = [10, 25, 50, 100];
 
@@ -22,8 +23,21 @@ const categoryColors = {
     'Other': 'bg-gray-100 text-gray-600',
 };
 
-const exportCSV = (rows) => {
-    const headers = ['Intervention ID', 'Child', 'Centre', 'Category', 'Type', 'Start', 'End', 'Sessions Done', 'Sessions Planned', 'Compliance %', 'Status', 'Provider'];
+const exportCSV = (rows, t) => {
+    const headers = [
+        'ID',
+        t('common.children'),
+        t('common.centre'),
+        t('interventions.cols.category') || 'Category',
+        t('interventions.cols.type') || 'Type',
+        t('interventions.cols.start') || 'Start',
+        t('interventions.cols.end') || 'End',
+        t('interventions.cols.sessions_done') || 'Sessions Done',
+        t('interventions.cols.sessions_planned') || 'Sessions Planned',
+        t('interventions.cols.compliance') || 'Compliance %',
+        t('common.status'),
+        t('interventions.cols.provider') || 'Provider',
+    ];
     const lines = [
         headers.join(','),
         ...rows.map(i => [
@@ -53,6 +67,7 @@ const ComplianceBar = ({ value }) => (
 );
 
 const InterventionsTable = ({ data = [] }) => {
+    const { t } = useLanguage();
     const [search, setSearch] = useState('');
     const [categoryFilter, setCategoryFilter] = useState('all');
     const [page, setPage] = useState(1);
@@ -70,13 +85,26 @@ const InterventionsTable = ({ data = [] }) => {
     const safePage = Math.min(page, totalPages);
     const pageRows = filtered.slice((safePage - 1) * pageSize, safePage * pageSize);
 
+    const colHeaders = [
+        t('common.children'),
+        t('common.centre'),
+        t('interventions.cols.category') || 'Category',
+        t('interventions.cols.type') || 'Type',
+        t('interventions.cols.start') || 'Start',
+        t('interventions.cols.end') || 'End',
+        t('interventions.cols.sessions') || 'Sessions',
+        t('interventions.cols.compliance') || 'Compliance',
+        t('common.status'),
+        t('interventions.cols.provider') || 'Provider',
+    ];
+
     return (
         <div className="bg-white rounded-xl shadow-sm border border-gray-200">
             {/* Header */}
             <div className="flex flex-wrap items-center justify-between gap-3 p-5 border-b border-gray-100">
                 <h2 className="text-lg font-semibold text-gray-900">
-                    Interventions
-                    <span className="ml-2 text-sm font-normal text-gray-400">({filtered.length} records)</span>
+                    {t('common.interventions')}
+                    <span className="ml-2 text-sm font-normal text-gray-400">({filtered.length} {t('common.no_records') ? '' : 'records'})</span>
                 </h2>
                 <div className="flex flex-wrap items-center gap-2">
                     <select
@@ -84,25 +112,25 @@ const InterventionsTable = ({ data = [] }) => {
                         onChange={e => { setCategoryFilter(e.target.value); setPage(1); }}
                         className="text-sm border border-gray-300 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
-                        <option value="all">All Categories</option>
+                        <option value="all">{t('children.filters.all_statuses') || 'All Categories'}</option>
                         {categories.map(c => <option key={c} value={c}>{c}</option>)}
                     </select>
                     <div className="relative">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                         <input
                             type="text"
-                            placeholder="Search child or type..."
+                            placeholder={t('common.search')}
                             value={search}
                             onChange={e => { setSearch(e.target.value); setPage(1); }}
                             className="pl-9 pr-4 py-1.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                     </div>
                     <button
-                        onClick={() => exportCSV(filtered)}
+                        onClick={() => exportCSV(filtered, t)}
                         className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
                     >
                         <Download className="w-4 h-4" />
-                        Export
+                        {t('common.export_csv')}
                     </button>
                 </div>
             </div>
@@ -112,14 +140,14 @@ const InterventionsTable = ({ data = [] }) => {
                 <table className="min-w-full divide-y divide-gray-100">
                     <thead className="bg-gray-50">
                         <tr>
-                            {['Child', 'Centre', 'Category', 'Type', 'Start', 'End', 'Sessions', 'Compliance', 'Status', 'Provider'].map(h => (
+                            {colHeaders.map(h => (
                                 <th key={h} className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">{h}</th>
                             ))}
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-50">
                         {pageRows.length === 0 ? (
-                            <tr><td colSpan={10} className="text-center py-10 text-gray-400 text-sm">No interventions found</td></tr>
+                            <tr><td colSpan={10} className="text-center py-10 text-gray-400 text-sm">{t('common.no_records')}</td></tr>
                         ) : pageRows.map(i => (
                             <tr key={i.intervention_id} className="hover:bg-gray-50 transition-colors">
                                 <td className="px-4 py-3 text-sm font-medium text-gray-900 whitespace-nowrap">{i.child_name}</td>
@@ -131,7 +159,7 @@ const InterventionsTable = ({ data = [] }) => {
                                 </td>
                                 <td className="px-4 py-3 text-xs text-gray-600">{i.intervention_type}</td>
                                 <td className="px-4 py-3 text-xs text-gray-600 whitespace-nowrap">{i.start_date || '—'}</td>
-                                <td className="px-4 py-3 text-xs text-gray-600 whitespace-nowrap">{i.end_date || 'Ongoing'}</td>
+                                <td className="px-4 py-3 text-xs text-gray-600 whitespace-nowrap">{i.end_date || t('interventions.ongoing') || 'Ongoing'}</td>
                                 <td className="px-4 py-3 text-sm text-center text-gray-800">{i.sessions_completed ?? '—'}/{i.total_sessions_planned ?? '—'}</td>
                                 <td className="px-4 py-3 min-w-[120px]"><ComplianceBar value={i.compliance_percentage} /></td>
                                 <td className="px-4 py-3">
@@ -149,7 +177,7 @@ const InterventionsTable = ({ data = [] }) => {
             {/* Pagination footer */}
             <div className="flex flex-wrap items-center justify-between gap-3 px-5 py-3 border-t border-gray-100 text-sm text-gray-500">
                 <div className="flex items-center gap-2">
-                    <span>Rows per page:</span>
+                    <span>{t('common.rows_per_page')}:</span>
                     <select
                         value={pageSize}
                         onChange={e => { setPageSize(Number(e.target.value)); setPage(1); }}
@@ -159,7 +187,7 @@ const InterventionsTable = ({ data = [] }) => {
                     </select>
                 </div>
                 <div className="flex items-center gap-3">
-                    <span>{filtered.length === 0 ? '0' : `${(safePage - 1) * pageSize + 1}–${Math.min(safePage * pageSize, filtered.length)}`} of {filtered.length}</span>
+                    <span>{filtered.length === 0 ? '0' : `${(safePage - 1) * pageSize + 1}–${Math.min(safePage * pageSize, filtered.length)}`} {t('common.of')} {filtered.length}</span>
                     <div className="flex gap-1">
                         <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={safePage === 1}
                             className="p-1 rounded hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors">
@@ -178,3 +206,4 @@ const InterventionsTable = ({ data = [] }) => {
 };
 
 export default InterventionsTable;
+

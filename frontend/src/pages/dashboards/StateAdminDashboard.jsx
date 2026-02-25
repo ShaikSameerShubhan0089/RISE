@@ -152,7 +152,7 @@ const StateAdminDashboard = () => {
                             />
                         </div>
                         <p className="text-sm text-gray-500 mt-1">
-                            Welcome, {user?.full_name} — Viewing scope: <span className="font-semibold text-blue-600">{currentScopeLabel}</span>
+                            {t('common.welcome')}, {user?.full_name} — Viewing scope: <span className="font-semibold text-blue-600">{currentScopeLabel}</span>
                         </p>
                     </div>
                 </div>

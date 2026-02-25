@@ -284,7 +284,7 @@ const AnganwadiWorkerDashboard = () => {
             <div className="relative overflow-hidden bg-gradient-to-r from-green-600 to-teal-600 rounded-2xl p-6 text-white flex flex-wrap justify-between items-center gap-4">
                 <div className="relative z-10">
                     <div className="flex items-center gap-3">
-                        <h1 className="text-2xl font-bold">Welcome, {user?.full_name}! 👋</h1>
+                        <h1 className="text-2xl font-bold">{t('common.welcome')}, {user?.full_name}! 👋</h1>
                         <VoiceButton
                             content={getPageSummary()}
                             className="bg-white/20 hover:bg-white/30 text-white border border-white/30"
@@ -300,14 +300,14 @@ const AnganwadiWorkerDashboard = () => {
                         className="bg-white/20 hover:bg-white/30 backdrop-blur-sm px-4 py-2 rounded-xl text-sm font-bold transition-all flex items-center gap-2"
                     >
                         <UserPlus className="w-4 h-4" />
-                        Register Child
+                        {t('common.register_child')}
                     </button>
                     <button
                         onClick={() => setShowAssessment(true)}
                         className="bg-white px-4 py-2 rounded-xl text-green-700 text-sm font-bold shadow-lg hover:bg-green-50 transition-all flex items-center gap-2"
                     >
                         <ClipboardList className="w-4 h-4" />
-                        New Assessment
+                        {t('common.new_assessment')}
                     </button>
                 </div>
 
@@ -445,7 +445,7 @@ const AnganwadiWorkerDashboard = () => {
                                 onClick={() => setShowRegister(true)}
                                 className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-green-700 transition-all flex items-center gap-2"
                             >
-                                <Plus className="w-4 h-4" /> Register New Child
+                                <Plus className="w-4 h-4" /> {t('common.register_child')}
                             </button>
                         </div>
                         <ChildrenTable data={children} />
@@ -466,7 +466,7 @@ const AnganwadiWorkerDashboard = () => {
                             onClick={() => setShowAssessment(true)}
                             className="bg-green-600 text-white px-8 py-3 rounded-2xl font-bold hover:bg-green-700 transition-all shadow-xl shadow-green-100"
                         >
-                            Start New Assessment
+                            {t('common.new_assessment')}
                         </button>
                     </div>
                 )
