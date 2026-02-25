@@ -148,11 +148,11 @@ async def startup_event():
     print("=" * 60)
 
     if check_db_connection():
-        print("✓ Database connection successful")
+        print("[OK] Database connection successful")
     else:
-        print("✗ Database connection failed")
+        print("[FAIL] Database connection failed")
 
-    print("✓ API server ready")
+    print("[OK] API server ready")
     print("Docs available at: /api/docs")
     print("=" * 60)
 

@@ -355,7 +355,7 @@ class User(Base):
     center_id = Column(Integer, ForeignKey("anganwadi_centers.center_id", ondelete="SET NULL"), index=True)
     
     status = Column(String(50), 
-                   CheckConstraint("status IN ('Active', 'Inactive', 'Suspended')"),
+                   CheckConstraint("status IN ('Active', 'Inactive', 'Suspended', 'Revoked')"),
                    default='Active')
     email_verified = Column(Boolean, default=False)
     last_login = Column(DateTime)

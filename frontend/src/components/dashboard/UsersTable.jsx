@@ -37,70 +37,159 @@ const exportCSV = (rows) => {
     URL.revokeObjectURL(url);
 };
 
-const UsersTable = ({ data = [], onToggleStatus, onResetPassword, onEdit, onDelete, showActions = false }) => {
+const UsersTable = ({
+    data = [],
+    onToggleStatus,
+    onResetPassword,
+    onEdit,
+    onDelete,
+    showActions = false,
+    districts = [],
+    mandals = [],
+    centers = [],
+    currentUser
+}) => {
     const [search, setSearch] = useState('');
     const [roleFilter, setRoleFilter] = useState('all');
     const [statusFilter, setStatusFilter] = useState('all');
+
+    // Geographical filters
+    const [selectedDistrict, setSelectedDistrict] = useState('all');
+    const [selectedMandal, setSelectedMandal] = useState('all');
+    const [selectedCenter, setSelectedCenter] = useState('all');
+
     const [page, setPage] = useState(1);
     const [pageSize, setPageSize] = useState(25);
 
     const roles = [...new Set(data.map(u => u.role))];
 
+    // Filtered data logic
     const filtered = data.filter(u => {
         const matchSearch = `${u.full_name} ${u.email}`.toLowerCase().includes(search.toLowerCase());
         const matchRole = roleFilter === 'all' || u.role === roleFilter;
         const matchStatus = statusFilter === 'all' || u.status === statusFilter;
-        return matchSearch && matchRole && matchStatus;
+
+        const matchDistrict = selectedDistrict === 'all' || u.district_id === Number(selectedDistrict);
+        const matchMandal = selectedMandal === 'all' || u.mandal_id === Number(selectedMandal);
+        const matchCenter = selectedCenter === 'all' || u.center_id === Number(selectedCenter);
+
+        return matchSearch && matchRole && matchStatus && matchDistrict && matchMandal && matchCenter;
     });
 
     const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
     const safePage = Math.min(page, totalPages);
     const pageRows = filtered.slice((safePage - 1) * pageSize, safePage * pageSize);
 
+    // Derived location lists based on hierarchy
+    const availableMandals = selectedDistrict === 'all'
+        ? []
+        : mandals.filter(m => m.district_id === Number(selectedDistrict));
+
+    const availableCenters = selectedMandal === 'all'
+        ? []
+        : centers.filter(c => c.mandal_id === Number(selectedMandal));
+
     return (
         <div className="bg-white rounded-xl shadow-sm border border-gray-200">
-            {/* Header */}
-            <div className="flex flex-wrap items-center justify-between gap-3 p-5 border-b border-gray-100">
-                <h2 className="text-lg font-semibold text-gray-900">
-                    Users
-                    <span className="ml-2 text-sm font-normal text-gray-400">({filtered.length} records)</span>
-                </h2>
+            {/* Upper Header: Filters */}
+            <div className="p-5 border-b border-gray-100 flex flex-wrap items-center gap-4">
+                <div className="flex-1 min-w-[200px] relative">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    <input
+                        type="text"
+                        placeholder="Search name or email..."
+                        value={search}
+                        onChange={e => { setSearch(e.target.value); setPage(1); }}
+                        className="w-full pl-9 pr-4 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    />
+                </div>
+
                 <div className="flex flex-wrap items-center gap-2">
+                    {/* Role Filter */}
                     <select
                         value={roleFilter}
                         onChange={e => { setRoleFilter(e.target.value); setPage(1); }}
-                        className="text-sm border border-gray-300 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                        className="text-sm border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white"
                     >
                         <option value="all">All Roles</option>
                         {roles.map(r => <option key={r} value={r}>{roleLabels[r] || r}</option>)}
                     </select>
+
+                    {/* Status Filter */}
                     <select
                         value={statusFilter}
                         onChange={e => { setStatusFilter(e.target.value); setPage(1); }}
-                        className="text-sm border border-gray-300 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                        className="text-sm border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white"
                     >
                         <option value="all">All Statuses</option>
                         <option value="Active">Active</option>
                         <option value="Revoked">Revoked</option>
                     </select>
-                    <div className="relative">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                        <input
-                            type="text"
-                            placeholder="Search name or email..."
-                            value={search}
-                            onChange={e => { setSearch(e.target.value); setPage(1); }}
-                            className="pl-9 pr-4 py-1.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 w-52"
-                        />
-                    </div>
+
+                    {/* Geographical Filters - Hierarchical */}
+                    {['system_admin', 'state_admin'].includes(currentUser?.role) && (
+                        <select
+                            value={selectedDistrict}
+                            onChange={e => {
+                                setSelectedDistrict(e.target.value);
+                                setSelectedMandal('all');
+                                setSelectedCenter('all');
+                                setPage(1);
+                            }}
+                            className="text-sm border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white"
+                        >
+                            <option value="all">All Districts</option>
+                            {districts.map(d => <option key={d.district_id} value={d.district_id}>{d.district_name}</option>)}
+                        </select>
+                    )}
+
+                    {['system_admin', 'state_admin', 'district_officer'].includes(currentUser?.role) && (
+                        <select
+                            value={selectedMandal}
+                            onChange={e => {
+                                setSelectedMandal(e.target.value);
+                                setSelectedCenter('all');
+                                setPage(1);
+                            }}
+                            disabled={selectedDistrict === 'all' && currentUser?.role !== 'district_officer'}
+                            className="text-sm border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white disabled:bg-gray-50 disabled:text-gray-400"
+                        >
+                            <option value="all">All Mandals</option>
+                            {(currentUser?.role === 'district_officer' ? mandals : availableMandals).map(m => (
+                                <option key={m.mandal_id} value={m.mandal_id}>{m.mandal_name}</option>
+                            ))}
+                        </select>
+                    )}
+
+                    {['system_admin', 'state_admin', 'district_officer', 'supervisor'].includes(currentUser?.role) && (
+                        <select
+                            value={selectedCenter}
+                            onChange={e => { setSelectedCenter(e.target.value); setPage(1); }}
+                            disabled={selectedMandal === 'all' && currentUser?.role !== 'supervisor'}
+                            className="text-sm border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white disabled:bg-gray-50 disabled:text-gray-400"
+                        >
+                            <option value="all">All Centers</option>
+                            {(currentUser?.role === 'supervisor' ? centers : availableCenters).map(c => (
+                                <option key={c.center_id} value={c.center_id}>{c.center_name}</option>
+                            ))}
+                        </select>
+                    )}
+
                     <button
                         onClick={() => exportCSV(filtered)}
-                        className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                        className="flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
                     >
                         <Download className="w-4 h-4" />
                         Export
                     </button>
                 </div>
+            </div>
+
+            {/* Lower Header: Row Count (Optional) */}
+            <div className="px-5 py-3 border-b border-gray-50 bg-gray-50/30 flex items-center justify-between">
+                <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Showing {pageRows.length} of {filtered.length} matching users
+                </p>
             </div>
 
             {/* Table */}

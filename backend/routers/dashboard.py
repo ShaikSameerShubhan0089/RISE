@@ -172,17 +172,26 @@ async def mandals_for_district(
 
 @router.get("/centers-for-mandal")
 async def centers_for_mandal(
+    mandal_id: Optional[int] = Query(None),
     db: Session = Depends(get_db),
     current_user: models.User = Depends(get_current_user),
 ):
-    """Returns AWC centers within the supervisor's assigned mandal."""
+    """Returns AWC centers within a given mandal or the supervisor's assigned mandal."""
     if current_user.role not in ("supervisor", "district_officer", "system_admin", "state_admin"):
         raise HTTPException(status_code=403, detail="Not authorized.")
-    mandal_id = current_user.mandal_id
-    if not mandal_id:
+    
+    # Use provided mandal_id, or default to current_user's mandal if they are a supervisor
+    target_mandal_id = mandal_id or current_user.mandal_id
+    
+    if not target_mandal_id:
         return []
+    
+    # Jurisdictional check for admins
+    if current_user.role == "supervisor" and target_mandal_id != current_user.mandal_id:
+        raise HTTPException(status_code=403, detail="Supervisors can only view centers in their own mandal.")
+        
     rows = db.query(models.AnganwadiCenter).filter(
-        models.AnganwadiCenter.mandal_id == mandal_id
+        models.AnganwadiCenter.mandal_id == target_mandal_id
     ).order_by(models.AnganwadiCenter.center_name).all()
     return [{"center_id": c.center_id, "center_name": c.center_name, "center_code": c.center_code} for c in rows]
 
@@ -688,8 +697,7 @@ async def child_growth(
                         "feature_name": s.feature_name,
                         "feature_value": s.feature_value,
                         "shap_value": s.shap_value,
-                        "interpretation": s.interpretation,
-                        "impact_direction": s.impact_direction
+                        "impact_direction": "Increases Risk" if s.shap_value > 0 else "Decreases Risk"
                     } for s in shap_exps
                 ]
             }

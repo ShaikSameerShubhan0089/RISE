@@ -162,7 +162,7 @@ async def create_user(
 @router.put("/users/{user_id}", response_model=schemas.UserResponse)
 async def update_user(
     user_id: int,
-    user_update: schemas.UserCreate,
+    user_update: schemas.UserUpdate,
     db: Session = Depends(get_db),
     current_user: models.User = Depends(RoleChecker(['system_admin', 'state_admin', 'district_officer', 'supervisor', 'anganwadi_worker']))
 ):
@@ -189,7 +189,7 @@ async def update_user(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="You cannot update users with higher privileges"
             )
-        if user_update.role not in ['district_officer', 'supervisor', 'anganwadi_worker', 'parent']:
+        if user_update.role and user_update.role not in ['district_officer', 'supervisor', 'anganwadi_worker', 'parent']:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="State Admin can only assign District Officer, Supervisor, AWC Worker, or Parent roles"
@@ -209,7 +209,7 @@ async def update_user(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="You cannot update users with higher privileges"
             )
-        if user_update.role not in ['supervisor', 'anganwadi_worker', 'parent']:
+        if user_update.role and user_update.role not in ['supervisor', 'anganwadi_worker', 'parent']:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="District Officer can only assign Supervisor, AWC Worker, or Parent roles"
@@ -230,7 +230,7 @@ async def update_user(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="You cannot update users with higher privileges"
             )
-        if user_update.role not in ['anganwadi_worker', 'parent']:
+        if user_update.role and user_update.role not in ['anganwadi_worker', 'parent']:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="Supervisor can only assign AWC Worker or Parent roles"
@@ -252,7 +252,7 @@ async def update_user(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="You can only update parent accounts"
             )
-        if user_update.role != 'parent':
+        if user_update.role and user_update.role != 'parent':
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="AWC Worker can only assign the Parent role"
@@ -263,13 +263,21 @@ async def update_user(
         user_update.mandal_id = current_user.mandal_id
         user_update.center_id = current_user.center_id
     
-    # Update fields
-    user.full_name = user_update.full_name
-    user.role = user_update.role
-    user.state_id = user_update.state_id
-    user.district_id = user_update.district_id
-    user.mandal_id = user_update.mandal_id
-    user.center_id = user_update.center_id
+    # Update fields only if provided
+    if user_update.full_name is not None:
+        user.full_name = user_update.full_name
+    if user_update.role is not None:
+        user.role = user_update.role
+    if user_update.state_id is not None:
+        user.state_id = user_update.state_id
+    if user_update.district_id is not None:
+        user.district_id = user_update.district_id
+    if user_update.mandal_id is not None:
+        user.mandal_id = user_update.mandal_id
+    if user_update.center_id is not None:
+        user.center_id = user_update.center_id
+    if user_update.email is not None:
+        user.email = user_update.email
     
     # Update password if provided
     if user_update.password:

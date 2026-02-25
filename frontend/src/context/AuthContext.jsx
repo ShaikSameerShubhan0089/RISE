@@ -16,26 +16,16 @@ export const AuthProvider = ({ children }) => {
     const [token, setToken] = useState(null);
     const [loading, setLoading] = useState(true);
 
-    // Initialize auth state from localStorage
-useEffect(() => {
-    try {
+    useEffect(() => {
         const storedToken = localStorage.getItem('token');
         const storedUser = localStorage.getItem('user');
 
-        if (storedToken && storedUser && storedUser !== "undefined") {
+        if (storedToken && storedUser) {
             setToken(storedToken);
             setUser(JSON.parse(storedUser));
-        } else {
-            localStorage.removeItem('user');
         }
-    } catch (error) {
-        console.error("Error parsing stored user:", error);
-        localStorage.removeItem('user');
-        localStorage.removeItem('token');
-    }
-
-    setLoading(false);
-}, []);
+        setLoading(false);
+    }, []);
 
     const login = async (email, password) => {
         try {
@@ -50,6 +40,7 @@ useEffect(() => {
 
             return { success: true };
         } catch (error) {
+            console.error('Login error:', error.response || error);
             return {
                 success: false,
                 error: error.response?.data?.detail || 'Login failed',
@@ -76,7 +67,7 @@ useEffect(() => {
         login,
         logout,
         hasRole,
-        isAuthenticated: !!token,
+        isAuthenticated: !!token && !!user,
     };
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

@@ -72,20 +72,29 @@ const UserManagement = () => {
         return true; // system_admin can see all
     });
 
+    const needsDistrict = ['district_officer', 'supervisor', 'anganwadi_worker', 'parent'].includes(form.role);
+    const needsMandal = ['supervisor', 'anganwadi_worker', 'parent'].includes(form.role);
+    const needsCenter = ['anganwadi_worker', 'parent'].includes(form.role);
+
     useEffect(() => {
         fetchUsers();
         const fetchLocationData = async () => {
             try {
-                // Fetch districts based on role
-                const res = user?.role === 'state_admin'
-                    ? await dashboardAPI.getDistrictsForState()
-                    : await dashboardAPI.getDistricts();
-                setDistricts(res.data);
+                // Fetch districts ONLY if user has permission
+                if (user?.role === 'system_admin') {
+                    const res = await dashboardAPI.getDistricts();
+                    setDistricts(res.data);
+                } else if (user?.role === 'state_admin') {
+                    const res = await dashboardAPI.getDistrictsForState();
+                    setDistricts(res.data);
+                }
 
                 // If district_officer, pre-fetch mandals for their district
                 if (user?.role === 'district_officer' && user.district_id) {
                     const mRes = await dashboardAPI.getMandals(user.district_id);
                     setMandals(mRes.data);
+                } else if (user?.role === 'state_admin' && !form.district_id) {
+                    // state_admin might see mandals after selecting a district
                 }
 
                 // If supervisor, pre-fetch centers for their mandal
@@ -93,7 +102,9 @@ const UserManagement = () => {
                     const cRes = await dashboardAPI.getCentersForMandal(user.mandal_id);
                     setCenters(cRes.data);
                 }
-            } catch { }
+            } catch (err) {
+                console.error("Failed to fetch location data:", err);
+            }
         };
         fetchLocationData();
     }, [user]);
@@ -116,9 +127,33 @@ const UserManagement = () => {
     };
 
     const handleRoleChange = (role) => {
-        setForm(f => ({ ...f, role, district_id: null, mandal_id: null, center_id: null }));
-        setMandals([]);
-        setCenters([]);
+        setForm(f => {
+            const newState = { ...f, role };
+            // Reset fields that are NOT fixed by the current login user's role
+            if (user?.role === 'system_admin') {
+                newState.district_id = null;
+                newState.mandal_id = null;
+                newState.center_id = null;
+            } else if (user?.role === 'state_admin') {
+                newState.district_id = null;
+                newState.mandal_id = null;
+                newState.center_id = null;
+            } else if (user?.role === 'district_officer') {
+                newState.mandal_id = null;
+                newState.center_id = null;
+            } else if (user?.role === 'supervisor') {
+                newState.center_id = null;
+            }
+            return newState;
+        });
+
+        // Re-fetch or clear sub-location lists
+        if (user?.role === 'system_admin' || user?.role === 'state_admin') {
+            setMandals([]);
+            setCenters([]);
+        } else if (user?.role === 'district_officer') {
+            setCenters([]);
+        }
     };
 
     const handleDistrictChange = async (districtId) => {
@@ -137,7 +172,7 @@ const UserManagement = () => {
         if (mandalId) {
             try {
                 // Fetch centers by mandal
-                const res = await dashboardAPI.getCentersForMandal();
+                const res = await dashboardAPI.getCentersForMandal(mandalId);
                 setCenters(res.data);
             } catch { }
         }
@@ -214,7 +249,12 @@ const UserManagement = () => {
         setFormError('');
         try {
             if (editingUser) {
-                await usersAPI.update(editingUser.user_id, form);
+                // Remove password if empty to avoid validation error or accidental reset
+                const updatePayload = { ...form };
+                if (!updatePayload.password) {
+                    delete updatePayload.password;
+                }
+                await usersAPI.update(editingUser.user_id, updatePayload);
                 showToast(`${form.full_name} updated successfully`);
             } else {
                 await usersAPI.create(form);
@@ -271,9 +311,6 @@ const UserManagement = () => {
         }
     };
 
-    const needsDistrict = ['district_officer', 'supervisor', 'anganwadi_worker'].includes(form.role);
-    const needsMandal = ['supervisor', 'anganwadi_worker'].includes(form.role);
-    const needsCenter = form.role === 'anganwadi_worker';
 
     return (
         <div className="p-6 space-y-6">
@@ -388,43 +425,56 @@ const UserManagement = () => {
                                 </InputField>
                             )}
 
-                            {needsDistrict && !['district_officer', 'supervisor', 'anganwadi_worker'].includes(user?.role) && (
+                            {needsDistrict && (
                                 <InputField label="District" required>
                                     <div className="relative">
-                                        <select value={form.district_id || ''} onChange={e => handleDistrictChange(e.target.value ? Number(e.target.value) : null)}
-                                            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm appearance-none focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                        <select
+                                            value={form.district_id || ''}
+                                            onChange={e => handleDistrictChange(e.target.value ? Number(e.target.value) : null)}
+                                            disabled={['district_officer', 'supervisor', 'anganwadi_worker'].includes(user?.role)}
+                                            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm appearance-none focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:bg-gray-50 disabled:text-gray-500">
                                             <option value="">Select District</option>
                                             {districts.map(d => <option key={d.district_id} value={d.district_id}>{d.district_name}</option>)}
                                         </select>
-                                        <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                                        {!['district_officer', 'supervisor', 'anganwadi_worker'].includes(user?.role) && (
+                                            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                                        )}
                                     </div>
                                 </InputField>
                             )}
 
-                            {needsMandal && !['supervisor', 'anganwadi_worker'].includes(user?.role) && (
+                            {needsMandal && (
                                 <InputField label="Mandal" required>
                                     <div className="relative">
-                                        <select value={form.mandal_id || ''} onChange={e => handleMandalChange(e.target.value ? Number(e.target.value) : null)}
-                                            disabled={!mandals.length}
-                                            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm appearance-none focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:bg-gray-50 disabled:text-gray-400">
+                                        <select
+                                            value={form.mandal_id || ''}
+                                            onChange={e => handleMandalChange(e.target.value ? Number(e.target.value) : null)}
+                                            disabled={!mandals.length || ['supervisor', 'anganwadi_worker'].includes(user?.role)}
+                                            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm appearance-none focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:bg-gray-50 disabled:text-gray-500">
                                             <option value="">Select Mandal</option>
                                             {mandals.map(m => <option key={m.mandal_id} value={m.mandal_id}>{m.mandal_name}</option>)}
                                         </select>
-                                        <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                                        {!['supervisor', 'anganwadi_worker'].includes(user?.role) && (
+                                            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                                        )}
                                     </div>
                                 </InputField>
                             )}
 
-                            {needsCenter && user?.role !== 'anganwadi_worker' && (
+                            {needsCenter && (
                                 <InputField label="AWC Center" required>
                                     <div className="relative">
-                                        <select value={form.center_id || ''} onChange={e => setForm(f => ({ ...f, center_id: e.target.value ? Number(e.target.value) : null }))}
-                                            disabled={!centers.length}
-                                            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm appearance-none focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:bg-gray-50 disabled:text-gray-400">
+                                        <select
+                                            value={form.center_id || ''}
+                                            onChange={e => setForm(f => ({ ...f, center_id: e.target.value ? Number(e.target.value) : null }))}
+                                            disabled={!centers.length || user?.role === 'anganwadi_worker'}
+                                            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm appearance-none focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:bg-gray-50 disabled:text-gray-500">
                                             <option value="">Select Center</option>
                                             {centers.map(c => <option key={c.center_id} value={c.center_id}>{c.center_name}</option>)}
                                         </select>
-                                        <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                                        {user?.role !== 'anganwadi_worker' && (
+                                            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                                        )}
                                     </div>
                                 </InputField>
                             )}

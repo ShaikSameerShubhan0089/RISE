@@ -295,6 +295,17 @@ class UserCreate(UserBase):
     center_id: Optional[int] = None
 
 
+class UserUpdate(BaseModel):
+    full_name: Optional[str] = Field(None, max_length=150)
+    email: Optional[EmailStr] = None
+    role: Optional[UserRole] = None
+    password: Optional[str] = Field(None, min_length=8)
+    state_id: Optional[int] = None
+    district_id: Optional[int] = None
+    mandal_id: Optional[int] = None
+    center_id: Optional[int] = None
+
+
 class UserResponse(UserBase):
     user_id: int
     state_id: Optional[int]

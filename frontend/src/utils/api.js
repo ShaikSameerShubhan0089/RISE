@@ -1,7 +1,9 @@
 import axios from 'axios';
 
-// Remove trailing slash from VITE_API_URL if present
-const API_BASE_URL = import.meta.env.VITE_API_URL?.replace(/\/+$/, '') || '/api';
+// Use backend URL if defined, otherwise use localhost backend
+const API_BASE_URL =
+    import.meta.env.VITE_API_URL?.replace(/\/+$/, '') ||
+    'http://localhost:8000';
 
 // Create axios instance
 const api = axios.create({
@@ -11,24 +13,20 @@ const api = axios.create({
     },
 });
 
-// Request interceptor to add JWT token
-api.interceptors.request.use(
-    (config) => {
-        const token = localStorage.getItem('token');
-        if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
-        }
-        return config;
-    },
-    (error) => Promise.reject(error)
-);
+// Add token automatically
+api.interceptors.request.use((config) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+});
 
-// Response interceptor for error handling
+// Handle 401 globally
 api.interceptors.response.use(
     (response) => response,
     (error) => {
         if (error.response?.status === 401) {
-            // Token expired or invalid
             localStorage.removeItem('token');
             localStorage.removeItem('user');
             window.location.href = '/login';
@@ -119,7 +117,7 @@ export const dashboardAPI = {
     getMandals: (districtId) => api.get('/api/dashboard/mandals', { params: { district_id: districtId } }),
     getChildGrowth: (childId, lang = 'en') => api.get(`/api/dashboard/child-growth/${childId}?lang=${lang}`),
     getMandalsForDistrict: () => api.get('/api/dashboard/mandals-for-district'),
-    getCentersForMandal: () => api.get('/api/dashboard/centers-for-mandal'),
+    getCentersForMandal: (mandalId) => api.get('/api/dashboard/centers-for-mandal', { params: { mandal_id: mandalId } }),
     getDistrictsForState: () => api.get('/api/dashboard/districts-for-state'),
     runRealtimePrediction: (data, lang = 'en') => api.post(`/api/predictions/run?lang=${lang}`, data),
 };
