@@ -5,7 +5,7 @@ Login, token generation, and user management
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import or_
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from pydantic import BaseModel
 from datetime import timedelta
 
@@ -300,7 +300,11 @@ async def list_users(
     """
     List users (filtered by role/status/search if specified)
     """
-    query = db.query(models.User)
+    query = db.query(models.User).options(
+        joinedload(models.User.district),
+        joinedload(models.User.mandal),
+        joinedload(models.User.center)
+    )
     
     if role:
         query = query.filter(models.User.role == role)
@@ -329,6 +333,13 @@ async def list_users(
         ))
     
     users = query.order_by(models.User.full_name).all()
+    
+    # Populate readable names for the Pydantic schema
+    for u in users:
+        u.district_name = u.district.district_name if u.district else None
+        u.mandal_name = u.mandal.mandal_name if u.mandal else None
+        u.center_name = u.center.center_name if u.center else None
+        
     return users
 
 

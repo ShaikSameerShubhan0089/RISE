@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { X, User, Calendar, Phone, Mail, Home, ShieldCheck } from 'lucide-react';
+import { useLanguage } from '../../context/LanguageContext';
 
 const ChildRegistrationForm = ({ onClose, onSuccess, user }) => {
+    const { t } = useLanguage();
     const [formData, setFormData] = useState({
         first_name: '',
         last_name: '',
@@ -40,7 +42,7 @@ const ChildRegistrationForm = ({ onClose, onSuccess, user }) => {
             onSuccess && onSuccess();
             onClose();
         } catch (err) {
-            setError(err.response?.data?.detail || 'Failed to register child. Check inputs.');
+            setError(err.response?.data?.detail || t('children.registration.failed'));
         } finally {
             setLoading(false);
         }
@@ -51,8 +53,10 @@ const ChildRegistrationForm = ({ onClose, onSuccess, user }) => {
             <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
                 <div className="flex items-center justify-between p-6 bg-green-50 border-b border-green-100">
                     <div>
-                        <h2 className="text-xl font-bold text-green-900">New Child Registration</h2>
-                        <p className="text-sm text-green-700">Add a new child to {user?.center_name || 'your centre'}</p>
+                        <h2 className="text-xl font-bold text-green-900">{t('children.registration.title')}</h2>
+                        <p className="text-sm text-green-700">
+                            {t('children.registration.sub').replace('{center}', user?.center_name || t('user_mgmt.fields.center'))}
+                        </p>
                     </div>
                     <button onClick={onClose} className="p-2 hover:bg-green-100 rounded-full transition-colors">
                         <X className="w-5 h-5 text-green-700" />
@@ -70,11 +74,11 @@ const ChildRegistrationForm = ({ onClose, onSuccess, user }) => {
                     <div className="space-y-4">
                         <div className="flex items-center gap-2 text-green-800 font-semibold border-b border-green-50 pb-2">
                             <User className="w-4 h-4" />
-                            <span>Child Information</span>
+                            <span>{t('children.info_section')}</span>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="space-y-1">
-                                <label className="text-xs font-bold text-gray-500 uppercase">First Name*</label>
+                                <label className="text-xs font-bold text-gray-500 uppercase">{t('children.registration.first_name')}</label>
                                 <input
                                     required
                                     name="first_name"
@@ -84,7 +88,7 @@ const ChildRegistrationForm = ({ onClose, onSuccess, user }) => {
                                 />
                             </div>
                             <div className="space-y-1">
-                                <label className="text-xs font-bold text-gray-500 uppercase">Last Name</label>
+                                <label className="text-xs font-bold text-gray-500 uppercase">{t('children.registration.last_name')}</label>
                                 <input
                                     name="last_name"
                                     value={formData.last_name}
@@ -93,7 +97,7 @@ const ChildRegistrationForm = ({ onClose, onSuccess, user }) => {
                                 />
                             </div>
                             <div className="space-y-1">
-                                <label className="text-xs font-bold text-gray-500 uppercase">DOB*</label>
+                                <label className="text-xs font-bold text-gray-500 uppercase">{t('children.registration.dob')}</label>
                                 <div className="relative">
                                     <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                                     <input
@@ -107,16 +111,16 @@ const ChildRegistrationForm = ({ onClose, onSuccess, user }) => {
                                 </div>
                             </div>
                             <div className="space-y-1">
-                                <label className="text-xs font-bold text-gray-500 uppercase">Gender*</label>
+                                <label className="text-xs font-bold text-gray-500 uppercase">{t('children.registration.gender')}</label>
                                 <select
                                     name="gender"
                                     value={formData.gender}
                                     onChange={handleChange}
                                     className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none transition-all"
                                 >
-                                    <option value="Male">Male</option>
-                                    <option value="Female">Female</option>
-                                    <option value="Other">Other</option>
+                                    <option value="Male">{t('children.genders.male')}</option>
+                                    <option value="Female">{t('children.genders.female')}</option>
+                                    <option value="Other">{t('children.genders.other')}</option>
                                 </select>
                             </div>
                         </div>
@@ -126,11 +130,11 @@ const ChildRegistrationForm = ({ onClose, onSuccess, user }) => {
                     <div className="space-y-4">
                         <div className="flex items-center gap-2 text-green-800 font-semibold border-b border-green-50 pb-2">
                             <Home className="w-4 h-4" />
-                            <span>Parent / Caregiver Information</span>
+                            <span>{t('children.caregiver_section')}</span>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="space-y-1">
-                                <label className="text-xs font-bold text-gray-500 uppercase">Caregiver Name*</label>
+                                <label className="text-xs font-bold text-gray-500 uppercase">{t('children.registration.caregiver_name')}</label>
                                 <input
                                     required
                                     name="caregiver_name"
@@ -140,21 +144,21 @@ const ChildRegistrationForm = ({ onClose, onSuccess, user }) => {
                                 />
                             </div>
                             <div className="space-y-1">
-                                <label className="text-xs font-bold text-gray-500 uppercase">Relationship*</label>
+                                <label className="text-xs font-bold text-gray-500 uppercase">{t('children.registration.relationship')}</label>
                                 <select
                                     name="caregiver_relationship"
                                     value={formData.caregiver_relationship}
                                     onChange={handleChange}
                                     className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none transition-all"
                                 >
-                                    <option value="Mother">Mother</option>
-                                    <option value="Father">Father</option>
-                                    <option value="Grandparent">Grandparent</option>
-                                    <option value="Guardian">Guardian</option>
+                                    <option value="Mother">{t('children.relationships.mother')}</option>
+                                    <option value="Father">{t('children.relationships.father')}</option>
+                                    <option value="Grandparent">{t('children.relationships.grandparent')}</option>
+                                    <option value="Guardian">{t('children.relationships.guardian')}</option>
                                 </select>
                             </div>
                             <div className="space-y-1">
-                                <label className="text-xs font-bold text-gray-500 uppercase">Phone Number</label>
+                                <label className="text-xs font-bold text-gray-500 uppercase">{t('children.registration.phone')}</label>
                                 <div className="relative">
                                     <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                                     <input
@@ -166,7 +170,7 @@ const ChildRegistrationForm = ({ onClose, onSuccess, user }) => {
                                 </div>
                             </div>
                             <div className="space-y-1">
-                                <label className="text-xs font-bold text-gray-500 uppercase">Email*</label>
+                                <label className="text-xs font-bold text-gray-500 uppercase">{t('children.registration.email')}</label>
                                 <div className="relative">
                                     <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                                     <input
@@ -180,12 +184,12 @@ const ChildRegistrationForm = ({ onClose, onSuccess, user }) => {
                                 </div>
                             </div>
                             <div className="space-y-1 md:col-span-2">
-                                <label className="text-xs font-bold text-gray-500 uppercase">Other Parent Details / Additional Info</label>
+                                <label className="text-xs font-bold text-gray-500 uppercase">{t('children.registration.additional')}</label>
                                 <textarea
                                     name="caregiver_additional_info"
                                     value={formData.caregiver_additional_info}
                                     onChange={handleChange}
-                                    placeholder="Enter any other parent details or contact information"
+                                    placeholder={t('children.registration.additional_placeholder')}
                                     className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none transition-all h-20"
                                 />
                             </div>
@@ -197,7 +201,7 @@ const ChildRegistrationForm = ({ onClose, onSuccess, user }) => {
                         <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2 text-blue-800 font-semibold">
                                 <ShieldCheck className="w-4 h-4" />
-                                <span>Create Parent Portal Account</span>
+                                <span>{t('children.account_section.title')}</span>
                             </div>
                             <input
                                 type="checkbox"
@@ -209,17 +213,17 @@ const ChildRegistrationForm = ({ onClose, onSuccess, user }) => {
                         </div>
                         {formData.create_parent_account && (
                             <div className="space-y-1 animate-in slide-in-from-top-2 duration-300">
-                                <label className="text-xs font-bold text-blue-500 uppercase">Set Parent Password*</label>
+                                <label className="text-xs font-bold text-blue-500 uppercase">{t('children.account_section.pwd_label')}</label>
                                 <input
                                     required
                                     type="password"
                                     name="parent_password"
                                     value={formData.parent_password}
                                     onChange={handleChange}
-                                    placeholder="Min 8 characters"
+                                    placeholder={t('user_mgmt.fields.min_8_chars')}
                                     className="w-full px-3 py-2 bg-white border border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all"
                                 />
-                                <p className="text-[10px] text-blue-400">This email and password will allow the parent to log in to the dashboard.</p>
+                                <p className="text-[10px] text-blue-400">{t('children.account_section.pwd_sub')}</p>
                             </div>
                         )}
                     </div>
@@ -230,7 +234,7 @@ const ChildRegistrationForm = ({ onClose, onSuccess, user }) => {
                             onClick={onClose}
                             className="flex-1 px-4 py-2.5 bg-gray-100 text-gray-700 font-bold rounded-xl hover:bg-gray-200 transition-all uppercase text-sm"
                         >
-                            Cancel
+                            {t('common.cancel')}
                         </button>
                         <button
                             disabled={loading}
@@ -238,7 +242,7 @@ const ChildRegistrationForm = ({ onClose, onSuccess, user }) => {
                             className="flex-[2] px-4 py-2.5 bg-green-600 text-white font-bold rounded-xl hover:bg-green-700 shadow-lg shadow-green-200 transition-all disabled:opacity-50 uppercase text-sm flex items-center justify-center gap-2"
                         >
                             {loading && <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white" />}
-                            Register Child
+                            {t('children.registration.btn')}
                         </button>
                     </div>
                 </form>
@@ -248,3 +252,4 @@ const ChildRegistrationForm = ({ onClose, onSuccess, user }) => {
 };
 
 export default ChildRegistrationForm;
+

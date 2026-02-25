@@ -1,0 +1,9 @@
+
+--- load_models called at 2026-02-25 15:50:56.386788 ---
+DEBUG: ML_MODEL_PATH env: ../ml/models/saved
+DEBUG: Resolved model_path: C:\Users\S Sameer\Desktop\autism - Copy\ml\models\saved
+DEBUG: Checking Model A file: C:\Users\S Sameer\Desktop\autism - Copy\ml\models\saved\autism_risk_classifier_v1.pkl (Exists: True)
+DEBUG: Checking Model B file: C:\Users\S Sameer\Desktop\autism - Copy\ml\models\saved\risk_escalation_predictor_v1.pkl (Exists: False)
+DEBUG: Model A loaded successfully!
+
+--- load_models called at 2026-02-25 15:51:02.654888 ---

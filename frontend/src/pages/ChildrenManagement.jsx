@@ -5,9 +5,12 @@ import ChildRegistrationForm from '../components/dashboard/ChildRegistrationForm
 import ChildDetailsModal from '../components/dashboard/ChildDetailsModal';
 import { Plus, Search, Filter, AlertCircle } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
+import VoiceButton from '../components/common/VoiceButton';
 
 const ChildrenManagement = () => {
     const { user } = useAuth();
+    const { t } = useLanguage();
     const [children, setChildren] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showRegister, setShowRegister] = useState(false);
@@ -55,20 +58,25 @@ const ChildrenManagement = () => {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-2xl font-bold text-gray-900">
-                        Children Management
+                        {t('children.title')}
                     </h1>
                     <p className="text-gray-500 text-sm">
-                        Register, search, and monitor children risk status
+                        {t('children.sub')}
                     </p>
                 </div>
 
-                <button
-                    onClick={() => setShowRegister(true)}
-                    className="bg-green-600 text-white px-4 py-2.5 rounded-xl font-bold hover:bg-green-700 transition-all flex items-center justify-center gap-2 shadow-lg shadow-green-100"
-                >
-                    <Plus className="w-5 h-5" />
-                    Register New Child
-                </button>
+                <div className="flex items-center gap-3">
+                    <button
+                        onClick={() => setShowRegister(true)}
+                        className="bg-green-600 text-white px-4 py-2.5 rounded-xl font-bold hover:bg-green-700 transition-all flex items-center justify-center gap-2 shadow-lg shadow-green-100"
+                    >
+                        <Plus className="w-5 h-5" />
+                        {t('children.register')}
+                    </button>
+                    <VoiceButton
+                        content={`${t('children.title')}. ${t('children.sub')}. ${children.length} ${t('common.children')} ${t('common.at')} ${t('common.total')}.`}
+                    />
+                </div>
             </div>
 
             {(user?.role === 'district_officer' ||
@@ -77,9 +85,7 @@ const ChildrenManagement = () => {
                     <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-center gap-3 text-blue-700 text-sm">
                         <AlertCircle className="w-5 h-5 shrink-0" />
                         <p>
-                            <strong>Note:</strong> Showing the most recent 200
-                            registered children in your jurisdiction.
-                            Use search or filters to find specific records.
+                            <strong>{t('common.note') || 'Note'}:</strong> {t('children.note_admin')}
                         </p>
                     </div>
                 )}
@@ -89,20 +95,20 @@ const ChildrenManagement = () => {
 
                 <div className="space-y-1">
                     <label className="text-xs font-bold text-gray-500 uppercase flex items-center gap-1">
-                        <Search className="w-3 h-3" /> Search
+                        <Search className="w-3 h-3" /> {t('children.filters.search')}
                     </label>
                     <input
                         name="search"
                         value={filters.search}
                         onChange={handleFilterChange}
-                        placeholder="Name or Unique ID..."
+                        placeholder={t('children.filters.search_placeholder')}
                         className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none transition-all text-sm"
                     />
                 </div>
 
                 <div className="space-y-1">
                     <label className="text-xs font-bold text-gray-500 uppercase flex items-center gap-1">
-                        <AlertCircle className="w-3 h-3" /> Risk Tier
+                        <AlertCircle className="w-3 h-3" /> {t('children.filters.risk_tier')}
                     </label>
                     <select
                         name="risk_tier"
@@ -110,17 +116,17 @@ const ChildrenManagement = () => {
                         onChange={handleFilterChange}
                         className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none transition-all text-sm"
                     >
-                        <option value="">All Tiers</option>
-                        <option value="High Risk">High Risk</option>
-                        <option value="Moderate Risk">Moderate Risk</option>
-                        <option value="Mild Concern">Mild Concern</option>
-                        <option value="Low Risk">Low Risk</option>
+                        <option value="">{t('children.filters.all_tiers')}</option>
+                        <option value="High Risk">{t('common.risk_tiers.high')}</option>
+                        <option value="Moderate Risk">{t('common.risk_tiers.moderate')}</option>
+                        <option value="Mild Concern">{t('common.risk_tiers.mild')}</option>
+                        <option value="Low Risk">{t('common.risk_tiers.low')}</option>
                     </select>
                 </div>
 
                 <div className="space-y-1">
                     <label className="text-xs font-bold text-gray-500 uppercase flex items-center gap-1">
-                        <Filter className="w-3 h-3" /> Status
+                        <Filter className="w-3 h-3" /> {t('children.filters.status')}
                     </label>
                     <select
                         name="status_filter"
@@ -128,11 +134,11 @@ const ChildrenManagement = () => {
                         onChange={handleFilterChange}
                         className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none transition-all text-sm"
                     >
-                        <option value="">All Status</option>
-                        <option value="Active">Active</option>
-                        <option value="Inactive">Inactive</option>
-                        <option value="Transferred">Transferred</option>
-                        <option value="Graduated">Graduated</option>
+                        <option value="">{t('children.filters.all_status')}</option>
+                        <option value="Active">{t('children.status.active')}</option>
+                        <option value="Inactive">{t('children.status.inactive')}</option>
+                        <option value="Transferred">{t('children.status.transferred')}</option>
+                        <option value="Graduated">{t('children.status.graduated')}</option>
                     </select>
                 </div>
 
@@ -146,7 +152,7 @@ const ChildrenManagement = () => {
                     }
                     className="text-xs font-bold text-gray-400 hover:text-red-500 transition-colors uppercase h-9"
                 >
-                    Reset Filters
+                    {t('children.filters.reset')}
                 </button>
             </div>
 

@@ -8,12 +8,18 @@ import {
     AlertTriangle,
     CheckCircle2,
     Info,
-    ArrowRight
+    ArrowRight,
+    FileText,
+    Activity,
+    TrendingUp
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useLanguage } from '../context/LanguageContext';
+import VoiceButton from '../components/common/VoiceButton';
 
 const Assessments = () => {
     const { user } = useAuth();
+    const { t } = useLanguage();
     const [children, setChildren] = useState([]);
     const [selectedChildId, setSelectedChildId] = useState('');
     const [modelType, setModelType] = useState('Model A');
@@ -68,12 +74,12 @@ const Assessments = () => {
             <div className="space-y-4">
                 <h3 className="font-bold text-gray-700 border-b pb-2 flex items-center gap-2">
                     <BrainCircuit className="w-4 h-4 text-primary-600" />
-                    Developmental Quotients (DQ)
+                    {t('assessments.form.dq')}
                 </h3>
                 <div className="grid grid-cols-2 gap-4">
                     {['gross_motor_dq', 'fine_motor_dq', 'language_dq', 'cognitive_dq', 'socio_emotional_dq', 'composite_dq'].map(field => (
                         <div key={field} className="space-y-1">
-                            <label className="text-xs font-bold text-gray-500 uppercase">{field.replace(/_/g, ' ')}*</label>
+                            <label className="text-xs font-bold text-gray-500 uppercase">{t(`parent.dq_labels.${field}`)}*</label>
                             <input
                                 required
                                 type="number"
@@ -89,7 +95,7 @@ const Assessments = () => {
 
                 <h3 className="font-bold text-gray-700 border-b pb-2 pt-4 flex items-center gap-2">
                     <AlertTriangle className="w-4 h-4 text-orange-500" />
-                    Neuro-Behavioral Risks
+                    {t('assessments.form.risks')}
                 </h3>
                 <div className="flex flex-wrap gap-4 pt-2">
                     {['adhd_risk', 'behavior_risk'].map(field => (
@@ -101,7 +107,7 @@ const Assessments = () => {
                                 onChange={handleInputChange}
                                 className="w-4 h-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
                             />
-                            <span className="text-sm font-medium text-gray-700 group-hover:text-gray-900 capitalize">{field.replace(/_/g, ' ')}</span>
+                            <span className="text-sm font-medium text-gray-700 group-hover:text-gray-900 capitalize">{t(`assessments.form.${field}`)}</span>
                         </label>
                     ))}
                 </div>
@@ -110,16 +116,20 @@ const Assessments = () => {
             <div className="space-y-4">
                 <h3 className="font-bold text-gray-700 border-b pb-2 flex items-center gap-2">
                     <Info className="w-4 h-4 text-blue-500" />
-                    Environmental Scores
+                    {t('assessments.form.env')}
                 </h3>
                 <div className="grid grid-cols-1 gap-4">
-                    {['caregiver_engagement_score', 'stimulation_score', 'language_exposure_score'].map(field => (
-                        <div key={field} className="space-y-1">
-                            <label className="text-xs font-bold text-gray-500 uppercase">{field.replace(/_/g, ' ')}</label>
+                    {[
+                        { key: 'caregiver_engagement_score', label: t('assessments.form.caregiver_engagement') },
+                        { key: 'stimulation_score', label: t('assessments.form.stimulation') },
+                        { key: 'language_exposure_score', label: t('assessments.form.language_exposure') }
+                    ].map(field => (
+                        <div key={field.key} className="space-y-1">
+                            <label className="text-xs font-bold text-gray-500 uppercase tracking-tighter">{field.label}</label>
                             <input
                                 type="number"
-                                name={field}
-                                value={formData[field] || ''}
+                                name={field.key}
+                                value={formData[field.key] || ''}
                                 onChange={handleInputChange}
                                 min="0" max="200" step="any"
                                 className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 outline-none transition-all text-sm"
@@ -136,14 +146,14 @@ const Assessments = () => {
             <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto shadow-sm">
                 <AlertTriangle className="w-8 h-8 text-orange-500" />
             </div>
-            <h3 className="text-lg font-bold text-orange-900">Risk Escalation Predictor</h3>
+            <h3 className="text-lg font-bold text-orange-900">Model B: {t('analytics.charts.ai_sub')}</h3>
             <p className="text-orange-800 text-sm max-w-md mx-auto">
-                This model analyzes longitudinal changes to predict if a child's risk status will escalate in the next 6 months.
+                {t('assessments.model_b_desc')}
             </p>
             <div className="bg-white p-4 rounded-xl text-left space-y-4 shadow-sm">
-                <p className="text-xs font-bold text-gray-400 uppercase">Input Requirements</p>
+                <p className="text-xs font-bold text-gray-400 uppercase">{t('assessments.input_reqs')}</p>
                 <p className="text-sm text-gray-600">
-                    Model B currently requires historical assessment data. If this is the child's first assessment, Model B will use baseline averages.
+                    {t('assessments.form.baseline')}
                 </p>
                 {renderModelAForm()} {/* Reusing fields since Model B also uses current DQ scores */}
             </div>
@@ -157,8 +167,8 @@ const Assessments = () => {
                     <ClipboardList className="w-6 h-6 text-primary-600" />
                 </div>
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900">Digital Assessment Portal</h1>
-                    <p className="text-gray-500 text-sm">Run real-time risk classification and predictive analyses</p>
+                    <h1 className="text-2xl font-bold text-gray-900">{t('assessments.title')}</h1>
+                    <p className="text-gray-500 text-sm">{t('assessments.sub')}</p>
                 </div>
             </div>
 
@@ -167,7 +177,7 @@ const Assessments = () => {
                     <div className="p-6 bg-gray-50 border-b border-gray-200 grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="space-y-1">
                             <label className="text-xs font-bold text-gray-500 uppercase flex items-center gap-1">
-                                <User className="w-3 h-3" /> Select Child
+                                <User className="w-3 h-3" /> {t('assessments.select_child')}
                             </label>
                             <select
                                 required
@@ -175,7 +185,7 @@ const Assessments = () => {
                                 onChange={(e) => setSelectedChildId(e.target.value)}
                                 className="w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none transition-all font-medium"
                             >
-                                <option value="">-- Choose a Child --</option>
+                                <option value="">{t('assessments.choose_child')}</option>
                                 {children.map(c => (
                                     <option key={c.child_id} value={c.child_id}>
                                         {c.first_name} {c.last_name} ({c.unique_child_code})
@@ -186,7 +196,7 @@ const Assessments = () => {
 
                         <div className="space-y-1">
                             <label className="text-xs font-bold text-gray-500 uppercase flex items-center gap-1">
-                                <BrainCircuit className="w-3 h-3" /> Analysis Model
+                                <BrainCircuit className="w-3 h-3" /> {t('assessments.model')}
                             </label>
                             <div className="flex bg-white p-1 rounded-xl border border-gray-200">
                                 {['Model A', 'Model B'].map(m => (
@@ -222,7 +232,7 @@ const Assessments = () => {
                                         ) : (
                                             <ArrowRight className="w-5 h-5" />
                                         )}
-                                        Run {modelType} Analysis
+                                        {t('assessments.run').replace('{model}', modelType)}
                                     </button>
                                 </div>
                             </>
@@ -231,7 +241,7 @@ const Assessments = () => {
                                 <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto">
                                     <User className="w-8 h-8 text-gray-300" />
                                 </div>
-                                <p className="text-gray-500 font-medium">Please select a child to begin the assessment</p>
+                                <p className="text-gray-500 font-medium">{t('assessments.select_child_msg')}</p>
                             </div>
                         )}
 
@@ -250,15 +260,20 @@ const Assessments = () => {
                         <div className={`p-8 text-white ${prediction.risk_tier.includes('High') ? 'bg-gradient-to-r from-red-600 to-orange-600' : 'bg-gradient-to-r from-green-600 to-teal-600'}`}>
                             <div className="flex justify-between items-start">
                                 <div>
-                                    <p className="text-white/80 font-bold uppercase text-xs tracking-wider mb-1">Risk Stratification Result</p>
+                                    <p className="text-white/80 font-bold uppercase text-xs tracking-wider mb-1">{t('assessments.result_title')}</p>
                                     <h2 className="text-4xl font-black">{prediction.risk_tier}</h2>
                                     <div className="flex items-center gap-2 mt-2 bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-sm font-bold w-fit">
                                         <BrainCircuit className="w-4 h-4" />
-                                        <span>Probability: {(prediction.combined_high_probability * 100).toFixed(1)}%</span>
+                                        <span>{t('assessments.probability')}: {(prediction.combined_high_probability * 100).toFixed(1)}%</span>
                                     </div>
                                 </div>
-                                <div className="bg-white/20 p-4 rounded-2xl backdrop-blur-md">
-                                    <CheckCircle2 className="w-12 h-12 text-white" />
+                                <div className="flex items-center gap-3">
+                                    <VoiceButton
+                                        content={`${t('assessments.result_title')}: ${prediction.risk_tier}. ${t('assessments.probability')}: ${(prediction.combined_high_probability * 100).toFixed(1)} percent. ${prediction.clinical_summary}`}
+                                    />
+                                    <div className="bg-white/20 p-4 rounded-2xl backdrop-blur-md">
+                                        <CheckCircle2 className="w-12 h-12 text-white" />
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -268,7 +283,7 @@ const Assessments = () => {
                                 <div className="space-y-2">
                                     <h3 className="font-bold text-gray-900 flex items-center gap-2">
                                         <FileText className="w-5 h-5 text-gray-400" />
-                                        Clinical Summary
+                                        {t('assessments.summary')}
                                     </h3>
                                     <p className="text-gray-700 leading-relaxed bg-gray-50 p-4 rounded-2xl border border-gray-100">
                                         {prediction.clinical_summary}
@@ -278,14 +293,14 @@ const Assessments = () => {
                                 <div className="space-y-4">
                                     <h3 className="font-bold text-gray-900 flex items-center gap-2">
                                         <TrendingUp className="w-5 h-5 text-gray-400" />
-                                        Key Risk Drivers (SHAP)
+                                        {t('assessments.drivers')}
                                     </h3>
                                     <div className="space-y-3">
                                         {prediction.top_features.map((feat, idx) => (
                                             <div key={idx} className="flex items-center justify-between group">
                                                 <div className="flex-1">
                                                     <div className="flex justify-between mb-1 px-1">
-                                                        <span className="text-sm font-bold text-gray-700 capitalize">{feat.feature_name.replace(/_/g, ' ')}</span>
+                                                        <span className="text-sm font-bold text-gray-700 capitalize">{t(`parent.dq_labels.${feat.feature_name}`) || feat.feature_name.replace(/_/g, ' ')}</span>
                                                         <span className={`text-xs font-bold ${feat.shap_value > 0 ? 'text-red-500' : 'text-green-500'}`}>
                                                             {feat.shap_value > 0 ? '+' : ''}{feat.shap_value.toFixed(3)}
                                                         </span>
@@ -308,7 +323,7 @@ const Assessments = () => {
                                 <div className="bg-primary-50 rounded-2xl p-6 border border-primary-100">
                                     <h3 className="font-bold text-primary-900 mb-4 flex items-center gap-2">
                                         <Activity className="w-5 h-5" />
-                                        Immediate Actions
+                                        {t('assessments.actions')}
                                     </h3>
                                     <div className="space-y-4">
                                         {prediction.recommendations.map((rec, idx) => (
@@ -327,7 +342,7 @@ const Assessments = () => {
                                 </div>
 
                                 <div className="p-4 bg-gray-50 rounded-2xl border border-gray-100">
-                                    <p className="text-[10px] text-gray-400 uppercase font-bold mb-2">Clinical Disclaimer</p>
+                                    <p className="text-[10px] text-gray-400 uppercase font-bold mb-2">{t('assessments.disclaimer_label')}</p>
                                     <p className="text-[10px] text-gray-500 leading-tight italic">
                                         {prediction.disclaimer}
                                     </p>
@@ -341,7 +356,7 @@ const Assessments = () => {
                             onClick={() => { setPrediction(null); setFormData({}); }}
                             className="bg-gray-900 text-white px-8 py-3 rounded-2xl font-bold hover:bg-black transition-all shadow-lg"
                         >
-                            Start New Assessment
+                            {t('assessments.new_assessment')}
                         </button>
                     </div>
                 </div>
@@ -350,15 +365,6 @@ const Assessments = () => {
     );
 };
 
-/* Mock used icons that were missing in main lucide imports */
-const Activity = (props) => (
-    <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2" /></svg>
-);
-const TrendingUp = (props) => (
-    <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18" /><polyline points="17 6 23 6 23 12" /></svg>
-);
-const FileText = (props) => (
-    <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" /><polyline points="14.5 2 14.5 7.5 20 7.5" /><line x1="16" y1="13" x2="8" y2="13" /><line x1="16" y1="17" x2="8" y2="17" /><line x1="10" y1="9" x2="8" y2="9" /></svg>
-);
+
 
 export default Assessments;

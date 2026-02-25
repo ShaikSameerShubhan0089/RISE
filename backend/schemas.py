@@ -312,6 +312,12 @@ class UserResponse(UserBase):
     district_id: Optional[int]
     mandal_id: Optional[int]
     center_id: Optional[int]
+    
+    # Human-readable location names (for filtering/display)
+    district_name: Optional[str] = None
+    mandal_name: Optional[str] = None
+    center_name: Optional[str] = None
+    
     status: str
     email_verified: bool
     last_login: Optional[datetime]

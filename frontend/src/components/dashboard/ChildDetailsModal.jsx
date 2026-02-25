@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { X, User, Home, Calendar, Phone, Activity, TrendingUp, ClipboardList, AlertCircle } from 'lucide-react';
 import { childrenAPI, dashboardAPI } from '../../utils/api';
+import { useLanguage } from '../../context/LanguageContext';
 import {
     LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
 } from 'recharts';
 
 const ChildDetailsModal = ({ child, onClose }) => {
+    const { t } = useLanguage();
     const [assessments, setAssessments] = useState([]);
     const [growthData, setGrowthData] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -32,6 +34,29 @@ const ChildDetailsModal = ({ child, onClose }) => {
 
     if (!child) return null;
 
+    const getLocalizedGender = (gender) => {
+        const key = gender?.toLowerCase();
+        return t(`children.genders.${key}`) || gender;
+    };
+
+    const getLocalizedRelationship = (rel) => {
+        const key = rel?.toLowerCase();
+        return t(`children.relationships.${key}`) || rel;
+    };
+
+    const getLocalizedStatus = (status) => {
+        const key = status?.toLowerCase();
+        return t(`children.status.${key}`) || status;
+    };
+
+    const getLocalizedRiskTier = (tier) => {
+        if (tier === 'High Risk') return t('common.risk_tiers.high');
+        if (tier === 'Moderate Risk') return t('common.risk_tiers.moderate');
+        if (tier === 'Mild Concern') return t('common.risk_tiers.mild');
+        if (tier === 'Low Risk') return t('common.risk_tiers.low');
+        return tier;
+    };
+
     return (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
             <div className="bg-white rounded-3xl shadow-2xl w-full max-w-4xl overflow-hidden animate-in fade-in zoom-in duration-200 flex flex-col max-h-[90vh]">
@@ -56,21 +81,21 @@ const ChildDetailsModal = ({ child, onClose }) => {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                         <div className="space-y-4">
                             <h3 className="text-sm font-black text-gray-400 uppercase tracking-widest flex items-center gap-2">
-                                <Activity className="w-4 h-4" /> Personal Details
+                                <Activity className="w-4 h-4" /> {t('children.details.personal')}
                             </h3>
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-1">
-                                    <p className="text-[10px] text-gray-400 font-bold uppercase">DOB</p>
+                                    <p className="text-[10px] text-gray-400 font-bold uppercase">{t('children.cols.dob')}</p>
                                     <p className="text-sm font-medium">{new Date(child.dob).toLocaleDateString()}</p>
                                 </div>
                                 <div className="space-y-1">
-                                    <p className="text-[10px] text-gray-400 font-bold uppercase">Gender</p>
-                                    <p className="text-sm font-medium">{child.gender}</p>
+                                    <p className="text-[10px] text-gray-400 font-bold uppercase">{t('children.cols.gender')}</p>
+                                    <p className="text-sm font-medium">{getLocalizedGender(child.gender)}</p>
                                 </div>
                                 <div className="space-y-1">
-                                    <p className="text-[10px] text-gray-400 font-bold uppercase">Status</p>
+                                    <p className="text-[10px] text-gray-400 font-bold uppercase">{t('common.status')}</p>
                                     <span className="px-2 py-0.5 bg-green-100 text-green-800 rounded-full text-[10px] font-black uppercase">
-                                        {child.status}
+                                        {getLocalizedStatus(child.status)}
                                     </span>
                                 </div>
                             </div>
@@ -78,12 +103,12 @@ const ChildDetailsModal = ({ child, onClose }) => {
 
                         <div className="space-y-4">
                             <h3 className="text-sm font-black text-gray-400 uppercase tracking-widest flex items-center gap-2">
-                                <Home className="w-4 h-4" /> Caregiver Info
+                                <Home className="w-4 h-4" /> {t('children.details.caregiver')}
                             </h3>
                             <div className="space-y-3">
                                 <div>
                                     <p className="text-sm font-bold">{child.caregiver_name}</p>
-                                    <p className="text-xs text-gray-500">{child.caregiver_relationship}</p>
+                                    <p className="text-xs text-gray-500">{getLocalizedRelationship(child.caregiver_relationship)}</p>
                                 </div>
                                 <div className="flex gap-4">
                                     {child.caregiver_phone && (
@@ -111,7 +136,7 @@ const ChildDetailsModal = ({ child, onClose }) => {
                     {/* Risk Trends Chart */}
                     <div className="space-y-4">
                         <h3 className="text-sm font-black text-gray-400 uppercase tracking-widest flex items-center gap-2">
-                            <TrendingUp className="w-4 h-4" /> Risk Score Trends
+                            <TrendingUp className="w-4 h-4" /> {t('children.details.trends')}
                         </h3>
                         <div className="bg-white border border-gray-100 rounded-2xl p-4 h-64">
                             {loading ? (
@@ -139,14 +164,14 @@ const ChildDetailsModal = ({ child, onClose }) => {
                                             strokeWidth={3}
                                             dot={{ r: 4, fill: '#ef4444' }}
                                             activeDot={{ r: 6 }}
-                                            name="Risk Probability"
+                                            name={t('children.details.probability')}
                                         />
                                     </LineChart>
                                 </ResponsiveContainer>
                             ) : (
                                 <div className="h-full flex flex-col items-center justify-center text-gray-400 gap-2">
                                     <AlertCircle className="w-8 h-8 opacity-20" />
-                                    <p className="text-sm font-medium">Insufficient data for trend analysis</p>
+                                    <p className="text-sm font-medium">{t('children.details.insufficient_data')}</p>
                                 </div>
                             )}
                         </div>
@@ -155,22 +180,22 @@ const ChildDetailsModal = ({ child, onClose }) => {
                     {/* Assessment History Table */}
                     <div className="space-y-4">
                         <h3 className="text-sm font-black text-gray-400 uppercase tracking-widest flex items-center gap-2">
-                            <ClipboardList className="w-4 h-4" /> Assessment History
+                            <ClipboardList className="w-4 h-4" /> {t('children.details.history')}
                         </h3>
                         <div className="border border-gray-100 rounded-2xl overflow-hidden">
                             <table className="min-w-full divide-y divide-gray-100 text-sm">
                                 <thead className="bg-gray-50">
                                     <tr>
-                                        <th className="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase">Cycle</th>
-                                        <th className="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase">Date</th>
-                                        <th className="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase">Age (mo)</th>
-                                        <th className="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase">Composite DQ</th>
-                                        <th className="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase">Risk Tier</th>
+                                        <th className="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase">{t('children.details.cols.cycle')}</th>
+                                        <th className="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase">{t('children.details.cols.date')}</th>
+                                        <th className="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase">{t('children.details.cols.age')}</th>
+                                        <th className="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase">{t('children.details.cols.dq')}</th>
+                                        <th className="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase">{t('children.details.cols.risk')}</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-50">
                                     {assessments.length === 0 ? (
-                                        <tr><td colSpan={5} className="py-8 text-center text-gray-400 italic">No assessments yet</td></tr>
+                                        <tr><td colSpan={5} className="py-8 text-center text-gray-400 italic">{t('children.details.no_assessments')}</td></tr>
                                     ) : (
                                         assessments.map((a, idx) => (
                                             <tr key={idx} className="hover:bg-gray-50">
@@ -181,7 +206,7 @@ const ChildDetailsModal = ({ child, onClose }) => {
                                                 <td className="px-4 py-3">
                                                     <span className={`px-2 py-0.5 rounded-full text-[10px] font-black uppercase ${a.latest_prediction?.risk_tier === 'High Risk' ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'
                                                         }`}>
-                                                        {a.latest_prediction?.risk_tier || 'N/A'}
+                                                        {getLocalizedRiskTier(a.latest_prediction?.risk_tier) || 'N/A'}
                                                     </span>
                                                 </td>
                                             </tr>
@@ -198,7 +223,7 @@ const ChildDetailsModal = ({ child, onClose }) => {
                         onClick={onClose}
                         className="px-6 py-2 bg-gray-900 text-white font-bold rounded-xl hover:bg-black transition-all"
                     >
-                        Close
+                        {t('common.close')}
                     </button>
                 </div>
             </div>
@@ -207,3 +232,4 @@ const ChildDetailsModal = ({ child, onClose }) => {
 };
 
 export default ChildDetailsModal;
+

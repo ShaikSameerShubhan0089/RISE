@@ -1,28 +1,24 @@
 import React, { useState } from 'react';
 import { Search, Download, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useLanguage } from '../../context/LanguageContext';
 
 const PAGE_SIZE_OPTIONS = [10, 25, 50, 100];
 
-const statusBadge = (status) => {
-    const colors = {
-        Active: 'bg-green-100 text-green-800',
-        Inactive: 'bg-gray-100 text-gray-600',
-        Transferred: 'bg-yellow-100 text-yellow-800',
-        Graduated: 'bg-blue-100 text-blue-800',
-    };
-    return (
-        <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${colors[status] || 'bg-gray-100 text-gray-600'}`}>
-            {status}
-        </span>
-    );
-};
-
-const exportCSV = (rows) => {
-    const headers = ['ID', 'First Name', 'Last Name', 'DOB', 'Gender', 'Centre', 'Caregiver', 'Phone', 'Status'];
+const exportCSV = (rows, t) => {
+    const headers = [
+        t('children.cols.id'),
+        t('children.cols.name'),
+        t('children.cols.dob'),
+        t('children.cols.gender'),
+        t('children.cols.centre'),
+        t('children.cols.caregiver'),
+        t('children.cols.phone'),
+        t('common.status')
+    ];
     const lines = [
         headers.join(','),
         ...rows.map(c =>
-            [c.unique_child_code, c.first_name, c.last_name, c.dob, c.gender,
+            [c.unique_child_code, `${c.first_name} ${c.last_name}`, c.dob, c.gender,
             `"${c.center_name}"`, `"${c.caregiver_name || ''}"`, c.caregiver_phone || '', c.status].join(',')
         ),
     ];
@@ -36,6 +32,7 @@ const exportCSV = (rows) => {
 };
 
 const ChildrenTable = ({ data = [], onSearch, onRowClick }) => {
+    const { t } = useLanguage();
     const [search, setSearch] = useState('');
     const [statusFilter, setStatusFilter] = useState('all');
     const [page, setPage] = useState(1);
@@ -53,23 +50,59 @@ const ChildrenTable = ({ data = [], onSearch, onRowClick }) => {
         ? safeData
         : safeData.filter(c => {
             if (!c) return false;
-
             const fullText = `${c?.first_name || ''} ${c?.last_name || ''} ${c?.unique_child_code || ''}`.toLowerCase();
             return fullText.includes(search.toLowerCase());
         })
     ).filter(c => statusFilter === 'all' || c?.status === statusFilter);
+
     const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
     const safePage = Math.min(page, totalPages);
     const pageRows = filtered.slice((safePage - 1) * pageSize, safePage * pageSize);
 
     const statuses = [...new Set(safeData.map(c => c?.status))].filter(Boolean);
+
+    const statusLabel = (status) => {
+        const map = {
+            Active: t('children.status.active'),
+            Inactive: t('children.status.inactive'),
+            Transferred: t('children.status.transferred'),
+            Graduated: t('children.status.graduated'),
+        };
+        return map[status] || status;
+    };
+
+    const statusBadge = (status) => {
+        const colors = {
+            Active: 'bg-green-100 text-green-800',
+            Inactive: 'bg-gray-100 text-gray-600',
+            Transferred: 'bg-yellow-100 text-yellow-800',
+            Graduated: 'bg-blue-100 text-blue-800',
+        };
+        return (
+            <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${colors[status] || 'bg-gray-100 text-gray-600'}`}>
+                {statusLabel(status)}
+            </span>
+        );
+    };
+
+    const columnHeaders = [
+        t('children.cols.id'),
+        t('children.cols.name'),
+        t('children.cols.dob'),
+        t('children.cols.gender'),
+        t('children.cols.centre'),
+        t('children.cols.caregiver'),
+        t('children.cols.phone'),
+        t('common.status'),
+    ];
+
     return (
         <div className="bg-white rounded-xl shadow-sm border border-gray-200">
             {/* Header */}
             <div className="flex flex-wrap items-center justify-between gap-3 p-5 border-b border-gray-100">
                 <h2 className="text-lg font-semibold text-gray-900">
-                    Children
-                    <span className="ml-2 text-sm font-normal text-gray-400">({filtered.length} records)</span>
+                    {t('common.children')}
+                    <span className="ml-2 text-sm font-normal text-gray-400">({filtered.length} {t('children.records')})</span>
                 </h2>
                 <div className="flex flex-wrap items-center gap-2">
                     {/* Status filter */}
@@ -78,15 +111,15 @@ const ChildrenTable = ({ data = [], onSearch, onRowClick }) => {
                         onChange={e => { setStatusFilter(e.target.value); setPage(1); }}
                         className="text-sm border border-gray-300 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
-                        <option value="all">All Status</option>
-                        {statuses.map(s => <option key={s} value={s}>{s}</option>)}
+                        <option value="all">{t('children.filters.all_status')}</option>
+                        {statuses.map(s => <option key={s} value={s}>{statusLabel(s)}</option>)}
                     </select>
                     {/* Search */}
                     <div className="relative">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                         <input
                             type="text"
-                            placeholder="Search name or ID..."
+                            placeholder={t('children.filters.search_placeholder')}
                             value={search}
                             onChange={handleSearch}
                             className="pl-9 pr-4 py-1.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -94,12 +127,12 @@ const ChildrenTable = ({ data = [], onSearch, onRowClick }) => {
                     </div>
                     {/* CSV export */}
                     <button
-                        onClick={() => exportCSV(filtered)}
-                        title="Export to CSV"
+                        onClick={() => exportCSV(filtered, t)}
+                        title={t('common.export')}
                         className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
                     >
                         <Download className="w-4 h-4" />
-                        Export
+                        {t('common.export')}
                     </button>
                 </div>
             </div>
@@ -109,14 +142,14 @@ const ChildrenTable = ({ data = [], onSearch, onRowClick }) => {
                 <table className="min-w-full divide-y divide-gray-100">
                     <thead className="bg-gray-50">
                         <tr>
-                            {['ID', 'Name', 'DOB', 'Gender', 'Centre', 'Caregiver', 'Phone', 'Status'].map(h => (
+                            {columnHeaders.map(h => (
                                 <th key={h} className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">{h}</th>
                             ))}
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-50">
                         {pageRows.length === 0 ? (
-                            <tr><td colSpan={8} className="text-center py-10 text-gray-400 text-sm">No children found</td></tr>
+                            <tr><td colSpan={8} className="text-center py-10 text-gray-400 text-sm">{t('children.no_children')}</td></tr>
                         ) : pageRows.map(child => (
                             <tr
                                 key={child.child_id}
@@ -140,7 +173,7 @@ const ChildrenTable = ({ data = [], onSearch, onRowClick }) => {
             {/* Pagination footer */}
             <div className="flex flex-wrap items-center justify-between gap-3 px-5 py-3 border-t border-gray-100 text-sm text-gray-500">
                 <div className="flex items-center gap-2">
-                    <span>Rows per page:</span>
+                    <span>{t('common.rows_per_page')}:</span>
                     <select
                         value={pageSize}
                         onChange={e => { setPageSize(Number(e.target.value)); setPage(1); }}
@@ -150,23 +183,15 @@ const ChildrenTable = ({ data = [], onSearch, onRowClick }) => {
                     </select>
                 </div>
                 <div className="flex items-center gap-3">
-                    <span>{filtered.length === 0 ? '0' : `${(safePage - 1) * pageSize + 1}–${Math.min(safePage * pageSize, filtered.length)}`} of {filtered.length}</span>
+                    <span>{filtered.length === 0 ? '0' : `${(safePage - 1) * pageSize + 1}–${Math.min(safePage * pageSize, filtered.length)}`} {t('common.of')} {filtered.length}</span>
                     <div className="flex gap-1">
-                        <button
-                            onClick={() => setPage(p => Math.max(1, p - 1))}
-                            disabled={safePage === 1}
-                            className="p-1 rounded hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-                        >
+                        <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={safePage === 1}
+                            className="p-1 rounded hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors">
                             <ChevronLeft className="w-4 h-4" />
                         </button>
-                        <span className="px-2 py-0.5">
-                            {safePage} / {totalPages}
-                        </span>
-                        <button
-                            onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-                            disabled={safePage === totalPages}
-                            className="p-1 rounded hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-                        >
+                        <span className="px-2 py-0.5">{safePage} / {totalPages}</span>
+                        <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={safePage === totalPages}
+                            className="p-1 rounded hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors">
                             <ChevronRight className="w-4 h-4" />
                         </button>
                     </div>

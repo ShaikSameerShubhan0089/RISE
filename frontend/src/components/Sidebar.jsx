@@ -9,50 +9,53 @@ import {
     UserCog,
     FileText,
     LogOut,
-    Activity
+    Activity,
+    Globe
 } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
 const Sidebar = () => {
     const { user, logout } = useAuth();
+    const { language, setLanguage, t } = useLanguage();
     const location = useLocation();
 
     const getRoleBasedNavigation = () => {
         const commonItems = [
-            { path: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
+            { path: '/dashboard', icon: LayoutDashboard, label: t('common.dashboard') },
         ];
 
         const roleSpecificItems = {
             system_admin: [
-                { path: '/users', icon: UserCog, label: 'User Management' },
-                { path: '/referrals', icon: ClipboardList, label: 'Referrals' },
-                { path: '/analytics', icon: TrendingUp, label: 'System Analytics' },
+                { path: '/users', icon: UserCog, label: t('common.users') },
+                { path: '/referrals', icon: ClipboardList, label: t('common.referrals') },
+                { path: '/analytics', icon: TrendingUp, label: t('common.analytics') },
             ],
             state_admin: [
-                { path: '/users', icon: UserCog, label: 'User Management' },
-                { path: '/children', icon: Users, label: 'Children' },
-                { path: '/referrals', icon: ClipboardList, label: 'Referrals' },
-                { path: '/analytics', icon: TrendingUp, label: 'Analytics' },
+                { path: '/users', icon: UserCog, label: t('common.users') },
+                { path: '/children', icon: Users, label: t('common.children') },
+                { path: '/referrals', icon: ClipboardList, label: t('common.referrals') },
+                { path: '/analytics', icon: TrendingUp, label: t('common.analytics') },
             ],
             district_officer: [
-                { path: '/users', icon: UserCog, label: 'User Management' },
-                { path: '/children', icon: Users, label: 'Children' },
-                { path: '/referrals', icon: ClipboardList, label: 'Referrals' },
-                { path: '/analytics', icon: TrendingUp, label: 'Analytics' },
+                { path: '/users', icon: UserCog, label: t('common.users') },
+                { path: '/children', icon: Users, label: t('common.children') },
+                { path: '/referrals', icon: ClipboardList, label: t('common.referrals') },
+                { path: '/analytics', icon: TrendingUp, label: t('common.analytics') },
             ],
             supervisor: [
-                { path: '/users', icon: UserCog, label: 'User Management' },
-                { path: '/children', icon: Users, label: 'Children' },
-                { path: '/assessments', icon: ClipboardList, label: 'Assessments' },
-                { path: '/referrals', icon: FileText, label: 'Referrals' },
+                { path: '/users', icon: UserCog, label: t('common.users') },
+                { path: '/children', icon: Users, label: t('common.children') },
+                { path: '/assessments', icon: ClipboardList, label: t('common.assessments') },
+                { path: '/referrals', icon: FileText, label: t('common.referrals') },
             ],
             anganwadi_worker: [
-                { path: '/users', icon: UserCog, label: 'User Management' },
-                { path: '/children', icon: Users, label: 'Children' },
-                { path: '/assessments', icon: ClipboardList, label: 'Assessments' },
-                { path: '/referrals', icon: FileText, label: 'Referrals' },
+                { path: '/users', icon: UserCog, label: t('common.users') },
+                { path: '/children', icon: Users, label: t('common.children') },
+                { path: '/assessments', icon: ClipboardList, label: t('common.assessments') },
+                { path: '/referrals', icon: FileText, label: t('common.referrals') },
             ],
             parent: [
-                { path: '/my-children', icon: Users, label: 'My Children' },
+                { path: '/my-children', icon: Users, label: t('common.children') },
             ],
         };
 
@@ -72,7 +75,7 @@ const Sidebar = () => {
                         <Activity className="w-6 h-6 text-white" />
                     </div>
                     <div>
-                        <h1 className="text-lg font-bold text-gray-900">Autism CDSS</h1>
+                        <h1 className="text-lg font-bold text-gray-900">{t('sidebar.title')}</h1>
                         <p className="text-xs text-gray-500 capitalize">{user?.role?.replace('_', ' ')}</p>
                     </div>
                 </div>
@@ -100,18 +103,36 @@ const Sidebar = () => {
                 })}
             </nav>
 
-            {/* User Info & Logout */}
-            <div className="p-4 border-t border-gray-200">
+            {/* Language Switcher & Logout */}
+            <div className="p-4 border-t border-gray-200 space-y-2">
+                {/* Language Toggle */}
+                <div className="px-4 py-2 border border-gray-200 rounded-lg flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-gray-600">
+                        <Globe className="w-4 h-4" />
+                        <span className="text-xs font-semibold uppercase">{t('sidebar.language')}</span>
+                    </div>
+                    <select
+                        value={language}
+                        onChange={(e) => setLanguage(e.target.value)}
+                        className="text-xs font-medium border-none bg-transparent focus:ring-0 cursor-pointer text-primary-600 outline-none"
+                    >
+                        <option value="en">English</option>
+                        <option value="te">తెలుగు</option>
+                        <option value="hi">हिन्दी</option>
+                        <option value="kn">ಕನ್ನಡ</option>
+                    </select>
+                </div>
+
                 <div className="mb-3 px-4 py-2 bg-gray-50 rounded-lg">
                     <p className="text-sm font-medium text-gray-900">{user?.full_name}</p>
-                    <p className="text-xs text-gray-500">{user?.email}</p>
+                    <p className="text-xs text-gray-500 truncate">{user?.email}</p>
                 </div>
                 <button
                     onClick={logout}
                     className="w-full flex items-center justify-center space-x-2 px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg transition"
                 >
                     <LogOut className="w-5 h-5" />
-                    <span>Logout</span>
+                    <span>{t('common.logout')}</span>
                 </button>
             </div>
         </div>
