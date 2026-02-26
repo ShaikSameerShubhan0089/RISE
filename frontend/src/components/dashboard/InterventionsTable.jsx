@@ -104,7 +104,7 @@ const InterventionsTable = ({ data = [] }) => {
             <div className="flex flex-wrap items-center justify-between gap-3 p-5 border-b border-gray-100">
                 <h2 className="text-lg font-semibold text-gray-900">
                     {t('common.interventions')}
-                    <span className="ml-2 text-sm font-normal text-gray-400">({filtered.length} {t('common.no_records') ? '' : 'records'})</span>
+                    <span className="ml-2 text-sm font-normal text-gray-400">({filtered.length})</span>
                 </h2>
                 <div className="flex flex-wrap items-center gap-2">
                     <select
@@ -159,7 +159,7 @@ const InterventionsTable = ({ data = [] }) => {
                                 </td>
                                 <td className="px-4 py-3 text-xs text-gray-600">{i.intervention_type}</td>
                                 <td className="px-4 py-3 text-xs text-gray-600 whitespace-nowrap">{i.start_date || '—'}</td>
-                                <td className="px-4 py-3 text-xs text-gray-600 whitespace-nowrap">{i.end_date || t('interventions.ongoing') || 'Ongoing'}</td>
+                                <td className="px-4 py-3 text-xs text-gray-600 whitespace-nowrap">{i.end_date || t('interventions.ongoing')}</td>
                                 <td className="px-4 py-3 text-sm text-center text-gray-800">{i.sessions_completed ?? '—'}/{i.total_sessions_planned ?? '—'}</td>
                                 <td className="px-4 py-3 min-w-[120px]"><ComplianceBar value={i.compliance_percentage} /></td>
                                 <td className="px-4 py-3">

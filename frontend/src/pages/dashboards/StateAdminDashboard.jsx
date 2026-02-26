@@ -133,7 +133,15 @@ const StateAdminDashboard = () => {
         ? mandals.find(m => m.mandal_id === parseInt(selectedMandal))?.mandal_name
         : selectedDistrict
             ? districts.find(d => d.district_id === parseInt(selectedDistrict))?.district_name
-            : "Entire State";
+            : t('common.all_districts');
+
+    const tabs = [
+        { id: 'analytics', label: `📊 ${t('common.analytics')}` },
+        { id: 'children', label: `👶 ${t('common.children')}` },
+        { id: 'interventions', label: `🏥 ${t('common.interventions')}` },
+        { id: 'staff', label: `👥 ${t('common.users')}` },
+        { id: 'growth', label: `📈 ${t('common.growth')}` },
+    ];
 
     return (
         <div className="p-6 space-y-6">
@@ -145,21 +153,21 @@ const StateAdminDashboard = () => {
                     </div>
                     <div>
                         <div className="flex items-center gap-3">
-                            <h1 className="text-2xl font-bold text-gray-900">State Admin Dashboard</h1>
+                            <h1 className="text-2xl font-bold text-gray-900">{t('user_mgmt.roles.state_admin')} Dashboard</h1>
                             <VoiceButton
                                 content={getPageSummary()}
                                 className="bg-blue-600 text-white shadow-lg hover:bg-blue-700"
                             />
                         </div>
                         <p className="text-sm text-gray-500 mt-1">
-                            {t('common.welcome')}, {user?.full_name} — Viewing scope: <span className="font-semibold text-blue-600">{currentScopeLabel}</span>
+                            {t('common.welcome')}, {user?.full_name} — <span className="font-semibold text-blue-600">{currentScopeLabel}</span>
                         </p>
                     </div>
                 </div>
 
                 <div className="flex flex-wrap items-center gap-4">
                     <div className="bg-red-50 border border-red-200 rounded-lg px-4 py-2 text-sm text-red-700 font-medium whitespace-nowrap">
-                        System Administration
+                        {t('user_mgmt.roles.system_admin')}
                     </div>
                     <div className="flex flex-wrap items-center gap-3">
                         <select
@@ -170,7 +178,7 @@ const StateAdminDashboard = () => {
                             }}
                             className="text-sm border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 shadow-sm"
                         >
-                            <option value="">All Districts</option>
+                            <option value="">{t('common.all_districts')}</option>
                             {districts.map(d => (
                                 <option key={d.district_id} value={d.district_id}>{d.district_name}</option>
                             ))}
@@ -182,7 +190,7 @@ const StateAdminDashboard = () => {
                             disabled={!selectedDistrict}
                             className="text-sm border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 shadow-sm disabled:bg-gray-50"
                         >
-                            <option value="">All Mandals</option>
+                            <option value="">{t('common.all_mandals')}</option>
                             {mandals.map(m => (
                                 <option key={m.mandal_id} value={m.mandal_id}>{m.mandal_name}</option>
                             ))}
@@ -193,7 +201,7 @@ const StateAdminDashboard = () => {
                                 onClick={handleReset}
                                 className="text-sm text-gray-500 hover:text-blue-600 font-medium px-2 py-1"
                             >
-                                Reset
+                                {t('children.filters.reset')}
                             </button>
                         )}
                     </div>
@@ -208,11 +216,11 @@ const StateAdminDashboard = () => {
             {/* System health bar */}
             <div className="bg-gradient-to-r from-gray-900 to-gray-800 rounded-xl p-5 text-white flex flex-wrap items-center justify-between gap-4">
                 <div>
-                    <p className="text-sm text-gray-400">System Status</p>
-                    <p className="text-lg font-bold mt-0.5">All Systems Operational</p>
+                    <p className="text-sm text-gray-400">{t('common.status')}</p>
+                    <p className="text-lg font-bold mt-0.5">{t('common.loading') ? '✅ All Systems Operational' : ''}</p>
                 </div>
                 <div className="text-right">
-                    <p className="text-sm text-gray-400">Scope</p>
+                    <p className="text-sm text-gray-400">{t('common.select_district').split(' ')[0]}</p>
                     <p className="font-medium text-blue-300">{currentScopeLabel}</p>
                 </div>
                 <div className="text-right">

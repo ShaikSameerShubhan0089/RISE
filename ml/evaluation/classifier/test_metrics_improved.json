@@ -1,0 +1,21 @@
+{
+    "roc_auc": 0.9951,
+    "sensitivity": 0.9638,
+    "specificity": 0.9685,
+    "f1_score": 0.9761,
+    "brier_score": 0.1635,
+    "confusion_matrix": [
+        [
+            400,
+            13
+        ],
+        [
+            43,
+            1144
+        ]
+    ],
+    "true_negatives": 400,
+    "false_positives": 13,
+    "false_negatives": 43,
+    "true_positives": 1144
+}

@@ -1,5 +1,5 @@
 {
-    "timestamp": "2026-02-20T05:26:31.636691",
+    "timestamp": "2026-02-26T17:17:05.025930",
     "model_type": "XGBClassifier",
     "features": [
         "gross_motor_dq",
@@ -33,11 +33,12 @@
         "erm",
         "dbs"
     ],
-    "train_size": 2380,
-    "val_size": 420,
+    "train_size": 5440,
+    "val_size": 960,
     "final_metrics": {
-        "logloss": 0.5370642459707423,
-        "auc": 0.7157632939876041,
-        "error": 0.28095238095238095
-    }
+        "logloss": 0.5188212764759859,
+        "auc": 0.996585039869518,
+        "error": 0.02708333333333333
+    },
+    "optimal_threshold": 0.5523843169212341
 }

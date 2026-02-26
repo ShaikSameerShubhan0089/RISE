@@ -119,14 +119,14 @@ const DistrictOfficerDashboard = () => {
         loadData('');
     };
 
-    const scopeLabel = mandals.find(m => String(m.mandal_id) === selectedMandal)?.mandal_name || 'All Mandals';
+    const scopeLabel = mandals.find(m => String(m.mandal_id) === selectedMandal)?.mandal_name || t('common.all_mandals');
 
     const tabs = [
-        { id: 'charts', label: '📊 Analytics' },
-        { id: 'children', label: '👶 Children' },
-        { id: 'interventions', label: '🏥 Interventions' },
-        { id: 'staff', label: '👥 Staff' },
-        { id: 'growth', label: '📈 Growth' },
+        { id: 'charts', label: `📊 ${t('common.analytics')}` },
+        { id: 'children', label: `👶 ${t('common.children')}` },
+        { id: 'interventions', label: `🏥 ${t('common.interventions')}` },
+        { id: 'staff', label: `👥 ${t('common.users')}` },
+        { id: 'growth', label: `📈 ${t('common.growth')}` },
     ];
 
     return (
@@ -140,7 +140,7 @@ const DistrictOfficerDashboard = () => {
                         </div>
                         <div>
                             <div className="flex items-center gap-3">
-                                <h1 className="text-2xl font-bold">District Officer Dashboard</h1>
+                                <h1 className="text-2xl font-bold">{t('user_mgmt.roles.district_officer')} Dashboard</h1>
                                 <VoiceButton
                                     content={getPageSummary()}
                                     className="bg-white/20 hover:bg-white/30 text-white border border-white/20"
@@ -173,7 +173,7 @@ const DistrictOfficerDashboard = () => {
                                 onChange={handleMandalChange}
                                 className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                             >
-                                <option value="">All Mandals</option>
+                                <option value="">{t('common.all_mandals')}</option>
                                 {mandals.map(m => (
                                     <option key={m.mandal_id} value={m.mandal_id}>{m.mandal_name}</option>
                                 ))}
@@ -185,13 +185,13 @@ const DistrictOfficerDashboard = () => {
                             onClick={handleReset}
                             className="flex items-center gap-1.5 px-3 py-2 text-sm text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
                         >
-                            <RefreshCw className="w-3.5 h-3.5" /> Reset
+                            <RefreshCw className="w-3.5 h-3.5" /> {t('children.filters.reset')}
                         </button>
                     )}
                     {dataLoading && (
                         <div className="flex items-center gap-2 text-blue-600 text-sm">
                             <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600" />
-                            Loading…
+                            {t('common.loading')}
                         </div>
                     )}
                 </div>

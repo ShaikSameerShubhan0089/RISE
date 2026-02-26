@@ -142,7 +142,7 @@ const SupervisorDashboard = () => {
                         </div>
                         <div>
                             <div className="flex items-center gap-3">
-                                <h1 className="text-2xl font-bold">{t('user_mgmt.roles.supervisor')} Dashboard</h1>
+                                <h1 className="text-2xl font-bold">{t('user_mgmt.roles.supervisor')} {t('common.dashboard')}</h1>
                                 <VoiceButton
                                     content={getPageSummary()}
                                     className="bg-white/20 hover:bg-white/30 text-white border border-white/20"

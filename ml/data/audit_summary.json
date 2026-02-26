@@ -1,0 +1,13 @@
+{
+  "total_records": 3500,
+  "suspicious_count": 2735,
+  "validation_warnings": [
+    "gross_motor_dq: 1846 values out of range [0, 100]",
+    "fine_motor_dq: 1853 values out of range [0, 100]",
+    "language_dq: 1949 values out of range [0, 100]",
+    "cognitive_dq: 1814 values out of range [0, 100]",
+    "socio_emotional_dq: 1510 values out of range [0, 100]",
+    "composite_dq: 1706 values out of range [0, 100]"
+  ],
+  "missing_values_sample": {}
+}

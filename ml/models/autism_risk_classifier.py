@@ -44,6 +44,7 @@ class AutismRiskClassifier:
         self.feature_names = None
         self.label_encoders = {}
         self.shap_explainer = None
+        self.optimal_threshold = 0.5  # Default, will be optimized during training
         
         # Performance metrics
         self.metrics = {}
@@ -122,7 +123,7 @@ class AutismRiskClassifier:
         return X, y
     
     def train(self, X_train, y_train, X_val=None, y_val=None, 
-              hyperparameter_tuning=False):
+              hyperparameter_tuning=False, xgb_params: dict = None):
         """
         Train XGBoost model with optional hyperparameter tuning
         """
@@ -163,25 +164,39 @@ class AutismRiskClassifier:
             print(f"Best CV ROC-AUC: {grid_search.best_score_:.4f}")
         
         else:
-            # Default parameters optimized for clinical use
+            # Default parameters optimized for clinical use with regularization
             pos_count = np.sum(y_train)
             neg_count = len(y_train) - pos_count
             scale_pos_weight = neg_count / pos_count if pos_count > 0 else 1
             print(f"Using scale_pos_weight: {scale_pos_weight:.2f}")
+            # If Optuna / external params provided, use them (merge with safe defaults)
+            if xgb_params:
+                params = xgb_params.copy()
+                # Ensure required args exist / are safe
+                params.setdefault('objective', 'binary:logistic')
+                params.setdefault('use_label_encoder', False)
+                params.setdefault('random_state', 42)
+                params.setdefault('eval_metric', ['logloss', 'auc', 'error'])
+                params['scale_pos_weight'] = scale_pos_weight
 
-            self.model = xgb.XGBClassifier(
-                max_depth=5,
-                learning_rate=0.05,
-                n_estimators=200,
-                min_child_weight=3,
-                subsample=0.8,
-                colsample_bytree=0.8,
-                objective='binary:logistic',
-                random_state=42,
-                use_label_encoder=False,
-                eval_metric=['logloss', 'auc', 'error'],
-                scale_pos_weight=scale_pos_weight
-            )
+                self.model = xgb.XGBClassifier(**params)
+            else:
+                self.model = xgb.XGBClassifier(
+                    max_depth=4,                 # Reduced from 5 to prevent overfitting
+                    learning_rate=0.03,          # Reduced from 0.05 for slower learning
+                    n_estimators=300,            # Increased from 200 since learning is slower
+                    min_child_weight=5,          # Increased from 3 for less split flexibility
+                    subsample=0.7,               # Reduced from 0.8 for less data per tree
+                    colsample_bytree=0.7,       # Reduced from 0.8 for less features per tree
+                    gamma=1,                     # Minimum loss reduction for split
+                    reg_alpha=0.1,               # L1 regularization
+                    reg_lambda=1.0,              # L2 regularization
+                    objective='binary:logistic',
+                    random_state=42,
+                    use_label_encoder=False,
+                    eval_metric=['logloss', 'auc', 'error'],
+                    scale_pos_weight=scale_pos_weight
+                )
             
             # Fit with early stopping if validation set provided
             if X_val is not None and y_val is not None:
@@ -191,7 +206,7 @@ class AutismRiskClassifier:
                 self.model.fit(
                     X_train_scaled, y_train,
                     eval_set=eval_set,
-                    verbose=False
+                    verbose=10
                 )
             else:
                 self.model.fit(X_train_scaled, y_train)
@@ -224,9 +239,14 @@ class AutismRiskClassifier:
         self.shap_explainer = shap.TreeExplainer(self.model)
         print("SHAP explainer ready")
     
-    def predict(self, X, use_calibration=False):
+    def predict(self, X, use_calibration=False, threshold=None):
         """
-        Make predictions
+        Make predictions with optional custom threshold
+        
+        Args:
+            X: Input features
+            use_calibration: Whether to use calibrated probabilities
+            threshold: Custom decision threshold (default: self.optimal_threshold)
         
         Returns:
             predictions: Binary class predictions (0 or 1)
@@ -234,12 +254,15 @@ class AutismRiskClassifier:
         """
         X_scaled = self.scaler.transform(X)
         
+        if threshold is None:
+            threshold = self.optimal_threshold
+        
         if use_calibration and self.calibrated_model:
             probabilities = self.calibrated_model.predict_proba(X_scaled)[:, 1]
-            predictions = (probabilities >= 0.5).astype(int)
+            predictions = (probabilities >= threshold).astype(int)
         else:
             probabilities = self.model.predict_proba(X_scaled)[:, 1]
-            predictions = (probabilities >= 0.5).astype(int)
+            predictions = (probabilities >= threshold).astype(int)
         
         return predictions, probabilities
     

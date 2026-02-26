@@ -167,6 +167,11 @@ export const translations = {
                 registrations: 'Children Registrations Over Time',
                 model_usage: 'Model Usage',
                 no_data: 'No data available yet',
+                children_per_center: 'Children per Centre',
+                intervention_categories: 'Intervention Categories',
+                improvement_status: 'Improvement Status',
+                gender_dist: 'Gender Distribution',
+                age_gender: 'Children by Age Group & Gender',
             },
             periods: {
                 week: 'Last 7 Days',
@@ -412,10 +417,35 @@ export const translations = {
                 start: 'Start Date',
                 end: 'End Date',
                 sessions: 'Sessions',
-                sessions_done: 'Sessions Done',
-                sessions_planned: 'Sessions Planned',
+                sessions_done: 'Done',
+                sessions_planned: 'Planned',
                 compliance: 'Compliance',
                 provider: 'Provider',
+            }
+        },
+        growth: {
+            title: 'Child Growth Chart',
+            select_child: 'Select a child',
+            select_child_instruction: 'Select a child above to view their growth trajectory',
+            export: 'Export',
+            loading: 'Loading assessment data...',
+            error: 'Failed to load growth data. Please try again.',
+            no_assessments: 'No assessments recorded for this child yet.',
+            x_axis: 'Assessment Cycle',
+            y_axis: 'DQ Score',
+            typical: 'Typical (85)',
+            cycle: 'Cycle',
+            csv_headers: {
+                cycle: 'Cycle',
+                date: 'Date',
+                age: 'Age (months)',
+                comp_dq: 'Composite DQ',
+                gross: 'Gross Motor',
+                fine: 'Fine Motor',
+                lang: 'Language',
+                cog: 'Cognitive',
+                socio: 'Socio-Emotional',
+                delayed: 'Delayed Domains'
             }
         }
     },
@@ -512,6 +542,11 @@ export const translations = {
                 registrations: 'పిల్లల నమోదుల కాలక్రమం',
                 model_usage: 'మోడల్ వినియోగం',
                 no_data: 'ఇంకా డేటా అందుబాటులో లేదు',
+                children_per_center: 'కేంద్రాల వారీగా పిల్లలు',
+                intervention_categories: 'హస్తక్షేప వర్గాలు',
+                improvement_status: 'మెరుగుదల స్థితి',
+                gender_dist: 'లింగ పంపిణీ',
+                age_gender: 'వయస్సు మరియు లింగం వారీగా పిల్లలు',
             },
             periods: {
                 week: 'గత 7 రోజులు',
@@ -822,6 +857,31 @@ export const translations = {
                 compliance: 'అనుసరణ',
                 provider: 'సేవా సంస్థ',
             }
+        },
+        growth: {
+            title: 'శిశువు అభివృద్ధి చார்ట్',
+            select_child: 'బిడ్డను ఎంచుకోండి',
+            select_child_instruction: 'అభివృద్ధి ట్రెండ్‌ను చూడటానికి పైన ఒక బిడ్డను ఎంచుకోండి',
+            export: 'ఎగుమతి',
+            loading: 'అసెస్‌మెంట్ డేటా లోడ్ అవుతోంది...',
+            error: 'అభివృద్ధి డేటాను లోడ్ చేయడం విఫలమైంది. మళ్ళీ ప్రయత్నించండి.',
+            no_assessments: 'ఈ బిడ్డకు ఇంకా అసెస్‌మెంట్స్ ఏవీ నమోదు చేయబడలేదు.',
+            x_axis: 'అసెస్‌మెంట్ సైకిల్',
+            y_axis: 'DQ స్కోరు',
+            typical: 'సాధారణం (85)',
+            cycle: 'చక్రం',
+            csv_headers: {
+                cycle: 'చక్రం',
+                date: 'తేదీ',
+                age: 'వయస్సు (నెలలు)',
+                comp_dq: 'మొత్తం DQ',
+                gross: 'గ్రాస్ మోటార్',
+                fine: 'ఫైన్ మోಟార్',
+                lang: 'భాష',
+                cog: 'జ్ఞానము',
+                socio: 'సామాజిక',
+                delayed: 'ఆలస్యమైన డొమైన్లు'
+            }
         }
     },
     hi: {
@@ -897,11 +957,16 @@ export const translations = {
                 new_month: 'इस महीने नए',
             },
             charts: {
-                users_by_role: 'भूमिका के अनुसार उपयोगकर्ता',
+                users_by_role: 'भूमिका के अनुसार उपयोगकर्ता (सक्रिय बनाम रद्द)',
                 risk_dist: 'जोखिम स्तर वितरण',
                 registrations: 'समय के साथ पंजीकरण',
                 model_usage: 'मॉडल उपयोग',
                 no_data: 'अभी तक कोई डेटा नहीं',
+                children_per_center: 'प्रति केंद्र बच्चे',
+                intervention_categories: 'हस्तक्षेप श्रेणियां',
+                improvement_status: 'सुधार की स्थिति',
+                gender_dist: 'लिंग वितरण',
+                age_gender: 'आयु समूह और लिंग के अनुसार बच्चे',
             },
             periods: {
                 week: 'पिछले 7 दिन',
@@ -1215,6 +1280,31 @@ export const translations = {
                 compliance: 'अनुपालन',
                 provider: 'सेवा प्रदाता',
             }
+        },
+        growth: {
+            title: 'बच्चे का विकास चार्ट',
+            select_child: 'बच्चे का चयन करें',
+            select_child_instruction: 'विकास की गति देखने के लिए ऊपर एक बच्चा चुनें',
+            export: 'निर्यात',
+            loading: 'मूल्यांकन डेटा लोड हो रहा है...',
+            error: 'विकास डेटा लोड करने में विफल। कृपया पुन: प्रयास करें।',
+            no_assessments: 'इस बच्चे के लिए अभी तक कोई मूल्यांकन दर्ज नहीं किया गया है।',
+            x_axis: 'मूल्यांकन चक्र',
+            y_axis: 'DQ स्कोर',
+            typical: 'सामान्य (85)',
+            cycle: 'चक्र',
+            csv_headers: {
+                cycle: 'चक्र',
+                date: 'तिथि',
+                age: 'आयु (माह)',
+                comp_dq: 'समग्र DQ',
+                gross: 'ग्रास मोटर',
+                fine: 'फाइन मोटर',
+                lang: 'भाषा',
+                cog: 'संज्ञानात्मक',
+                socio: 'सामाजिक-भावनात्मक',
+                delayed: 'विलंबित क्षेत्र'
+            }
         }
     },
     kn: {
@@ -1285,11 +1375,16 @@ export const translations = {
                 new_month: 'ಈ ತಿಂಗಳು ಹೊಸತು',
             },
             charts: {
-                users_by_role: 'ಪಾತ್ರದ ಪ್ರಕಾರ ಬಳಕೆದಾರರು',
+                users_by_role: 'ಪಾತ್ರದ ಪ್ರಕಾರ ಬಳಕೆದಾರರು (ಸಕ್ರಿಯ vs ರದ್ದುಗೊಂಡವರು)',
                 risk_dist: 'ಅಪಾಯದ ಮಟ್ಟದ ವಿತರಣೆ',
                 registrations: 'ಸಮಯದ ಮೀರಿದ ನೋಂದಣಿಗಳು',
                 model_usage: 'ಮಾದರಿ ಬಳಕೆ',
                 no_data: 'ಇನ್ನೂ ಯಾವುದೇ ಡೇಟಾ ಇಲ್ಲ',
+                children_per_center: 'ಕೇಂದ್ರದ ಪ್ರಕಾರ ಮಕ್ಕಳು',
+                intervention_categories: 'ಹಸ್ತಕ್ಷೇಪ ವರ್ಗಗಳು',
+                improvement_status: 'ಸುಧಾರಣೆಯ ಸ್ಥಿತಿ',
+                gender_dist: 'ಲಿಂಗ ವಿತರಣೆ',
+                age_gender: 'ವಯಸ್ಸಿನ ಗುಂಪು ಮತ್ತು ಲಿಂಗದ ಪ್ರಕಾರ ಮಕ್ಕಳು',
             },
             periods: {
                 week: 'ಕಳೆದ 7 ದಿನಗಳು',
@@ -1607,6 +1702,31 @@ export const translations = {
                 compliance: 'ಅನುಸರಣೆ',
                 provider: 'ಸೇವಿಕ',
             }
+        },
+        growth: {
+            title: 'ಮಗುವಿನ ಬೆಳವಣಿಗೆಯ ಚಾರ್ಟ್',
+            select_child: 'ಮಗುವನ್ನು ಆಯ್ಕೆಮಾಡಿ',
+            select_child_instruction: 'ಬೆಳವಣಿಗೆಯ ಪ್ರವೃತ್ತಿಯನ್ನು ನೋಡಲು ಮಗುವನ್ನು ಆಯ್ಕೆಮಾಡಿ',
+            export: 'ರಫ್ತು',
+            loading: 'ಮೌಲ್ಯಮಾಪನ ಡೇಟಾ ಲೋಡ್ ಆಗುತ್ತಿದೆ...',
+            error: 'ಬೆಳವಣಿಗೆಯ ಡೇಟಾವನ್ನು ಲೋಡ್ ಮಾಡುವಲ್ಲಿ ವಿಫಲವಾಗಿದೆ. ದಯವಿಟ್ಟು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.',
+            no_assessments: 'ಈ ಮಗುವಿಗೆ ಇನ್ನೂ ಯಾವುದೇ ಮೌಲ್ಯಮಾಪನ ದಾಖಲಾಗಿಲ್ಲ.',
+            x_axis: 'ಮೌಲ್ಯಮಾಪನ ಚಕ್ರ',
+            y_axis: 'DQ ಅಂಕ',
+            typical: 'ಸಹಜ (85)',
+            cycle: 'ಚಕ್ರ',
+            csv_headers: {
+                cycle: 'ಚಕ್ರ',
+                date: 'ದಿನಾಂಕ',
+                age: 'ವಯಸ್ಸು (ತಿಂಗಳು)',
+                comp_dq: 'ಒಟ್ಟು DQ',
+                gross: 'ಗ್ರಾಸ್ ಮೋಟಾರ್',
+                fine: 'ಫೈನ್ ಮೋಟಾರ್',
+                lang: 'ಭಾಷೆ',
+                cog: 'ಅರಿವಿನ',
+                socio: 'ಸಾಮಾಜಿಕ-ಭಾವನಾತ್ಮಕ',
+                delayed: 'ವಿಳಂಬಿತ ವಲಯಗಳು'
+            }
         }
     },
     ur: {
@@ -1777,6 +1897,11 @@ export const translations = {
                 registrations: 'بچوں کی رجسٹریشن وقت کے ساتھ',
                 model_usage: 'ماڈل کا استعمال',
                 no_data: 'ابھی تک کوئی ڈیٹا دستیاب نہیں ہے',
+                children_per_center: 'فی سینٹر بچے',
+                intervention_categories: 'مداخلت کے زمرے',
+                improvement_status: 'بہتری کی صورتحال',
+                gender_dist: 'جنس کی تقسیم',
+                age_gender: 'عمر گروپ اور جنس کے لحاظ سے بچے',
             },
             periods: {
                 week: 'آخری 7 دن',
@@ -2013,20 +2138,45 @@ export const translations = {
                 system_health: 'سسٹم کی حیثیت {status} ہے۔ بیک اینڈ اے پی آئی اور ڈیٹا بیس مکمل طور پر منسلک ہیں۔',
                 system_audit: 'سسٹم ہیلتھ آڈٹ: {api} پر بیک اینڈ اے پی آئی {api_status} ہے۔ ڈیٹا بیس {db} {db_status} ہے۔'
             }
-        }
-    },
-    interventions: {
-        ongoing: 'جاری ہے',
-        cols: {
-            category: 'زمرہ',
-            type: 'قسم',
-            start: 'آغاز کی تاریخ',
-            end: 'اختتام کی تاریخ',
-            sessions: 'سیشنز',
-            sessions_done: 'مکمل سیشنز',
-            sessions_planned: 'طے کردہ سیشنز',
-            compliance: 'انطباق',
-            provider: 'فراہم کنندہ',
+        },
+        interventions: {
+            ongoing: 'جاری ہے',
+            cols: {
+                category: 'زمرہ',
+                type: 'قسم',
+                start: 'آغاز کی تاریخ',
+                end: 'اختتام کی تاریخ',
+                sessions: 'سیشنز',
+                sessions_done: 'مکمل سیشنز',
+                sessions_planned: 'طے کردہ سیشنز',
+                compliance: 'انطباق',
+                provider: 'فراہم کنندہ',
+            }
+        },
+        growth: {
+            title: 'بچے کی نشوونما کا چارٹ',
+            select_child: 'بچہ منتخب کریں',
+            select_child_instruction: 'بچے کی نشوونما کا رجحان دیکھنے کے لیے اوپر سے ایک بچہ منتخب کریں',
+            export: 'ایکسپورٹ',
+            loading: 'تشخیصی ڈیٹا لوڈ ہو رہا ہے...',
+            error: 'ترقیاتی ڈیٹا لوڈ کرنے میں ناکامی۔ براہ کرم دوبارہ کوشش کریں۔',
+            no_assessments: 'اس بچے کے لیے ابھی تک کوئی تشخیص ریکارڈ نہیں کی گئی ہے۔',
+            x_axis: 'تشخیصی سائیکل',
+            y_axis: 'ڈی کیو اسکور',
+            typical: 'عام (85)',
+            cycle: 'سائیکل',
+            csv_headers: {
+                cycle: 'سائیکل',
+                date: 'تاریخ',
+                age: 'عمر (ماہ)',
+                comp_dq: 'جامع ڈی کیو',
+                gross: 'گراس موٹر',
+                fine: 'فائن موٹر',
+                lang: 'زبان',
+                cog: 'علمی',
+                socio: 'سماجی جذباتی',
+                delayed: 'تاخیر کے دائرے'
+            }
         }
     },
     ta: {
@@ -2197,6 +2347,11 @@ export const translations = {
                 registrations: 'காலப்போக்கில் குழந்தைகளின் பதிவுகள்',
                 model_usage: 'மாதிரி பயன்பாடு',
                 no_data: 'தரவு எதுவும் இன்னும் இல்லை',
+                children_per_center: 'மைய வாரியாக குழந்தைகள்',
+                intervention_categories: 'தலையீடு வகைகள்',
+                improvement_status: 'மேம்பாட்டு நிலை',
+                gender_dist: 'பாலின விநியோகம்',
+                age_gender: 'வயது மற்றும் பாலின வாரியாக குழந்தைகள்',
             },
             periods: {
                 week: 'கடந்த 7 நாட்கள்',
@@ -2446,6 +2601,31 @@ export const translations = {
                 sessions_planned: 'திட்டத்தப்பட்ட அமர்வுகள்',
                 compliance: 'இணக்கம்',
                 provider: 'வழங்குபவர்',
+            }
+        },
+        growth: {
+            title: 'குழந்தை வளர்ச்சி விளக்கப்படம்',
+            select_child: 'குழந்தையைத் தேர்ந்தெடுக்கவும்',
+            select_child_instruction: 'வளர்ச்சிப் போக்கைக் காண மேலே உள்ள குழந்தையைத் தேர்ந்தெடுக்கவும்',
+            export: 'ஏற்றுமதி',
+            loading: 'மதிப்பீட்டுத் தரவு ஏற்றப்படுகிறது...',
+            error: 'வளர்ச்சித் தரவை ஏற்றுவதில் தோல்வி. மீண்டும் முயற்சிக்கவும்.',
+            no_assessments: 'இந்தக் குழந்தைக்கு இன்னும் மதிப்பீடுகள் எதுவும் பதிவு செய்யப்படவில்லை.',
+            x_axis: 'மதிப்பீட்டுச் சுழற்சி',
+            y_axis: 'DQ மதிப்பெண்',
+            typical: 'சாதாரண (85)',
+            cycle: 'சுழற்சி',
+            csv_headers: {
+                cycle: 'சுற்று',
+                date: 'தேதி',
+                age: 'வயது (மாதங்கள்)',
+                comp_dq: 'கூட்டு DQ',
+                gross: 'மொத்த மோட்டார்',
+                fine: 'நுண்ணிய மோட்டார்',
+                lang: 'மொழி',
+                cog: 'அறிவுசார்',
+                socio: 'சமூக-உணர்ச்சி',
+                delayed: 'தாமதமான களங்கள்'
             }
         }
     }
