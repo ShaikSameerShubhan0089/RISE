@@ -1,4 +1,5 @@
-# Python Dependencies for Autism Risk Stratification CDSS
+# Python Dependencies for RISE
+# Risk Identification System for Early Detection
 
 # Core ML & Data Science
 numpy>=1.24.0

@@ -1,11 +1,11 @@
-# 🏥 Autism Risk Stratification CDSS
+# 🏥 RISE - Risk Identification System for Early Detection
 ## Professional & Technical Source Documentation
 
 ---
 
 ## 📋 Executive Summary
 
-The **Autism Risk Stratification CDSS** (Clinical Decision Support System) is a high-precision digital ecosystem designed for the early identification, longitudinal tracking, and personalized intervention management of children with neurodevelopmental risks. It serves as a decision-support bridge between rural Anganwadi centers and clinical specialist facilities.
+The **RISE (Risk Identification System for Early Detection)** is a high-precision digital ecosystem designed for the early identification, longitudinal tracking, and personalized intervention management of children with neurodevelopmental risks. It serves as a decision-support bridge between rural Anganwadi centers and clinical specialist facilities.
 
 ### Key Value Proposition
 - ⚡ **Precision Screening**: 98.4% accuracy in DQ-based risk classification via calibrated XGBoost.

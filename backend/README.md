@@ -65,6 +65,10 @@ Once the server is running, access:
 - **ReDoc**: http://localhost:8000/api/redoc
 - **Health Check**: http://localhost:8000/api/health
 
+## Translation Files
+
+All language strings used by the backend (risk tiers, intervention objectives, etc.) are now stored in `shared/translations.json`. This makes it easy to add new languages or update phrasing without modifying Python code. Translators can edit that JSON directly and restart the server. The `InterventionPlanner` will load the file at startup.
+
 ## API Endpoints
 
 ### Authentication

@@ -1,4 +1,5 @@
-# Autism CDSS - Render Deployment Guide
+# RISE - Render Deployment Guide
+**Risk Identification System for Early Detection**
 
 ## Architecture Overview
 
@@ -212,8 +213,9 @@ LOG_LEVEL=INFO
 ### Frontend (.env.production in git)
 
 ```
-VITE_API_URL=https://autism-cdss-api.onrender.com/api
-VITE_APP_NAME=Autism Risk Stratification CDSS
+VITE_API_URL=https://rise-api.onrender.com/api
+VITE_APP_NAME=RISE
+VITE_APP_TAGLINE=See Tomorrow. Act Today.
 ```
 
 ---

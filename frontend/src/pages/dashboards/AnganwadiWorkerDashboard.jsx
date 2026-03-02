@@ -321,10 +321,6 @@ const AnganwadiWorkerDashboard = () => {
                 data={summary}
                 keys={['total_children', 'active_children', 'total_interventions', 'active_interventions', 'total_assessments', 'total_centers']}
             />
-            <SummaryCards
-                data={summary}
-                keys={['total_children', 'active_children', 'total_interventions', 'active_interventions', 'total_assessments', 'total_centers']}
-            />
 
             {/* Tabs */}
             <div className="border-b border-gray-200">
@@ -458,9 +454,9 @@ const AnganwadiWorkerDashboard = () => {
                         <div className="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center mx-auto">
                             <ClipboardList className="w-10 h-10 text-green-600" />
                         </div>
-                        <h2 className="text-xl font-bold text-gray-900">Digital Assessments Portal</h2>
+                        <h2 className="text-xl font-bold text-gray-900">{t('common.worker_portal_title')}</h2>
                         <p className="text-gray-500 max-w-sm mx-auto">
-                            Run real-time AI risk screening or escalation predictions for children in your centre.
+                            {t('common.worker_portal_desc')}
                         </p>
                         <button
                             onClick={() => setShowAssessment(true)}
@@ -480,7 +476,7 @@ const AnganwadiWorkerDashboard = () => {
                                 onClick={openAddUser}
                                 className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-green-700 transition-all flex items-center gap-2"
                             >
-                                <UserPlus className="w-4 h-4" /> Add Parent Account
+                                <UserPlus className="w-4 h-4" /> {t('common.add_parent_account')}
                             </button>
                         </div>
                         <UsersTable
@@ -514,9 +510,9 @@ const AnganwadiWorkerDashboard = () => {
                     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
                         <div className="bg-white rounded-2xl p-8 max-w-md text-center space-y-4 shadow-2xl">
                             <ClipboardList className="w-12 h-12 text-green-600 mx-auto" />
-                            <h2 className="text-xl font-bold">Assessments</h2>
-                            <p className="text-gray-500">The assessment form is being updated. Please use the sidebar 'Assessments' link for now.</p>
-                            <button onClick={() => setShowAssessment(false)} className="bg-green-600 text-white px-6 py-2 rounded-xl font-bold">Close</button>
+                            <h2 className="text-xl font-bold">{t('common.assessment_modal_title')}</h2>
+                            <p className="text-gray-500">{t('common.assessment_form_notice')}</p>
+                            <button onClick={() => setShowAssessment(false)} className="bg-green-600 text-white px-6 py-2 rounded-xl font-bold">{t('common.close')}</button>
                         </div>
                     </div>
                 )
@@ -529,13 +525,13 @@ const AnganwadiWorkerDashboard = () => {
                         <div className="flex-1 bg-black/40" onClick={() => setShowUserForm(false)} />
                         <div className="w-full max-w-lg bg-white shadow-2xl flex flex-col p-6 overflow-y-auto">
                             <div className="flex justify-between items-center mb-6">
-                                <h2 className="text-xl font-bold">{editingUser ? 'Edit Parent' : 'Add Parent'}</h2>
+                                <h2 className="text-xl font-bold">{editingUser ? t('common.edit_parent') : t('common.add_parent')}</h2>
                                 <button onClick={() => setShowUserForm(false)}><X className="w-6 h-6 text-gray-400" /></button>
                             </div>
                             <form onSubmit={handleSaveUser} className="space-y-4">
                                 {formError && <div className="p-3 bg-red-50 text-red-600 text-sm rounded-lg">{formError}</div>}
                                 <div className="space-y-1">
-                                    <label className="text-xs font-bold text-gray-500 uppercase">Full Name</label>
+                                    <label className="text-xs font-bold text-gray-500 uppercase">{t('user_mgmt.fields.full_name')}</label>
                                     <input
                                         value={userForm.full_name}
                                         onChange={e => setUserForm(f => ({ ...f, full_name: e.target.value }))}
@@ -544,7 +540,7 @@ const AnganwadiWorkerDashboard = () => {
                                     />
                                 </div>
                                 <div className="space-y-1">
-                                    <label className="text-xs font-bold text-gray-500 uppercase">Email</label>
+                                    <label className="text-xs font-bold text-gray-500 uppercase">{t('user_mgmt.fields.email')}</label>
                                     <input
                                         type="email"
                                         value={userForm.email}
@@ -554,14 +550,14 @@ const AnganwadiWorkerDashboard = () => {
                                     />
                                 </div>
                                 <div className="space-y-1">
-                                    <label className="text-xs font-bold text-gray-500 uppercase">Password</label>
+                                    <label className="text-xs font-bold text-gray-500 uppercase">{t('user_mgmt.fields.password')}</label>
                                     <div className="flex gap-2">
                                         <input
                                             type={showPwd ? 'text' : 'password'}
                                             value={userForm.password}
                                             onChange={e => setUserForm(f => ({ ...f, password: e.target.value }))}
                                             className="w-full border rounded-lg px-3 py-2 text-sm"
-                                            placeholder={editingUser ? '(Leave blank to keep)' : ''}
+                                            placeholder={editingUser ? t('user_mgmt.fields.leave_blank_password') : ''}
                                             required={!editingUser}
                                         />
                                         <button
@@ -578,7 +574,7 @@ const AnganwadiWorkerDashboard = () => {
                                     disabled={saving}
                                     className="w-full bg-green-600 text-white py-2.5 rounded-xl font-bold mt-4 disabled:opacity-50"
                                 >
-                                    {saving ? 'Saving...' : editingUser ? 'Update Parent' : 'Create Parent'}
+                                    {saving ? t('common.saving') : (editingUser ? t('common.edit_parent') : t('common.add_parent'))}
                                 </button>
                             </form>
                         </div>
@@ -591,8 +587,8 @@ const AnganwadiWorkerDashboard = () => {
                 resetModal && (
                     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
                         <div className="bg-white rounded-2xl p-6 w-full max-w-sm space-y-4 shadow-2xl">
-                            <h2 className="text-lg font-bold">Reset Password</h2>
-                            <p className="text-sm text-gray-500">New password for {resetModal.full_name}:</p>
+                            <h2 className="text-lg font-bold">{t('user_mgmt.reset_modal.title')}</h2>
+                            <p className="text-sm text-gray-500">{t('user_mgmt.reset_modal.sub', { name: resetModal.full_name })}</p>
                             <input
                                 type="text"
                                 value={newPassword}
@@ -600,8 +596,8 @@ const AnganwadiWorkerDashboard = () => {
                                 className="w-full border rounded-lg px-3 py-2 font-mono text-sm"
                             />
                             <div className="flex gap-3">
-                                <button onClick={() => setResetModal(null)} className="flex-1 py-2 text-sm font-bold text-gray-500">Cancel</button>
-                                <button onClick={handleResetPassword} className="flex-1 py-2 text-sm font-bold bg-amber-500 text-white rounded-lg">Reset</button>
+                                <button onClick={() => setResetModal(null)} className="flex-1 py-2 text-sm font-bold text-gray-500">{t('common.cancel')}</button>
+                                <button onClick={handleResetPassword} className="flex-1 py-2 text-sm font-bold bg-amber-500 text-white rounded-lg">{t('user_mgmt.reset_pwd_btn')}</button>
                             </div>
                         </div>
                     </div>

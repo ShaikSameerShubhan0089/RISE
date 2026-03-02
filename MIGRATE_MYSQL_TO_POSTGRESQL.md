@@ -16,15 +16,15 @@ You have data in **local MySQL** that needs to move to **Render PostgreSQL** bef
 ### Step 1.1: Export MySQL Data Locally
 
 ```bash
-# Export entire autism_cdss database to SQL file
-mysqldump -u root -pLead@0089 --single-transaction --no-tablespaces autism_cdss > backup.sql
+# Export entire rise database to SQL file
+mysqldump -u root -pLead@0089 --single-transaction --no-tablespaces rise > backup.sql
 
 # Options explained:
 # -u root              : MySQL username
 # -pLead@0089          : MySQL password (no space after -p)
 # --single-transaction : Consistent snapshot (no locks)
 # --no-tablespaces     : Skip tablespace (PostgreSQL compatible)
-# autism_cdss          : Database name
+# rise                 : Database name
 # > backup.sql         : Save to file
 ```
 
@@ -54,8 +54,8 @@ Create migration config file: `migrate.load`
 
 ```
 LOAD DATABASE
-    FROM      mysql://root:Lead@0089@localhost:3306/autism_cdss
-    INTO      postgresql://postgres:RENDER_PASSWORD@autism-cdss-db.onrender.com:5432/autism_cdss
+    FROM      mysql://root:Lead@0089@localhost:3306/rise
+    INTO      postgresql://postgres:RENDER_PASSWORD@rise-db.onrender.com:5432/rise
     WITH      data only, skip truncate, create no indexes
     EXCLUDING TABLE NAMES MATCHING 'alembic%'
 ;
@@ -72,13 +72,13 @@ pgloader migrate.load
 
 ```bash
 # Connect to PostgreSQL on Render
-psql -U postgres -h autism-cdss-db.onrender.com -d autism_cdss
+psql -U postgres -h rise-db.onrender.com -d rise
 
 # Inside psql terminal:
 \i backup.sql
 
 # Or from command line:
-psql -U postgres -h autism-cdss-db.onrender.com -d autism_cdss < backup.sql
+psql -U postgres -h rise-db.onrender.com -d rise < backup.sql
 ```
 
 **Password**: Enter the Render PostgreSQL password when prompted.

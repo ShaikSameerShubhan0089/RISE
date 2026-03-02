@@ -4,6 +4,26 @@ import { useLanguage } from '../../context/LanguageContext';
 
 const PAGE_SIZE_OPTIONS = [10, 25, 50, 100];
 
+// Maps for English values to translation keys
+const statusKeyMap = {
+    'Significant Improvement': 'interventions.improvement_status.significant',
+    'Moderate Improvement': 'interventions.improvement_status.moderate',
+    'Minimal Improvement': 'interventions.improvement_status.minimal',
+    'No Change': 'interventions.improvement_status.no_change',
+    'Decline': 'interventions.improvement_status.decline',
+    'In Progress': 'interventions.improvement_status.in_progress',
+};
+
+const categoryKeyMap = {
+    'Speech Therapy': 'interventions.categories.speech_therapy',
+    'Occupational Therapy': 'interventions.categories.occupational_therapy',
+    'Behavioral Therapy': 'interventions.categories.behavioral_therapy',
+    'Early Intervention': 'interventions.categories.early_intervention',
+    'Nutritional Support': 'interventions.categories.nutritional_support',
+    'Parental Training': 'interventions.categories.parental_training',
+    'Other': 'interventions.categories.other',
+};
+
 const statusColors = {
     'Significant Improvement': 'bg-green-100 text-green-800',
     'Moderate Improvement': 'bg-teal-100 text-teal-800',
@@ -42,10 +62,10 @@ const exportCSV = (rows, t) => {
         headers.join(','),
         ...rows.map(i => [
             i.intervention_id,
-            `"${i.child_name}"`, `"${i.center_name}"`, `"${i.intervention_category || ''}"`,
-            `"${i.intervention_type}"`, i.start_date || '', i.end_date || 'Ongoing',
+            `"${i.child_name}"`, `"${i.center_name}"`, `"${t(categoryKeyMap[i.intervention_category] || 'interventions.categories.other')}"`,
+            `"${i.intervention_type}"`, i.start_date || '', i.end_date || t('interventions.ongoing'),
             i.sessions_completed ?? '', i.total_sessions_planned ?? '',
-            i.compliance_percentage?.toFixed(1) ?? '', `"${i.improvement_status || ''}"`,
+            i.compliance_percentage?.toFixed(1) ?? '', `"${t(statusKeyMap[i.improvement_status] || 'interventions.improvement_status.no_change')}"`,
             `"${i.provider_name || ''}"`,
         ].join(',')
         ),
@@ -113,7 +133,7 @@ const InterventionsTable = ({ data = [] }) => {
                         className="text-sm border border-gray-300 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
                         <option value="all">{t('children.filters.all_statuses') || 'All Categories'}</option>
-                        {categories.map(c => <option key={c} value={c}>{c}</option>)}
+                        {categories.map(c => <option key={c} value={c}>{t(categoryKeyMap[c] || c)}</option>)}
                     </select>
                     <div className="relative">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -154,7 +174,7 @@ const InterventionsTable = ({ data = [] }) => {
                                 <td className="px-4 py-3 text-xs text-gray-500">{i.center_name}</td>
                                 <td className="px-4 py-3">
                                     <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${categoryColors[i.intervention_category] || 'bg-gray-100 text-gray-600'}`}>
-                                        {i.intervention_category || '—'}
+                                        {t(categoryKeyMap[i.intervention_category] || 'interventions.categories.other')}
                                     </span>
                                 </td>
                                 <td className="px-4 py-3 text-xs text-gray-600">{i.intervention_type}</td>
@@ -164,7 +184,7 @@ const InterventionsTable = ({ data = [] }) => {
                                 <td className="px-4 py-3 min-w-[120px]"><ComplianceBar value={i.compliance_percentage} /></td>
                                 <td className="px-4 py-3">
                                     <span className={`px-2 py-0.5 rounded-full text-xs font-medium whitespace-nowrap ${statusColors[i.improvement_status] || 'bg-gray-100 text-gray-600'}`}>
-                                        {i.improvement_status || '—'}
+                                        {t(statusKeyMap[i.improvement_status] || 'interventions.improvement_status.no_change')}
                                     </span>
                                 </td>
                                 <td className="px-4 py-3 text-xs text-gray-600">{i.provider_name || '—'}</td>

@@ -1,12 +1,12 @@
 services:
   # PostgreSQL Database
   - type: pserv
-    name: autism-cdss-db
+    name: rise-db
     env: docker
     dockerfilePath: ./Dockerfile.db
     envVars:
       - key: POSTGRES_DB
-        value: autism_cdss
+        value: rise
       - key: POSTGRES_USER
         value: postgres
       - key: POSTGRES_PASSWORD
@@ -14,7 +14,7 @@ services:
 
   # FastAPI Backend + React Frontend (Combined Service)
   - type: web
-    name: autism-cdss-api
+    name: rise-api
     runtime: python
     buildCommand: cd frontend && npm install && npm run build && cd .. && mkdir -p backend/static && cp -r frontend/dist/* backend/static/ && pip install -r requirements.txt
     startCommand: cd backend && uvicorn main:app --host 0.0.0.0 --port $PORT
@@ -22,11 +22,11 @@ services:
     envVars:
       - key: DATABASE_URL
         fromService:
-          name: autism-cdss-db
+          name: rise-db
           type: pserv
           property: connectionString
       - key: DATABASE_URL
-        value: postgresql://postgres:${POSTGRES_PASSWORD}@autism-cdss-db:5432/autism_cdss
+        value: postgresql://postgres:${POSTGRES_PASSWORD}@rise-db:5432/rise
       - key: JWT_SECRET
         sync: false
       - key: JWT_ALGORITHM

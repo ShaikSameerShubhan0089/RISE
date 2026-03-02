@@ -52,7 +52,7 @@ def init_db():
     Note: In production, use Alembic for migrations
     """
     Base.metadata.create_all(bind=engine)
-    print("✓ Database tables initialized")
+    print("[OK] Database tables initialized")
 
 
 def check_db_connection():
@@ -62,5 +62,5 @@ def check_db_connection():
             conn.execute(text("SELECT 1"))
         return True
     except Exception as e:
-        print(f"✗ Database connection failed: {e}")
+        print(f"[FAIL] Database connection failed: {e}")
         return False

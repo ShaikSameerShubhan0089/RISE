@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import {
@@ -10,14 +10,33 @@ import {
     FileText,
     LogOut,
     Activity,
-    Globe
+    Globe,
+    Volume2,
+    ChevronDown
 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
+import logo from '../../../logo/logo.png';
 
 const Sidebar = () => {
     const { user, logout } = useAuth();
-    const { language, setLanguage, t } = useLanguage();
+    const { language, setLanguage, t, speak } = useLanguage();
     const location = useLocation();
+    const [availableVoices, setAvailableVoices] = useState([]);
+    const [selectedVoice, setSelectedVoice] = useState('default');
+    const [showVoiceDropdown, setShowVoiceDropdown] = useState(false);
+
+    // Load available voices
+    useEffect(() => {
+        const loadVoices = () => {
+            const voices = window.speechSynthesis?.getVoices() || [];
+            const langVoices = voices.filter(v => v.lang.startsWith(language));
+            setAvailableVoices(langVoices);
+        };
+
+        loadVoices();
+        window.speechSynthesis?.addEventListener('voiceschanged', loadVoices);
+        return () => window.speechSynthesis?.removeEventListener('voiceschanged', loadVoices);
+    }, [language]);
 
     const getRoleBasedNavigation = () => {
         const commonItems = [
@@ -70,14 +89,11 @@ const Sidebar = () => {
         <div className="h-screen w-64 bg-white border-r border-gray-200 flex flex-col">
             {/* Logo */}
             <div className="p-6 border-b border-gray-200">
-                <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-primary-600 rounded-lg flex items-center justify-center">
-                        <Activity className="w-6 h-6 text-white" />
+                <div className="flex flex-col items-center">
+                    <div className="w-50 h-50 flex items-center justify-center">
+                        <img src={logo} alt="RISE" className="max-w-full max-h-full object-contain" />
                     </div>
-                    <div>
-                        <h1 className="text-lg font-bold text-gray-900">{t('sidebar.title')}</h1>
-                        <p className="text-xs text-gray-500 capitalize">{user?.role?.replace('_', ' ')}</p>
-                    </div>
+                    <p className="text-xs text-gray-500 capitalize mt-2">{user?.role?.replace('_', ' ')}</p>
                 </div>
             </div>
 
@@ -103,7 +119,7 @@ const Sidebar = () => {
                 })}
             </nav>
 
-            {/* Language Switcher & Logout */}
+            {/* Language Switcher & Voice Control */}
             <div className="p-4 border-t border-gray-200 space-y-2">
                 {/* Language Toggle */}
                 <div className="px-4 py-2 border border-gray-200 rounded-lg flex items-center justify-between">
@@ -124,6 +140,55 @@ const Sidebar = () => {
                         <option value="ta">தமிழ்</option>
                     </select>
                 </div>
+
+                {/* Voice Selector */}
+                <div className="relative">
+                    <button
+                        onClick={() => setShowVoiceDropdown(!showVoiceDropdown)}
+                        className="w-full px-4 py-2 border border-gray-200 rounded-lg flex items-center justify-between hover:bg-gray-50 transition"
+                    >
+                        <div className="flex items-center gap-2 text-gray-600">
+                            <Volume2 className="w-4 h-4" />
+                            <span className="text-xs font-semibold uppercase">Voice</span>
+                        </div>
+                        <ChevronDown className={`w-3 h-3 text-gray-400 transition ${showVoiceDropdown ? 'rotate-180' : ''}`} />
+                    </button>
+                    {showVoiceDropdown && availableVoices.length > 0 && (
+                        <div className="absolute bottom-full left-0 right-0 mb-2 bg-white border border-gray-200 rounded-lg shadow-lg z-50 max-h-48 overflow-y-auto">
+                            <button
+                                onClick={() => {
+                                    speak('Hello, system voice test');
+                                    setShowVoiceDropdown(false);
+                                }}
+                                className="w-full text-left px-3 py-2 text-xs hover:bg-blue-50 text-gray-700 border-b border-gray-100"
+                            >
+                                🔊 System Default
+                            </button>
+                            {availableVoices.slice(0, 8).map((voice, idx) => (
+                                <button
+                                    key={idx}
+                                    onClick={() => {
+                                        speak('Voice test');
+                                        setShowVoiceDropdown(false);
+                                    }}
+                                    className="w-full text-left px-3 py-2 text-xs hover:bg-blue-50 text-gray-700 border-t border-gray-100 truncate"
+                                    title={voice.name}
+                                >
+                                    {voice.name.substring(0, 28)}...
+                                </button>
+                            ))}
+                        </div>
+                    )}
+                </div>
+
+                {/* Test Voice Button */}
+                <button
+                    onClick={() => speak(`${t('common.welcome')}!`)}
+                    className="w-full px-3 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg transition text-xs font-semibold flex items-center justify-center gap-2"
+                >
+                    <Volume2 className="w-3 h-3" />
+                    Test Voice
+                </button>
 
                 <div className="mb-3 px-4 py-2 bg-gray-50 rounded-lg">
                     <p className="text-sm font-medium text-gray-900">{user?.full_name}</p>

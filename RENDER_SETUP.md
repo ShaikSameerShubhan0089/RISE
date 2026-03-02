@@ -36,14 +36,14 @@ ml/models/saved/
 
 1. Click **+ New**
 2. Select **PostgreSQL**
-3. Name: `autism-cdss-db`
+3. Name: `rise-db`
 4. Plan: **Free** ($0/month, 1 GB storage)
 5. Region: Pick same as API (e.g., Singapore)
 6. Click **Create Database**
 
 **Save these credentials**:
-- Host: `autism-cdss-db.onrender.com` (or similar)
-- Database: `autism_cdss` (auto-created)
+- Host: `rise-db.onrender.com` (or similar)
+- Database: `rise` (auto-created)
 - User: `postgres`
 - Password: (auto-generated, copy it!)
 - Port: `5432`
@@ -62,7 +62,7 @@ postgresql://postgres:PASSWORD@autism-cdss-db.onrender.com:5432/autism_cdss
 3. Choose your GitHub repo
 4. Configuration:
    ```
-   Name: autism-cdss-api
+   Name: rise-api
    Root Directory: (leave blank)
    Runtime: Python 3
    Build Command: pip install -r requirements.txt
@@ -74,20 +74,20 @@ postgresql://postgres:PASSWORD@autism-cdss-db.onrender.com:5432/autism_cdss
 6. While deploying, go to **Environment** tab and add variables:
 
 ```
-DATABASE_URL = postgresql://postgres:PASSWORD@autism-cdss-db.onrender.com:5432/autism_cdss
+DATABASE_URL = postgresql://postgres:PASSWORD@rise-db.onrender.com:5432/rise
 JWT_SECRET = (generate: python -c "import secrets; print(secrets.token_urlsafe(64))")
 JWT_ALGORITHM = HS256
 JWT_EXPIRATION = 1440
 API_HOST = 0.0.0.0
 API_PORT = 8000
 API_RELOAD = False
-CORS_ORIGINS = https://autism-cdss-frontend.onrender.com
+CORS_ORIGINS = https://rise-frontend.onrender.com
 ML_MODEL_PATH = ./ml/models/saved/
 LOG_LEVEL = INFO
 ```
 
 7. Save & Deploy
-8. **Get Backend URL**: `https://autism-cdss-api.onrender.com`
+8. **Get Backend URL**: `https://rise-api.onrender.com`
 
 ### Step 4: Deploy Frontend (3 minutes)
 
@@ -97,7 +97,7 @@ LOG_LEVEL = INFO
 2. Connect your GitHub repo
 3. Configuration:
    ```
-   Name: autism-cdss-frontend
+   Name: rise-frontend
    Root Directory: (leave blank)
    Build Command: cd frontend && npm install && npm run build
    Publish Directory: frontend/dist
@@ -106,19 +106,21 @@ LOG_LEVEL = INFO
 4. Before creating, add file: `frontend/.env.production`
 
 ```
-VITE_API_URL=https://autism-cdss-api.onrender.com/api
+VITE_API_URL=https://rise-api.onrender.com/api
+VITE_APP_NAME=RISE
+VITE_APP_TAGLINE=See Tomorrow. Act Today.
 ```
 
 5. Click **Create Static Site**
-6. **Get Frontend URL**: `https://autism-cdss-frontend.onrender.com`
+6. **Get Frontend URL**: `https://rise-frontend.onrender.com`
 
 ### Step 5: Update CORS (2 minutes)
 
-Go back to **autism-cdss-api** service → **Environment**:
+Go back to **rise-api** service → **Environment**:
 
 Update:
 ```
-CORS_ORIGINS = https://autism-cdss-frontend.onrender.com
+CORS_ORIGINS = https://rise-frontend.onrender.com
 ```
 
 Click **Save** and wait for restart (~30 seconds).
@@ -127,13 +129,13 @@ Click **Save** and wait for restart (~30 seconds).
 
 ```bash
 # 1. Check API health
-curl https://autism-cdss-api.onrender.com/api/health
+curl https://rise-api.onrender.com/api/health
 
 # Expected response:
 # {"status":"healthy","database":"connected","version":"1.0.0"}
 
 # 2. Open frontend
-# https://autism-cdss-frontend.onrender.com
+# https://rise-frontend.onrender.com
 
 # 3. Test login & prediction
 # Create a test user and try making predictions
@@ -144,7 +146,7 @@ curl https://autism-cdss-api.onrender.com/api/health
 ## Troubleshooting Quick Fixes
 
 ### API returns 500 Error
-→ Check logs: Dashboard → **autism-cdss-api** → **Logs**
+→ Check logs: Dashboard → **rise-api** → **Logs**
 → Usually: database connection, missing environment variable, or ML model file not found
 
 ### Frontend shows blank page
@@ -183,7 +185,7 @@ mysql+pymysql://root:password@localhost:3306/autism_cdss
 
 **Render Production**:
 ```
-postgresql://postgres:PASSWORD@autism-cdss-db.onrender.com:5432/autism_cdss
+postgresql://postgres:PASSWORD@rise-db.onrender.com:5432/rise
 ```
 
 Your code automatically detects which database to use based on the URL prefix!

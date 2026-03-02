@@ -29,6 +29,7 @@
 ![SHAP Summary](classifier/shap_summary.png)
 
 --- 
+
 ## 🟠 Model B: Risk Escalation Predictor
 > [!WARNING]
 > Model B training is currently in **Architecture Ready** status. 

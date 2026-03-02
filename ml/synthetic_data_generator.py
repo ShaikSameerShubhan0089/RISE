@@ -1,5 +1,6 @@
 """
-Synthetic Data Generator for Autism Risk Stratification CDSS
+Synthetic Data Generator for RISE
+Risk Identification System for Early Detection
 Generates realistic developmental assessment data for ML model training and testing
 """
 

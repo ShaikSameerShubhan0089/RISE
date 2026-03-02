@@ -3,6 +3,7 @@ import {
     BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
     PieChart, Pie, Cell, Legend
 } from 'recharts';
+import { useLanguage } from '../../context/LanguageContext';
 
 const COLORS = ['#6366f1', '#22c55e', '#f59e0b', '#ef4444', '#14b8a6', '#a855f7', '#f97316'];
 
@@ -19,6 +20,7 @@ const CustomTooltip = ({ active, payload, label }) => {
 };
 
 const DashboardCharts = ({ data = {} }) => {
+    const { t } = useLanguage();
     const {
         children_per_center = [],
         intervention_categories = [],
@@ -30,9 +32,9 @@ const DashboardCharts = ({ data = {} }) => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Children per Centre */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
-                <h3 className="text-base font-semibold text-gray-900 mb-4">Children per Centre</h3>
+                <h3 className="text-base font-semibold text-gray-900 mb-4">{t('analytics.charts.children_per_center')}</h3>
                 {children_per_center.length === 0 ? (
-                    <div className="flex items-center justify-center h-48 text-gray-400 text-sm">No data</div>
+                    <div className="flex items-center justify-center h-48 text-gray-400 text-sm">{t('errors.no_data')}</div>
                 ) : (
                     <ResponsiveContainer width="100%" height={260}>
                         <BarChart data={children_per_center} margin={{ top: 5, right: 5, bottom: 60, left: 0 }}>
@@ -53,9 +55,9 @@ const DashboardCharts = ({ data = {} }) => {
 
             {/* Intervention Categories */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
-                <h3 className="text-base font-semibold text-gray-900 mb-4">Intervention Categories</h3>
+                <h3 className="text-base font-semibold text-gray-900 mb-4">{t('analytics.charts.intervention_categories')}</h3>
                 {intervention_categories.length === 0 ? (
-                    <div className="flex items-center justify-center h-48 text-gray-400 text-sm">No data</div>
+                    <div className="flex items-center justify-center h-48 text-gray-400 text-sm">{t('errors.no_data')}</div>
                 ) : (
                     <ResponsiveContainer width="100%" height={260}>
                         <PieChart>
@@ -83,9 +85,9 @@ const DashboardCharts = ({ data = {} }) => {
 
             {/* Improvement Status */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
-                <h3 className="text-base font-semibold text-gray-900 mb-4">Improvement Status</h3>
+                <h3 className="text-base font-semibold text-gray-900 mb-4">{t('analytics.charts.improvement_status')}</h3>
                 {improvement_status.length === 0 ? (
-                    <div className="flex items-center justify-center h-48 text-gray-400 text-sm">No data</div>
+                    <div className="flex items-center justify-center h-48 text-gray-400 text-sm">{t('errors.no_data')}</div>
                 ) : (
                     <ResponsiveContainer width="100%" height={200}>
                         <BarChart data={improvement_status} layout="vertical" margin={{ top: 0, right: 20, bottom: 0, left: 120 }}>
@@ -102,9 +104,9 @@ const DashboardCharts = ({ data = {} }) => {
 
             {/* Gender Distribution */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
-                <h3 className="text-base font-semibold text-gray-900 mb-4">Gender Distribution</h3>
+                <h3 className="text-base font-semibold text-gray-900 mb-4">{t('analytics.charts.gender_dist')}</h3>
                 {gender_distribution.length === 0 ? (
-                    <div className="flex items-center justify-center h-48 text-gray-400 text-sm">No data</div>
+                    <div className="flex items-center justify-center h-48 text-gray-400 text-sm">{t('errors.no_data')}</div>
                 ) : (
                     <ResponsiveContainer width="100%" height={200}>
                         <PieChart>

@@ -21,7 +21,8 @@ if __name__ == "__main__":
     import uvicorn
     
     print("=" * 60)
-    print("Starting Autism Risk Stratification CDSS API Server")
+    print("Starting RISE API Server")
+    print("Risk Identification System for Early Detection")
     print("=" * 60)
     
     # Configuration

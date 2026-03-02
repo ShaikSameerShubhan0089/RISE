@@ -1,7 +1,7 @@
 {
-  "name": "autism-cdss-frontend",
+  "name": "rise-frontend",
   "version": "1.0.0",
-  "description": "Clinical Decision Support System for Autism Risk Stratification - Frontend",
+  "description": "Risk Identification System for Early Detection - Frontend",
   "type": "module",
   "scripts": {
     "dev": "vite",

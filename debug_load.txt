@@ -15,3 +15,43 @@ DEBUG: Model A loaded successfully!
 --- load_models called at 2026-02-25 17:03:54.738988 ---
 
 --- load_models called at 2026-02-25 17:03:59.197913 ---
+
+--- load_models called at 2026-02-27 15:40:44.465500 ---
+DEBUG: ML_MODEL_PATH env: ../ml/models/saved
+DEBUG: Resolved model_path: C:\Users\S Sameer\Desktop\autism - Copy\ml\models\saved
+DEBUG: Checking Model A file: C:\Users\S Sameer\Desktop\autism - Copy\ml\models\saved\autism_risk_classifier_v1.pkl (Exists: True)
+DEBUG: Checking Model B file: C:\Users\S Sameer\Desktop\autism - Copy\ml\models\saved\risk_escalation_predictor_v1.pkl (Exists: False)
+DEBUG: Model A loaded successfully!
+
+--- load_models called at 2026-02-27 15:40:51.175851 ---
+
+--- load_models called at 2026-02-27 16:21:52.754475 ---
+DEBUG: ML_MODEL_PATH env: ../ml/models/saved
+DEBUG: Resolved model_path: C:\Users\S Sameer\Desktop\autism - Copy\ml\models\saved
+DEBUG: Checking Model A file: C:\Users\S Sameer\Desktop\autism - Copy\ml\models\saved\autism_risk_classifier_v1.pkl (Exists: True)
+DEBUG: Checking Model B file: C:\Users\S Sameer\Desktop\autism - Copy\ml\models\saved\risk_escalation_predictor_v1.pkl (Exists: False)
+DEBUG: Model A loaded successfully!
+
+--- load_models called at 2026-02-27 16:21:59.112117 ---
+
+--- load_models called at 2026-03-02 10:37:17.396173 ---
+DEBUG: ML_MODEL_PATH env: ../ml/models/saved
+DEBUG: Resolved model_path: C:\Users\S Sameer\Desktop\autism - Copy\ml\models\saved
+DEBUG: Checking Model A file: C:\Users\S Sameer\Desktop\autism - Copy\ml\models\saved\autism_risk_classifier_v1.pkl (Exists: True)
+DEBUG: Checking Model B file: C:\Users\S Sameer\Desktop\autism - Copy\ml\models\saved\risk_escalation_predictor_v1.pkl (Exists: False)
+DEBUG: Model A loaded successfully!
+
+--- load_models called at 2026-03-02 10:37:23.315980 ---
+
+--- load_models called at 2026-03-02 10:51:00.259995 ---
+DEBUG: ML_MODEL_PATH env: ../ml/models/saved
+DEBUG: Resolved model_path: C:\Users\S Sameer\Desktop\autism - Copy\ml\models\saved
+DEBUG: Checking Model A file: C:\Users\S Sameer\Desktop\autism - Copy\ml\models\saved\autism_risk_classifier_v1.pkl (Exists: True)
+DEBUG: Checking Model B file: C:\Users\S Sameer\Desktop\autism - Copy\ml\models\saved\risk_escalation_predictor_v1.pkl (Exists: False)
+DEBUG: Model A loaded successfully!
+
+--- load_models called at 2026-03-02 10:51:06.266574 ---
+
+--- load_models called at 2026-03-02 10:58:40.349603 ---
+
+--- load_models called at 2026-03-02 10:58:45.539103 ---

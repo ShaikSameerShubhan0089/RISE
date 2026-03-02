@@ -2,7 +2,7 @@
 
 ## 📋 Overview
 
-This checklist guides you through deploying your Autism Risk Stratification CDSS to Render with proper database connectivity.
+This checklist guides you through deploying RISE (Risk Identification System for Early Detection) to Render with proper database connectivity.
 
 **Current Status**: ✅ All files prepared for deployment
 

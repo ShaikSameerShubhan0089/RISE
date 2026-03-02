@@ -343,13 +343,19 @@ async def format_prediction_response(prediction, lang, db):
             shap_for_planner = [{'feature_name': s.feature_name, 'shap_value': float(s.shap_value or 0)} for s in shaps]
             raw_recs = intervention_planner.generate_pathway(shap_for_planner, lang.value if hasattr(lang, 'value') else lang)
             for r in raw_recs:
-                recommendations.append(schemas.InterventionRecommendation(
+                # preserve all the fields returned by the planner
+                rec = schemas.InterventionRecommendation(
                     category=r.get('category', 'General'),
                     priority=r.get('priority', 'Moderate'),
-                    action_plan=r.get('parent_guide') or r.get('objective', 'Consult specialist'),
-                    triggered_by=r.get('triggered_by', 'Assessment'),
-                    impact_score=float(r.get('impact_score', 0))
-                ))
+                    objective=r.get('objective'),
+                    daily_steps=r.get('daily_steps'),
+                    parent_guide=r.get('parent_guide'),
+                    ui_labels=r.get('ui_labels'),
+                    triggered_by=r.get('triggered_by'),
+                    impact_score=float(r.get('impact_score', 0)),
+                    action_plan=r.get('parent_guide') or r.get('objective', 'Consult specialist')
+                )
+                recommendations.append(rec)
         except Exception as e:
             print(f"Intervention planner error (non-fatal): {e}")
 

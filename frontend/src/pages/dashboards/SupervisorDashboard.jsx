@@ -63,7 +63,7 @@ const SupervisorDashboard = () => {
     useEffect(() => { loadData(''); }, [loadData]);
 
     const getPageSummary = () => {
-        const scope = centers.find(c => String(c.center_id) === selectedCenter)?.center_name || 'the entire Mandal';
+        const scope = centers.find(c => String(c.center_id) === selectedCenter)?.center_name || t('common.all_centers');
 
         let text = t('parent.narration.admin_hello')
             .replace('{name}', user?.full_name || '')

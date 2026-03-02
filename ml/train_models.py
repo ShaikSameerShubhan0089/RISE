@@ -58,7 +58,8 @@ def train_model_pipeline(n_children=1000, test_size=0.2, save_models=True):
     Complete training pipeline for both models
     """
     print("="*70)
-    print("AUTISM RISK STRATIFICATION CDSS - ML TRAINING PIPELINE")
+    print("RISE - ML TRAINING PIPELINE")
+    print("Risk Identification System for Early Detection")
     print("="*70)
     
     # Create directories

@@ -98,7 +98,7 @@ const SystemAdminDashboard = () => {
             ? mandals.find(m => String(m.mandal_id) === selectedMandal)?.mandal_name
             : selectedDistrict
                 ? districts.find(d => String(d.district_id) === selectedDistrict)?.district_name
-                : "the global System";
+                : t('common.global_system');
 
         let text = t('parent.narration.admin_hello')
             .replace('{name}', user?.full_name || '')
@@ -270,9 +270,9 @@ const SystemAdminDashboard = () => {
                 !dataLoaded && !dataLoading && (
                     <div className="rounded-xl border-2 border-dashed border-gray-200 bg-gray-50 py-20 text-center">
                         <span className="text-5xl">🗺️</span>
-                        <h2 className="mt-4 text-lg font-semibold text-gray-700">Select a district to view data</h2>
+                        <h2 className="mt-4 text-lg font-semibold text-gray-700">{t('common.empty_district_title')}</h2>
                         <p className="mt-1 text-sm text-gray-500">
-                            Use the <strong>District</strong> dropdown above to load children, interventions, and analytics for that district.
+                            {t('common.empty_district_desc')}
                         </p>
                     </div>
                 )
@@ -288,19 +288,19 @@ const SystemAdminDashboard = () => {
                         <div className="bg-gradient-to-r from-gray-900 to-gray-800 rounded-xl p-5 text-white flex flex-wrap items-center justify-between gap-4">
                             <div>
                                 <p className="text-sm text-gray-400">{t('common.status')}</p>
-                                <p className="text-lg font-bold mt-0.5">✅ All Systems Operational</p>
+                                <p className="text-lg font-bold mt-0.5">{t('common.status_all_operational')}</p>
                             </div>
                             <div className="text-right">
                                 <p className="text-sm text-gray-400">{t('common.select_district').split(' ')[0]}</p>
                                 <p className="font-medium text-blue-300">{scopeLabel}</p>
                             </div>
                             <div className="text-right">
-                                <p className="text-sm text-gray-400">Backend API</p>
-                                <p className="font-medium text-green-400">localhost:8000 — Running</p>
+                                <p className="text-sm text-gray-400">{t('common.backend_api')}</p>
+                                <p className="font-medium text-green-400">{t('common.running')}</p>
                             </div>
                             <div className="text-right">
-                                <p className="text-sm text-gray-400">Database</p>
-                                <p className="font-medium text-green-400">PostgreSQL — Connected</p>
+                                <p className="text-sm text-gray-400">{t('common.database')}</p>
+                                <p className="font-medium text-green-400">{t('common.db_connected')}</p>
                             </div>
                         </div>
 

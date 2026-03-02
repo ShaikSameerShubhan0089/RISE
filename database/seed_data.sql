@@ -1,6 +1,6 @@
 -- ============================================================
 -- SEED DATA FOR DEVELOPMENT AND TESTING
--- Clinical-Grade Autism Risk Stratification CDSS
+-- RISE - Risk Identification System for Early Detection
 -- ============================================================
 
 -- ============================================================

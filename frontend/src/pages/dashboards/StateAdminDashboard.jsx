@@ -217,19 +217,19 @@ const StateAdminDashboard = () => {
             <div className="bg-gradient-to-r from-gray-900 to-gray-800 rounded-xl p-5 text-white flex flex-wrap items-center justify-between gap-4">
                 <div>
                     <p className="text-sm text-gray-400">{t('common.status')}</p>
-                    <p className="text-lg font-bold mt-0.5">{t('common.loading') ? '✅ All Systems Operational' : ''}</p>
+                    <p className="text-lg font-bold mt-0.5">{t('common.status_all_operational')}</p>
                 </div>
                 <div className="text-right">
                     <p className="text-sm text-gray-400">{t('common.select_district').split(' ')[0]}</p>
                     <p className="font-medium text-blue-300">{currentScopeLabel}</p>
                 </div>
                 <div className="text-right">
-                    <p className="text-sm text-gray-400">Backend API</p>
-                    <p className="font-medium text-green-400">localhost:8000 — Running</p>
+                    <p className="text-sm text-gray-400">{t('common.backend_api')}</p>
+                    <p className="font-medium text-green-400">{t('common.running')}</p>
                 </div>
                 <div className="text-right">
-                    <p className="text-sm text-gray-400">Database</p>
-                    <p className="font-medium text-green-400">PostgreSQL — Connected</p>
+                    <p className="text-sm text-gray-400">{t('common.database')}</p>
+                    <p className="font-medium text-green-400">{t('common.db_connected')}</p>
                 </div>
             </div>
 

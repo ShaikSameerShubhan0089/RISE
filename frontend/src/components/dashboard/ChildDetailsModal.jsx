@@ -133,71 +133,66 @@ const ChildDetailsModal = ({ child, onClose }) => {
                         </div>
                     </div>
 
-                    {/* Risk Trends Chart */}
-                    <div className="space-y-4">
-                        <h3 className="text-sm font-black text-gray-400 uppercase tracking-widest flex items-center gap-2">
-                            <TrendingUp className="w-4 h-4" /> {t('children.details.trends')}
-                        </h3>
-                        <div className="bg-white border border-gray-100 rounded-2xl p-4 h-64">
-                            {loading ? (
-                                <div className="h-full flex items-center justify-center">
-                                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600" />
-                                </div>
-                            ) : growthData.length > 0 ? (
-                                <ResponsiveContainer width="100%" height="100%">
-                                    <LineChart data={growthData}>
-                                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                                        <XAxis
-                                            dataKey="date"
-                                            tick={{ fontSize: 10 }}
-                                            tickFormatter={(val) => new Date(val).toLocaleDateString()}
-                                        />
-                                        <YAxis domain={[0, 1]} tick={{ fontSize: 10 }} />
-                                        <Tooltip
-                                            labelFormatter={(val) => new Date(val).toLocaleDateString()}
-                                            contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
-                                        />
-                                        <Line
-                                            type="monotone"
-                                            dataKey="risk_score"
-                                            stroke="#ef4444"
-                                            strokeWidth={3}
-                                            dot={{ r: 4, fill: '#ef4444' }}
-                                            activeDot={{ r: 6 }}
-                                            name={t('children.details.probability')}
-                                        />
-                                    </LineChart>
-                                </ResponsiveContainer>
-                            ) : (
-                                <div className="h-full flex flex-col items-center justify-center text-gray-400 gap-2">
-                                    <AlertCircle className="w-8 h-8 opacity-20" />
-                                    <p className="text-sm font-medium">{t('children.details.insufficient_data')}</p>
-                                </div>
-                            )}
+                    {/* Risk Trends Chart - only show if data exists or still loading */}
+                    {(loading || growthData.length > 0) && (
+                        <div className="space-y-4">
+                            <h3 className="text-sm font-black text-gray-400 uppercase tracking-widest flex items-center gap-2">
+                                <TrendingUp className="w-4 h-4" /> {t('children.details.trends')}
+                            </h3>
+                            <div className="bg-white border border-gray-100 rounded-2xl p-4 h-64">
+                                {loading ? (
+                                    <div className="h-full flex items-center justify-center">
+                                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600" />
+                                    </div>
+                                ) : growthData.length > 0 ? (
+                                    <ResponsiveContainer width="100%" height="100%">
+                                        <LineChart data={growthData}>
+                                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                                            <XAxis
+                                                dataKey="date"
+                                                tick={{ fontSize: 10 }}
+                                                tickFormatter={(val) => new Date(val).toLocaleDateString()}
+                                            />
+                                            <YAxis domain={[0, 1]} tick={{ fontSize: 10 }} />
+                                            <Tooltip
+                                                labelFormatter={(val) => new Date(val).toLocaleDateString()}
+                                                contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
+                                            />
+                                            <Line
+                                                type="monotone"
+                                                dataKey="risk_score"
+                                                stroke="#ef4444"
+                                                strokeWidth={3}
+                                                dot={{ r: 4, fill: '#ef4444' }}
+                                                activeDot={{ r: 6 }}
+                                                name={t('children.details.probability')}
+                                            />
+                                        </LineChart>
+                                    </ResponsiveContainer>
+                                ) : null}
+                            </div>
                         </div>
-                    </div>
+                    )}
 
-                    {/* Assessment History Table */}
-                    <div className="space-y-4">
-                        <h3 className="text-sm font-black text-gray-400 uppercase tracking-widest flex items-center gap-2">
-                            <ClipboardList className="w-4 h-4" /> {t('children.details.history')}
-                        </h3>
-                        <div className="border border-gray-100 rounded-2xl overflow-hidden">
-                            <table className="min-w-full divide-y divide-gray-100 text-sm">
-                                <thead className="bg-gray-50">
-                                    <tr>
-                                        <th className="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase">{t('children.details.cols.cycle')}</th>
-                                        <th className="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase">{t('children.details.cols.date')}</th>
-                                        <th className="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase">{t('children.details.cols.age')}</th>
-                                        <th className="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase">{t('children.details.cols.dq')}</th>
-                                        <th className="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase">{t('children.details.cols.risk')}</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-gray-50">
-                                    {assessments.length === 0 ? (
-                                        <tr><td colSpan={5} className="py-8 text-center text-gray-400 italic">{t('children.details.no_assessments')}</td></tr>
-                                    ) : (
-                                        assessments.map((a, idx) => (
+                    {/* Assessment History Table - only show if data exists */}
+                    {assessments.length > 0 && (
+                        <div className="space-y-4">
+                            <h3 className="text-sm font-black text-gray-400 uppercase tracking-widest flex items-center gap-2">
+                                <ClipboardList className="w-4 h-4" /> {t('children.details.history')}
+                            </h3>
+                            <div className="border border-gray-100 rounded-2xl overflow-hidden">
+                                <table className="min-w-full divide-y divide-gray-100 text-sm">
+                                    <thead className="bg-gray-50">
+                                        <tr>
+                                            <th className="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase">{t('children.details.cols.cycle')}</th>
+                                            <th className="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase">{t('children.details.cols.date')}</th>
+                                            <th className="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase">{t('children.details.cols.age')}</th>
+                                            <th className="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase">{t('children.details.cols.dq')}</th>
+                                            <th className="px-4 py-3 text-left text-xs font-bold text-gray-500 uppercase">{t('children.details.cols.risk')}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-gray-50">
+                                        {assessments.map((a, idx) => (
                                             <tr key={idx} className="hover:bg-gray-50">
                                                 <td className="px-4 py-3 font-medium">#{a.assessment_cycle}</td>
                                                 <td className="px-4 py-3">{new Date(a.assessment_date).toLocaleDateString()}</td>
@@ -210,12 +205,12 @@ const ChildDetailsModal = ({ child, onClose }) => {
                                                     </span>
                                                 </td>
                                             </tr>
-                                        ))
-                                    )}
-                                </tbody>
-                            </table>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
-                    </div>
+                    )}
                 </div>
 
                 <div className="p-4 bg-gray-50 border-t border-gray-100 flex justify-end">

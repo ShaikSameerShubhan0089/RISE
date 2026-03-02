@@ -1,11 +1,12 @@
-# Autism CDSS - Clinical Decision Support System
+# RISE - Clinical Decision Support System
 ## Professional Documentation
+**Risk Identification System for Early Detection**
 
 ---
 
 ## 📋 Executive Summary
 
-The **Autism CDSS (Clinical Decision Support System)** is an AI-powered clinical platform that enables early detection, risk assessment, and personalized intervention planning for children at risk of autism spectrum disorder (ASD). The system integrates developmental assessments, neuro-behavioral analysis, and machine learning-driven predictions to support clinicians in making evidence-based decisions.
+The **RISE (Risk Identification System for Early Detection)** is an AI-powered clinical platform that enables early detection, risk assessment, and personalized intervention planning for children at risk of autism spectrum disorder (ASD). The system integrates developmental assessments, neuro-behavioral analysis, and machine learning-driven predictions to support clinicians in making evidence-based decisions.
 
 ### Key Value Proposition
 - ⚡ **Real-time Risk Scoring** with 95%+ accuracy in autism risk prediction
@@ -1107,7 +1108,7 @@ SessionLocal = sessionmaker(
 
 ```
 ┌─────────────────────────────────────────┐
-│ AUTISM CDSS - Autism Risk Assessment    │
+│ RISE - Early Risk Assessment            │
 │ Dr. Smith | Logout                      │
 ├─────────────────────────────────────────┤
 │ Child: Emma Johnson (18 months)          │
@@ -1550,7 +1551,7 @@ See [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md) for Render cloud deployment ins
 
 ## License & Credits
 
-**Project**: Autism CDSS - Clinical Decision Support System  
+**Project**: RISE - Risk Identification System for Early Detection  
 **Version**: 1.0.0  
 **Status**: Production Ready  
 **Last Updated**: February 26, 2026

@@ -63,7 +63,7 @@ const DistrictOfficerDashboard = () => {
     useEffect(() => { loadData(''); }, [loadData]);
 
     const getPageSummary = () => {
-        const scope = mandals.find(m => String(m.mandal_id) === selectedMandal)?.mandal_name || 'the entire District';
+        const scope = mandals.find(m => String(m.mandal_id) === selectedMandal)?.mandal_name || t('common.all_mandals');
 
         let text = t('parent.narration.admin_hello')
             .replace('{name}', user?.full_name || '')

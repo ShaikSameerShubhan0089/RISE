@@ -54,28 +54,67 @@ export const LanguageProvider = ({ children }) => {
             te: 'te-IN',
             hi: 'hi-IN',
             kn: 'kn-IN',
-            ur: 'ur-IN',
+            ur: 'ur-PK',  // Pakistan variant for Urdu
             ta: 'ta-IN'
         };
         utterance.lang = langMap[language] || 'en-IN';
 
-        // Try to find a female voice
+        // Enhanced voice selection: prioritize quality female voices
         const voices = window.speechSynthesis.getVoices();
-        const femaleVoice = voices.find(v =>
-            (v.name.toLowerCase().includes('female') ||
-                v.name.toLowerCase().includes('google') ||
-                v.name.toLowerCase().includes('samantha') ||
-                v.name.toLowerCase().includes('zira') ||
-                v.name.toLowerCase().includes('heera')) &&
-            v.lang.startsWith(language)
-        );
+        let selectedVoice = null;
 
-        if (femaleVoice) {
-            utterance.voice = femaleVoice;
+        // Priority 1: Look for explicitly sweet/female Google voices
+        selectedVoice = voices.find(v => {
+            const name = v.name.toLowerCase();
+            return (
+                v.lang.startsWith(language) && (
+                    name.includes('female') ||
+                    name.includes('woman') ||
+                    name.includes('girl') ||
+                    name.includes('zira') ||  // Microsoft Zira (English, excellent quality)
+                    name.includes('heera') ||  // Hindi
+                    name.includes('noto') ||  // Google voices
+                    name.includes('neural')
+                )
+            );
+        });
+
+        // Priority 2: Google Wavenet/Neural voices (high quality)
+        if (!selectedVoice) {
+            selectedVoice = voices.find(v =>
+                v.lang.startsWith(language) &&
+                (v.name.includes('Google') || v.name.includes('Neural'))
+            );
         }
 
-        utterance.rate = 0.9;
-        utterance.pitch = 1.1; // Slightly higher pitch for "sweetness"
+        // Priority 3: Microsoft voices (good quality)
+        if (!selectedVoice) {
+            selectedVoice = voices.find(v =>
+                v.lang.startsWith(language) &&
+                v.name.includes('Microsoft')
+            );
+        }
+
+        // Priority 4: Any voice with matching language
+        if (!selectedVoice) {
+            selectedVoice = voices.find(v =>
+                v.lang.startsWith(language)
+            );
+        }
+
+        // Priority 5: Default English if language not found
+        if (!selectedVoice) {
+            selectedVoice = voices.find(v => v.lang.startsWith('en'));
+        }
+
+        if (selectedVoice) {
+            utterance.voice = selectedVoice;
+        }
+
+        // Settings for sweet, pleasant voice
+        utterance.rate = 0.85;      // Slightly slower for clarity
+        utterance.pitch = 1.3;      // Higher pitch for sweetness
+        utterance.volume = 0.9;     // Slightly lower to prevent harshness
 
         window.speechSynthesis.speak(utterance);
     };

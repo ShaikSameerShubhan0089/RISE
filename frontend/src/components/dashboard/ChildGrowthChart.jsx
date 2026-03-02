@@ -14,6 +14,7 @@ import {
     Tooltip, Legend, ResponsiveContainer, ReferenceLine,
 } from 'recharts';
 import { dashboardAPI } from '../../utils/api';
+import { useLanguage } from '../../context/LanguageContext';
 import { Download, TrendingUp } from 'lucide-react';
 
 const DQ_LINES = [
@@ -25,8 +26,19 @@ const DQ_LINES = [
     { key: 'socio_emotional_dq', label: 'Socio-Emotional', color: '#a855f7' },
 ];
 
-const exportGrowthCSV = (childName, datapoints) => {
-    const headers = ['Cycle', 'Date', 'Age (months)', 'Composite DQ', 'Gross Motor', 'Fine Motor', 'Language', 'Cognitive', 'Socio-Emotional', 'Delayed Domains'];
+const exportGrowthCSV = (childName, datapoints, t) => {
+    const headers = [
+        t('growth.csv_headers.cycle'),
+        t('growth.csv_headers.date'),
+        t('growth.csv_headers.age'),
+        t('growth.csv_headers.comp_dq'),
+        t('growth.csv_headers.gross'),
+        t('growth.csv_headers.fine'),
+        t('growth.csv_headers.lang'),
+        t('growth.csv_headers.cog'),
+        t('growth.csv_headers.socio'),
+        t('growth.csv_headers.delayed'),
+    ];
     const lines = [
         headers.join(','),
         ...datapoints.map(d => [
@@ -63,6 +75,7 @@ const CustomTooltip = ({ active, payload, label }) => {
 };
 
 const ChildGrowthChart = ({ children = [] }) => {
+    const { t } = useLanguage();
     const [selectedChildId, setSelectedChildId] = useState('');
     const [growthData, setGrowthData] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -96,7 +109,7 @@ const ChildGrowthChart = ({ children = [] }) => {
             <div className="flex flex-wrap items-center justify-between gap-3 p-5 border-b border-gray-100">
                 <div className="flex items-center gap-2">
                     <TrendingUp className="w-5 h-5 text-indigo-500" />
-                    <h3 className="text-base font-semibold text-gray-900">Child Growth Chart</h3>
+                    <h3 className="text-base font-semibold text-gray-900">{t('growth.title')}</h3>
                     {growthData && !growthData.error && (
                         <span className="text-sm text-gray-500">— {growthData.child_name}</span>
                     )}
@@ -109,7 +122,7 @@ const ChildGrowthChart = ({ children = [] }) => {
                         onChange={handleChildSelect}
                         className="text-sm border border-gray-300 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-indigo-500 min-w-[220px]"
                     >
-                        <option value="">— Select a child —</option>
+                        <option value="">{t('growth.select_child_instruction')}</option>
                         {children.map(c => (
                             <option key={c.child_id} value={c.child_id}>
                                 {c.first_name} {c.last_name} ({c.unique_child_code})
@@ -119,11 +132,11 @@ const ChildGrowthChart = ({ children = [] }) => {
                     {/* CSV export (only when data loaded) */}
                     {growthData && !growthData.error && datapoints.length > 0 && (
                         <button
-                            onClick={() => exportGrowthCSV(growthData.child_name, datapoints)}
+                            onClick={() => exportGrowthCSV(growthData.child_name, datapoints, t)}
                             className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
                         >
                             <Download className="w-4 h-4" />
-                            Export
+                            {t('growth.export')}
                         </button>
                     )}
                 </div>
@@ -135,7 +148,7 @@ const ChildGrowthChart = ({ children = [] }) => {
                 {!selectedChildId && !loading && (
                     <div className="flex flex-col items-center justify-center h-48 text-gray-400">
                         <TrendingUp className="w-8 h-8 mb-2 opacity-40" />
-                        <p className="text-sm">Select a child above to view their growth trajectory</p>
+                        <p className="text-sm">{t('growth.select_child_instruction')}</p>
                     </div>
                 )}
 
@@ -143,21 +156,21 @@ const ChildGrowthChart = ({ children = [] }) => {
                 {loading && (
                     <div className="flex items-center justify-center h-48 gap-2 text-blue-600 text-sm">
                         <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-600" />
-                        Loading assessment data…
+                        {t('growth.loading')}
                     </div>
                 )}
 
                 {/* Error */}
                 {growthData?.error && (
                     <div className="flex items-center justify-center h-48 text-red-500 text-sm">
-                        Failed to load growth data. Please try again.
+                        {t('growth.error')}
                     </div>
                 )}
 
                 {/* No assessments */}
                 {growthData && !growthData.error && datapoints.length === 0 && (
                     <div className="flex items-center justify-center h-48 text-gray-400 text-sm">
-                        No assessments recorded for this child yet.
+                        {t('growth.no_assessments')}
                     </div>
                 )}
 

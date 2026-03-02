@@ -1,5 +1,5 @@
 -- ============================================================
--- CLINICAL-GRADE AUTISM RISK STRATIFICATION CDSS
+-- RISE - Risk Identification System for Early Detection
 -- PostgreSQL Database Schema
 -- ============================================================
 -- This schema supports:

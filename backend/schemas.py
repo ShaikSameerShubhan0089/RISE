@@ -3,7 +3,7 @@ Pydantic Schemas for Request/Response Validation
 """
 
 from pydantic import BaseModel, EmailStr, Field, validator
-from typing import Optional, List
+from typing import Optional, List, Dict
 from datetime import date, datetime
 from enum import Enum
 
@@ -153,9 +153,15 @@ class SHAPFeature(BaseModel):
 class InterventionRecommendation(BaseModel):
     category: str
     priority: str
-    action_plan: str
-    triggered_by: str
-    impact_score: float
+    # full pathway information exported from the intervention planner
+    objective: Optional[str] = None
+    daily_steps: Optional[List[str]] = None
+    parent_guide: Optional[str] = None
+    ui_labels: Optional[Dict[str, str]] = None
+    triggered_by: Optional[str] = None
+    impact_score: float = 0.0
+    # legacy field for backwards compatibility with existing clients
+    action_plan: Optional[str] = None
 
 class ModelType(str, Enum):
     MODEL_A = "Model A"

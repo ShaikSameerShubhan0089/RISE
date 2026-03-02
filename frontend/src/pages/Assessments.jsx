@@ -367,26 +367,89 @@ const Assessments = () => {
                             </div>
 
                             <div className="space-y-6">
-                                <div className="bg-primary-50 rounded-2xl p-6 border border-primary-100">
+                                {/* full pathway cards similar to parent view */}
+                                <div>
                                     <h3 className="font-bold text-primary-900 mb-4 flex items-center gap-2">
                                         <Activity className="w-5 h-5" />
                                         {t('assessments.actions')}
                                     </h3>
                                     <div className="space-y-4">
                                         {prediction.recommendations.map((rec, idx) => (
-                                            <div key={idx} className="bg-white p-4 rounded-xl shadow-sm border border-primary-100">
-                                                <div className="flex justify-between items-start mb-1">
-                                                    <span className="text-[10px] font-black text-primary-500 uppercase tracking-widest">{rec.category}</span>
-                                                    <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${rec.priority === 'High' ? 'bg-red-100 text-red-700' : 'bg-blue-100 text-blue-700'
-                                                        }`}>
-                                                        {rec.priority}
-                                                    </span>
+                                            <div key={idx} className="bg-white rounded-xl border border-gray-200 p-5 shadow-sm relative overflow-hidden group hover:border-primary-300 transition-all hover:shadow-md">
+                                                <div className={`absolute top-0 left-0 w-1 h-full ${rec.priority === 'High' ? 'bg-red-500' : rec.priority === 'Moderate' ? 'bg-orange-500' : 'bg-green-500'
+                                                    }`} />
+                                                <div className="flex justify-between items-start mb-2">
+                                                    <div className="flex items-center gap-2">
+                                                        <span className="text-xl">{
+                                                            rec.category.includes('Speech') ? '🗣️' :
+                                                                rec.category.includes('Motor') ? '💪' :
+                                                                    rec.category.includes('Nutrition') ? '🥗' :
+                                                                        rec.category.includes('Behavioral') ? '🧠' : '👨‍👩‍👧'
+                                                        }</span>
+                                                        <h5 className="font-bold text-gray-900">{rec.category}</h5>
+                                                    </div>
+                                                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${rec.priority === 'High' ? 'bg-red-100 text-red-700' : 'bg-orange-100 text-orange-700'
+                                                        }`}>{rec.priority}</span>
                                                 </div>
-                                                <p className="text-sm font-bold text-gray-800 leading-tight">{rec.action_plan}</p>
+                                                <div className="space-y-3">
+                                                    {rec.objective && (
+                                                        <div>
+                                                            <p className="text-[10px] uppercase font-black text-purple-400 tracking-wider">{rec.ui_labels?.objective || 'Objective'}</p>
+                                                            <p className="text-sm text-gray-900 font-medium">{rec.objective}</p>
+                                                        </div>
+                                                    )}
+
+                                                    {rec.daily_steps && rec.daily_steps.length > 0 && (
+                                                        <div>
+                                                            <p className="text-[10px] uppercase font-black text-purple-400 tracking-wider">{rec.ui_labels?.daily_steps || 'Daily Steps'}</p>
+                                                            <ul className="mt-1 space-y-1">
+                                                                {rec.daily_steps.map((step, sidx) => (
+                                                                    <li key={sidx} className="text-xs text-gray-700 flex items-start gap-2">
+                                                                        <span className="text-purple-400">•</span>
+                                                                        <span>{step}</span>
+                                                                    </li>
+                                                                ))}
+                                                            </ul>
+                                                        </div>
+                                                    )}
+
+                                                    {rec.parent_guide && (
+                                                        <div className="bg-purple-50 p-3 rounded-lg border border-purple-100">
+                                                            <p className="text-[10px] uppercase font-black text-purple-500 tracking-wider">{rec.ui_labels?.parent_guide || 'Parent Guide'}</p>
+                                                            <p className="text-xs text-purple-800 italic mt-0.5">"{rec.parent_guide}"</p>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                                <div className="mt-4 pt-3 border-t border-gray-50 flex items-center gap-3">
+                                                    {rec.triggered_by && (
+                                                        <div className="flex items-center gap-1">
+                                                            <span className="text-[10px] text-gray-400 uppercase font-bold">{t('parent.basis')}:</span>
+                                                            <span className="text-[10px] font-mono text-gray-500">{rec.triggered_by}</span>
+                                                        </div>
+                                                    )}
+                                                    <div className="flex items-center gap-1">
+                                                        <span className="text-[10px] text-gray-400 uppercase font-bold">{t('parent.ai_weight')}:</span>
+                                                        <span className="text-[10px] font-mono text-gray-500">{(rec.impact_score * 100).toFixed(1)}%</span>
+                                                    </div>
+                                                </div>
                                             </div>
                                         ))}
                                     </div>
                                 </div>
+
+                                {/* follow-up goal card could be added here similar to parent dashboard */}
+                                {prediction.recommendations.length > 0 && (
+                                    <div className="bg-gradient-to-br from-indigo-50 to-purple-100 p-5 rounded-xl border border-indigo-200">
+                                        <h5 className="font-bold text-indigo-900 text-sm mb-2 flex items-center gap-2">
+                                            <span>🏁</span> {t('assessments.goal') || t('parent.goal')}
+                                        </h5>
+                                        <p className="text-sm text-indigo-800 italic leading-relaxed">
+                                            {t('parent.goal_desc')
+                                                .replace('{name}', (children.find(c => c.child_id.toString() === selectedChildId)?.first_name) || '')
+                                                .replace('{feature}', (prediction.top_features?.[0]?.interpretation || '').split('(')[0].trim() || '—')}
+                                        </p>
+                                    </div>
+                                )}
 
                                 <div className="p-4 bg-gray-50 rounded-2xl border border-gray-100">
                                     <p className="text-[10px] text-gray-400 uppercase font-bold mb-2">{t('assessments.disclaimer_label')}</p>

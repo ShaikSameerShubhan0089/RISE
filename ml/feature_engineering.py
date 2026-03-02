@@ -1,5 +1,6 @@
 """
-Feature Engineering for Autism Risk Stratification CDSS
+Feature Engineering for RISE
+Risk Identification System for Early Detection
 Implements clinical indices and longitudinal change metrics
 """
 

@@ -1,4 +1,5 @@
-# Autism Risk Stratification CDSS - Phase 1 Complete
+# RISE - Risk Identification System for Early Detection
+**See Tomorrow. Act Today.**
 
 A Clinical Decision Support System for early autism risk stratification in children, built for state-level Early Childhood Development (ECD) programs.
 
@@ -79,13 +80,13 @@ pip install -r requirements.txt
 
 ```bash
 # Create PostgreSQL database
-createdb autism_cdss
+createdb rise
 
 # Run schema
-psql -d autism_cdss -f database/schema.sql
+psql -d rise -f database/schema.sql
 
 # Load seed data (optional)
-psql -d autism_cdss -f database/seed_data.sql
+psql -d rise -f database/seed_data.sql
 ```
 
 ### 3. Train ML Models
@@ -185,7 +186,7 @@ See `implementation_plan.md` for full details.
 
 ## 👥 Authors
 
-Clinical-Grade Autism Risk Stratification CDSS Development Team
+RISE Development Team
 
 ---
 
