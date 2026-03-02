@@ -15,7 +15,7 @@ import {
     ChevronDown
 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
-import logo from '../../../logo/logo.png';
+import logo from '../../../logo/logo-2.png';
 
 const Sidebar = () => {
     const { user, logout } = useAuth();
@@ -124,7 +124,8 @@ const Sidebar = () => {
                 {/* Language Toggle */}
                 <div className="px-4 py-2 border border-gray-200 rounded-lg flex items-center justify-between">
                     <div className="flex items-center gap-2 text-gray-600">
-                        <Globe className="w-4 h-4" />
+                        {/* use project logo in place of globe icon for language selector */}
+                        <img src={logo} alt="logo" className="w-4 h-4 object-contain" />
                         <span className="text-xs font-semibold uppercase">{t('sidebar.language')}</span>
                     </div>
                     <select

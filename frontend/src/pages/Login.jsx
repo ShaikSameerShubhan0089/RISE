@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import { Activity, Globe } from 'lucide-react';
-import logo from '../../../logo/logo.png';
+import logo from '../../../logo/logo-2.png';
 
 const Login = () => {
     const [email, setEmail] = useState('');
@@ -46,7 +46,8 @@ const Login = () => {
                     <div className="flex justify-between items-center mb-8">
                         <h2 className="text-2xl font-bold text-gray-800">{t('common.sign_in')}</h2>
                         <div className="flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-primary-50 to-primary-100 rounded-full border border-primary-200">
-                            <Globe className="w-4 h-4 text-primary-600" />
+                            {/* use project logo as language toggle icon instead of globe */}
+                        <img src={logo} alt="logo" className="w-4 h-4 object-contain" />
                             <select
                                 value={language}
                                 onChange={(e) => setLanguage(e.target.value)}
