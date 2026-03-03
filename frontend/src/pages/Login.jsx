@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import { Activity, Globe } from 'lucide-react';
-import logo from '../../../logo/logo-2.png';
+import logo from '../../../logo/logo.png';
 
 const Login = () => {
     const [email, setEmail] = useState('');

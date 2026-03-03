@@ -15,7 +15,7 @@ import {
     ChevronDown
 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
-import logo from '../../../logo/logo-2.png';
+import logo from '../../../logo/logo.png';
 
 const Sidebar = () => {
     const { user, logout } = useAuth();

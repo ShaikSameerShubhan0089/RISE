@@ -1,16 +1,16 @@
 """
 FastAPI Main Application
-Autism Risk Stratification CDSS Backend + Frontend
+RISE - Risk Identification System for Early Detection
 """
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse, FileResponse
-from fastapi.staticfiles import StaticFiles
+from fastapi.responses import JSONResponse
 import os
 import sys
 from pathlib import Path
 from dotenv import load_dotenv
+
 
 # Ensure project root is in path for ml module
 backend_dir = Path(__file__).parent
@@ -25,51 +25,51 @@ from middleware.audit import log_request
 # Import routers
 from routers import auth, children, assessments, predictions, referrals, interventions, dashboard
 
+load_dotenv()
+
 # Create FastAPI app
 app = FastAPI(
-    title="Autism Risk Stratification CDSS API",
-    description="Clinical Decision Support System for Early Autism Risk Stratification",
+    title="RISE API",
+    description="RISE - Risk Identification System for Early Detection - Clinical Decision Support System",
     version="1.0.0",
     docs_url="/api/docs",
     redoc_url="/api/redoc"
 )
 
-# -----------------------------
 # CORS Configuration
-# -----------------------------
-# Read from .env
-cors_origins_env = os.getenv("CORS_ORIGINS", "")
-origins = [origin.strip() for origin in cors_origins_env.split(",") if origin.strip()]
+origins = os.getenv("CORS_ORIGINS", "http://localhost:3000").split(",")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,        # must match frontend domain(s)
-    allow_credentials=True,       # allow cookies
-    allow_methods=["*"],          # GET, POST, etc.
-    allow_headers=["*"],          # Authorization, Content-Type, etc.
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
-# -----------------------------
-# Audit Logging Middleware
-# -----------------------------
+# Add audit logging middleware
 @app.middleware("http")
 async def audit_middleware(request: Request, call_next):
     return await log_request(request, call_next)
 
-# -----------------------------
-# API Endpoints
-# -----------------------------
+
+# Health check endpoint
 @app.get("/api/health")
 async def health_check():
+    """Health check endpoint"""
     db_status = check_db_connection()
+    
     return {
         "status": "healthy" if db_status else "unhealthy",
         "database": "connected" if db_status else "disconnected",
         "version": "1.0.0"
     }
 
+
+# Clinical disclaimer endpoint
 @app.get("/api/disclaimer")
 async def get_disclaimer():
+    """Get clinical disclaimer text"""
     return {
         "disclaimer": (
             "This tool provides autism risk stratification based on structured "
@@ -78,6 +78,7 @@ async def get_disclaimer():
             "developmental specialist."
         )
     }
+
 
 # Include routers
 app.include_router(auth.router, prefix="/api/auth", tags=["Authentication"])
@@ -88,87 +89,50 @@ app.include_router(referrals.router, prefix="/api/referrals", tags=["Referrals"]
 app.include_router(interventions.router, prefix="/api/interventions", tags=["Interventions"])
 app.include_router(dashboard.router, prefix="/api/dashboard", tags=["Dashboard"])
 
-# -----------------------------
-# Serve React Frontend
-# -----------------------------
-STATIC_DIR = backend_dir / "static"
 
-if STATIC_DIR.exists():
-
-    # Serve static assets (Vite build)
-    if (STATIC_DIR / "assets").exists():
-        app.mount(
-            "/assets",
-            StaticFiles(directory=STATIC_DIR / "assets"),
-            name="assets"
-        )
-
-    @app.get("/{full_path:path}")
-    async def serve_react_app(full_path: str):
-        """
-        Serve React SPA for all non-API routes
-        """
-        # Prevent overriding API routes
-        if full_path.startswith("api"):
-            return JSONResponse(status_code=404, content={"detail": "Not Found"})
-
-        file_path = STATIC_DIR / full_path
-
-        # If file exists, serve it
-        if file_path.exists() and file_path.is_file():
-            return FileResponse(file_path)
-
-        # Otherwise serve index.html (SPA fallback)
-        return FileResponse(STATIC_DIR / "index.html")
-
-# -----------------------------
-# Global Exception Handler
-# -----------------------------
+# Global exception handler
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
-    import traceback
-    print(f"ERROR: Exception during {request.method} {request.url.path}")
-    traceback.print_exc()
+    """Handle unexpected errors"""
     return JSONResponse(
         status_code=500,
         content={
             "detail": "An internal server error occurred",
-            "type": str(type(exc).__name__),
-            "error": str(exc)
+            "type": str(type(exc).__name__)
         }
     )
 
-# -----------------------------
-# Startup Event
-# -----------------------------
+
+# Startup event
 @app.on_event("startup")
 async def startup_event():
+    """Initialize database and load ML models on startup"""
     print("=" * 60)
-    print("Starting Autism Risk Stratification CDSS API")
+    print("Starting RISE API")
+    print("Risk Identification System for Early Detection")
     print("=" * 60)
-
+    
+    # Check database connection
     if check_db_connection():
-        print("[OK] Database connection successful")
+        print("✓ Database connection successful")
     else:
-        print("[FAIL] Database connection failed")
-
-    print("[OK] API server ready")
-    print("Docs available at: /api/docs")
+        print("✗ Database connection failed")
+    
+    print(f"✓ API server ready")
+    print(f"  Docs: http://localhost:8000/api/docs")
     print("=" * 60)
 
-# -----------------------------
-# Shutdown Event
-# -----------------------------
+
+# Shutdown event
 @app.on_event("shutdown")
 async def shutdown_event():
+    """Cleanup on shutdown"""
     print("Shutting down CDSS API...")
 
-# -----------------------------
-# Local Development Run
-# -----------------------------
+
 if __name__ == "__main__":
     import uvicorn
-
+    
     uvicorn.run(
         "main:app",
         host=os.getenv("API_HOST", "0.0.0.0"),
