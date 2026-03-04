@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import { Activity, Globe } from 'lucide-react';
-import logo from '../../../logo/logo.png';
+import companyLogo from '../../../logo/logo-3.png';
+import riseLogo from '../../../logo/logo.png';
 
 const Login = () => {
     const [email, setEmail] = useState('');
@@ -35,11 +36,22 @@ const Login = () => {
         <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 flex items-center justify-center px-4">
             <div className="max-w-md w-full">
                 <div className="text-center mb-8">
-                    <div className="inline-flex items-center justify-center w-50 h-40 p-2 bg-white mb-2 shadow-2xl">
-                        <img src={logo} alt="RISE" className="w-full h-full object-contain" />
+                    {/* Company Logo - Top Left Rectangular */}
+                    <div className="inline-flex items-center justify-start w-full mb-2 px-4">
+                        <div className="w-32 h-20 flex items-center justify-center rounded-lg bg-white shadow-lg border-2 border-blue-500 hover:scale-105 transition-transform duration-300 p-2">
+                            <img src={companyLogo} alt="Company Logo" className="max-w-full max-h-full object-contain" />
+                        </div>
                     </div>
                     
-                    {/* logo only - no additional text */}
+                    {/* Presents Text */}
+                    <p className="text-sm font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-4">
+                        presents
+                    </p>
+                    
+                    {/* RISE Logo */}
+                    <div className="inline-flex items-center justify-center w-64 h-48 p-6 bg-gradient-to-br from-white to-blue-50 rounded-3xl shadow-2xl border-2 border-blue-100 hover:scale-105 transform transition-all duration-300">
+                        <img src={riseLogo} alt="RISE Logo" className="w-full h-full object-contain drop-shadow-lg" />
+                    </div>
                 </div>
 
                 <div className="bg-white rounded-3xl shadow-2xl p-8 border-2 border-primary-100">
@@ -47,7 +59,7 @@ const Login = () => {
                         <h2 className="text-2xl font-bold text-gray-800">{t('common.sign_in')}</h2>
                         <div className="flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-primary-50 to-primary-100 rounded-full border border-primary-200">
                             {/* use project logo as language toggle icon instead of globe */}
-                        <img src={logo} alt="logo" className="w-4 h-4 object-contain" />
+                        <img src={companyLogo} alt="logo" className="w-4 h-4 object-contain" />
                             <select
                                 value={language}
                                 onChange={(e) => setLanguage(e.target.value)}

@@ -15,7 +15,8 @@ import {
     ChevronDown
 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
-import logo from '../../../logo/logo.png';
+import companyLogo from '../../../logo/logo-3.png';
+import riseLogo from '../../../logo/logo.png';
 
 const Sidebar = () => {
     const { user, logout } = useAuth();
@@ -88,12 +89,26 @@ const Sidebar = () => {
     return (
         <div className="h-screen w-64 bg-white border-r border-gray-200 flex flex-col">
             {/* Logo */}
-            <div className="p-6 border-b border-gray-200">
+            <div className="p-6 border-b border-gray-200 bg-gradient-to-b from-blue-50 to-white">
                 <div className="flex flex-col items-center">
-                    <div className="w-50 h-50 flex items-center justify-center">
-                        <img src={logo} alt="RISE" className="max-w-full max-h-full object-contain" />
+                    {/* Company Logo - Top Left Rectangular */}
+                    <div className="self-start mb-2 w-28 h-16 flex items-center justify-center rounded-lg bg-white shadow-lg border-2 border-blue-500 hover:scale-105 transition-transform duration-300">
+                        <img src={companyLogo} alt="Company Logo" className="max-w-full max-h-full object-contain p-1" />
                     </div>
-                    <p className="text-xs text-gray-500 capitalize mt-2">{user?.role?.replace('_', ' ')}</p>
+                    
+                    {/* Presents Text */}
+                    <div className="mb-3">
+                        <p className="text-xs font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                            presents
+                        </p>
+                    </div>
+                    
+                    {/* RISE Logo */}
+                    <div className="mb-3 w-44 h-36 flex items-center justify-center rounded-xl hover:scale-105 transition-transform duration-300 bg-white shadow-lg border border-gray-100">
+                        <img src={riseLogo} alt="RISE Logo" className="max-w-full max-h-full object-contain drop-shadow-md" />
+                    </div>
+                    
+                    <p className="text-xs text-gray-600 capitalize font-semibold">{user?.role?.replace('_', ' ')}</p>
                 </div>
             </div>
 
@@ -125,7 +140,7 @@ const Sidebar = () => {
                 <div className="px-4 py-2 border border-gray-200 rounded-lg flex items-center justify-between">
                     <div className="flex items-center gap-2 text-gray-600">
                         {/* use project logo in place of globe icon for language selector */}
-                        <img src={logo} alt="logo" className="w-4 h-4 object-contain" />
+                        <img src={companyLogo} alt="logo" className="w-4 h-4 object-contain" />
                         <span className="text-xs font-semibold uppercase">{t('sidebar.language')}</span>
                     </div>
                     <select
