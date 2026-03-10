@@ -1,69 +1,123 @@
-# RISE - Deep-Dive Line-by-Line Code Documentation
-## Technical Breakdown: ML Infrastructure
+# RISE - Machine Learning Training Pipeline
+## Knowledge Transfer: Data to Deployment
 
-This guide provides a granular, line-by-line explanation of the logic within the feature engineering and training scripts.
-
----
-
-### 📂 1. `ml/feature_engineering.py` (The Clinical Translator)
-
-This class is responsible for converting raw clinical assessments into predictive indices.
-
-#### **`class FeatureEngineer`**
-- **Lines 24-36 (`__init__`)**: We define the mathematical "importance" (weights) for our indices. 
-    - **SCII**: Language (40%) and Socio-Emotional (45%) are the primary drivers of autism detection.
-    - **ERM**: Caregiver engagement (35%) and Language exposure (30%) are the top environmental protective factors.
-- **Lines 38-56 (`compute_scii`)**: 
-    - `lc_inverse = 100 - row['language_dq']`: We "flip" the score. A high DQ is good, but a high *impairment* (the inverse) is what predicts risk.
-    - The final `scii` sum is the weighted combination of these clinical impairments.
-- **Lines 58-67 (`compute_nsi`)**: 
-    - `1 - (row['composite_dq'] / 100)`: If a child has a DQ of 70, their NSI is 0.30 (Moderate severity). If DQ is 30, NSI is 0.70 (High severity).
-- **Lines 86-96 (`compute_dbs`)**: 
-    - `row['delayed_domains'] / 5`: There are 5 total domains (Motor, Language, etc.). If 3 are delayed, the "Burden" is 0.60.
-- **Lines 98-148 (`compute_longitudinal_features`)**: 
-    - **`if previous is None`**: For a child's first visit, we set all changes (Deltas) to 0.0.
-    - **Deltas**: We subtract the previous score from the current score. A negative DQ delta means the child is regressing.
-- **Lines 150-191 (`engineer_features`)**: 
-    - `df.apply(..., axis=1)`: Calculates indices for every row in the database.
-    - **Longitudinal Loop**: We group data by `child_id` and sort by `assessment_cycle`. We then step through each cycle, comparing the "Current" assessment to the "Previous" one to build the child's developmental trajectory.
+This document explains how the RISE "Intelligence Engine" is trained, from raw clinical data to the final optimized models, with a detailed breakdown of the underlying code.
 
 ---
 
-### 📂 2. `ml/train_classifier.py` (Model A Training Logic)
+### 📋 1. Training Pipeline Overview
 
-#### **`main()` Function**
-- **Lines 67-75**: Initializes paths for model storage (`saved/classifier`) and logging.
-- **Lines 86-89**: Calls the `FeatureEngineer` to prepare the clinical data.
-- **Lines 92-93**: `classifier.prepare_data(df_engineered)`: Converts text gender to 0/1 and ensures all clinical flags are integers for the XGBoost engine.
-- **Lines 95-101**: 
-    - **1st Split**: Separates 20% of data for the "Final Exam" (Test set).
-    - **2nd Split**: Separates 15% of the remainder for "Validation" to prevent the model from over-learning (Overfitting).
-- **Lines 105-113 (SMOTE)**: 
-    - `SMOTE(random_state=42)`: Because we have fewer "High Risk" cases, SMOTE creates "synthetic" examples by finding similar children and interpolating new data points. This balances the "scales" of the model.
-- **Lines 116-130 (Training)**: 
-    - Checks for `xgb_optuna_best.json`. If you've run a hyperparameter search, it loads those specific "best" settings.
-    - `classifier.train(...)`: Starts the boosting process.
-- **Lines 132-147 (Thresholding)**: 
-    - The model outputs a probability (0.0 to 1.0).
-    - **Logic**: We look for the threshold where **Recall (Sensitivity) is at least 0.75**. If at 0.42 probability we catch 75% of autism cases, we set 0.42 as our "Clinical Threshold."
-- **Lines 185-187**: Saves the `autism_risk_classifier_v1.pkl` containing the trained "Brain," the data scaler, and the optimized threshold.
+The training process is automated via the `ml/train_models.py` script. It follows a 6-step rigorous scientific workflow:
+
+1.  **Data Loading**: Ingesting cleaned clinical assessment records.
+2.  **Feature Engineering**: Transforming raw scores into clinical indices (SCII, NSI, etc.).
+3.  **Data Partitioning**: Splitting data into Train, Validation, and Test sets.
+4.  **Model Training (Model A)**: Training the Autism Risk Classifier (XGBoost).
+5.  **Longitudinal Processing**: Preparing "Delta" features for escalation prediction.
+6.  **Model Training (Model B)**: Training the Risk Escalation Predictor.
 
 ---
 
-### 📂 3. `ml/train_escalation.py` (Model B Training Logic)
+### 🧪 2. Phase 1: Feature Engineering (The Clinical Lens)
+Before the model sees any data, we translate raw scores into meaningful clinical indices using the `FeatureEngineer` class in `ml/feature_engineering.py`.
 
-#### **Core Functions**
-- **Lines 69-87 (`prepare_escalation_data`)**: 
-    - **Logic**: It identifies "Escalation Events."
-    - `(current['autism_risk'] == 0) and (next_assessment['autism_risk'] == 1)`: If a child was Low Risk but moved to High Risk in the next visit, the label is set to **1** (Escalation). All others are **0**.
-- **Lines 89-162 (`main`)**:
-    - **Constraint Check (Lines 116-119)**: If the dataset has no children with multiple visits, the code stops here with a warning. You cannot predict "Change" without at least two data points.
-    - **Training (Line 137)**: Trains a separate XGBoost model that focuses specifically on **Deltas** (Speed of change) rather than static scores.
-- **Lines 143-152 (Metadata)**: Saves a `training_meta.json` which recording the **Final Metrics** (ROC-AUC, Error) so administrators can verify model health without opening the code.
+#### **Code Breakdown: Clinical Indices**
+```python
+def compute_scii(self, row: pd.Series) -> float:
+    # 1. We invert the DQ (100 - Score) because a LOWER DQ means HIGHER impairment
+    lc_inverse = 100 - row['language_dq']
+    se_inverse = 100 - row['socio_emotional_dq']
+    behavior = row['behavior_score']
+    
+    # 2. Apply clinical weights: Socio-emotional (45%) and Language (40%) are primary
+    scii = (
+        self.scii_weights['lc_weight'] * lc_inverse +
+        self.scii_weights['se_weight'] * se_inverse +
+        self.scii_weights['behavior_weight'] * behavior
+    )
+    return round(scii, 2)
+```
+
+#### **Key Clinical Indices Calculated:**
+- **SCII (Social Communication Impairment Index)**: Captures the core deficits of autism.
+- **NSI (Neurodevelopmental Severity Index)**: Formula: `1 - (Composite_DQ / 100)`. Measures global delay burden.
+- **DBS (Delay Burden Score)**: Formula: `Delayed_Domains / 5`. Quantifies affected functional areas.
 
 ---
 
-### 🛠️ Global Execution Logic Summary
-1.  **Scaling**: All data is normalized to a Z-score (mean 0, variance 1) before hitting the model.
-2.  **Early Stopping**: Both scripts monitor the "Validation" set. If error stops dropping for 10 rounds, the training stops to save the most accurate version.
-3.  **Auditability**: Every step is logged with timestamps and record counts in `training.log`.
+### 🏗️ 3. Phase 2: The Training Logic (Model A)
+
+The `AutismRiskClassifier` (Model A) uses **XGBoost** with specific clinical optimizations found in `ml/train_classifier.py`.
+
+#### **Code Breakdown: Balancing & Safety**
+```python
+# 1. Apply SMOTE to create synthetic 'High Risk' cases so the model isn't biased
+smote = SMOTE(random_state=42, k_neighbors=5)
+X_train_balanced, y_train_balanced = smote.fit_resample(X_train, y_train)
+
+# 2. Find the threshold that guarantees we catch at least 75% of cases (Recall)
+precision, recall, thresholds = precision_recall_curve(y_val, y_val_pred_proba)
+optimal_idx = np.where(recall >= 0.75)[0]
+optimal_threshold = thresholds[optimal_idx[-1]]
+```
+
+#### **Addressing Class Imbalance**
+In clinical datasets, "High Risk" cases are much rarer. We use **SMOTE** to generate synthetic data points and **`scale_pos_weight`** to tell the model to pay 4x more attention to High Risk mistakes.
+
+---
+
+### 📈 4. Phase 3: Risk Escalation (Model B)
+
+Model B predicts if a child will **escalate** from Low to High Risk in the future, as defined in `ml/train_escalation.py`.
+
+#### **Code Breakdown: Longitudinal Logic**
+```python
+def prepare_escalation_data(df, logger):
+    # Scan children with at least 2 visits
+    for child_id in child_ids:
+        child_assessments = df[df['child_id'] == child_id].sort_values('assessment_cycle')
+        if len(child_assessments) < 2: continue
+        
+        for i in range(len(child_assessments) - 1):
+            current = child_assessments.iloc[i]
+            next_assessment = child_assessments.iloc[i + 1]
+            # LABEL: Did they move from Risk 0 (Low) to Risk 1 (High)?
+            will_escalate = (current['autism_risk'] == 0) and (next_assessment['autism_risk'] == 1)
+            row = current.to_dict()
+            row['will_escalate'] = int(will_escalate)
+            escalation_data.append(row)
+```
+
+---
+
+### 📊 5. Evaluation & Quality Control
+
+Every training run generates an evaluation report in `ml/evaluation/`. We track:
+
+1.  **ROC-AUC**: Overall ability to distinguish between High and Low risk (Target > 0.88).
+2.  **Sensitivity (Recall)**: How many of the *actual* High Risk children did we catch? (Target > 0.85).
+3.  **Calibration Plot**: We use **Platt Scaling** (`CalibratedClassifierCV`) to ensure the predicted probability matches real-world frequency.
+
+---
+
+### 💾 6. Model Persistence (Deployment)
+
+Once a model passes all quality checks, it is serialized to disk.
+
+#### **Code Breakdown: Serialization**
+```python
+def save_model(self, path):
+    model_artifacts = {
+        'model': self.model,           # The XGBoost Engine
+        'scaler': self.scaler,         # Data Normalizer
+        'optimal_threshold': self.optimal_threshold, # Clinical Safety Guard
+        'feature_names': self.feature_names
+    }
+    with open(path, 'wb') as f:
+        pickle.dump(model_artifacts, f)
+```
+
+---
+
+### 🛠️ Summary for the Technical Team
+"The training process is a closed-loop system. We take raw data, apply clinical domain knowledge through **Feature Engineering**, train an **XGBoost** model with **Class Weighting**, and verify everything with **Calibration** and **SHAP explanations**. This ensures our AI is not just fast, but clinically sound."
