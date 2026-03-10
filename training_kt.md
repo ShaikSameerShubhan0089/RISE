@@ -40,7 +40,43 @@ For children with multiple assessments, we calculate **Deltas**:
 
 ---
 
-6. Feature Engineering Pipeline
+### 🏗️ 3. Phase 2: The Training Logic (Model A)
+
+The `AutismRiskClassifier` (Model A) uses **XGBoost** with specific clinical optimizations.
+
+#### **Data Splitting Strategy**
+We use a triple-split to ensure the model is truly accurate and hasn't just "memorized" the data:
+1.  **Training Set (70%)**: Used to teach the model patterns.
+2.  **Validation Set (15%)**: Used to tune the "Learning Rate" and "Tree Depth" during training.
+3.  **Test Set (15%)**: **Hidden** from the model during training. This is the final exam used to generate the 0.88+ accuracy reports.
+
+#### **Addressing Class Imbalance**
+In clinical datasets, "High Risk" cases are much rarer than "Low Risk" cases. To prevent the model from ignoring the rare cases, we use:
+- **`scale_pos_weight`**: We tell the model to pay ~4x more attention to a High Risk mistake than a Low Risk mistake.
+
+---
+
+### 📈 4. Phase 3: Risk Escalation (Model B)
+
+Model B predicts if a child will **escalate** to High Risk in the future.
+
+- **Data Preparation**: The system looks at "Cycle 1" and "Cycle 2."
+- **Labeling**: If a child was Low Risk in Cycle 1 but became High Risk in Cycle 2, they are marked as an "Escalation Case."
+- **Predictive Power**: By learning the patterns that lead to escalation (e.g., a dropping Language DQ), the model can warn clinicians *before* the child reaches the high-risk tier.
+
+---
+
+### 📊 5. Evaluation & Quality Control
+
+Every training run generates an evaluation report in `ml/evaluation/`. We track:
+
+1.  **ROC-AUC**: The "Gold Standard" of accuracy. Our target is > 0.88.
+2.  **Sensitivity (Recall)**: How many of the *actual* High Risk children did we catch? (Target > 0.85).
+3.  **Calibration Plot**: Does a "70% risk" prediction actually mean 7 out of 10 such children have autism? We use **Platt Scaling** to ensure the answer is Yes.
+
+---
+
+### 💾 6. Feature Engineering Pipeline
 6.1 Social Communication Impairment Index (SCII)
 
 ```python
@@ -507,43 +543,7 @@ This pipeline transforms raw assessment data into sophisticated risk indicators 
 
 ---
 
-### 🏗️ 3. Phase 2: The Training Logic (Model A)
-
-The `AutismRiskClassifier` (Model A) uses **XGBoost** with specific clinical optimizations.
-
-#### **Data Splitting Strategy**
-We use a triple-split to ensure the model is truly accurate and hasn't just "memorized" the data:
-1.  **Training Set (70%)**: Used to teach the model patterns.
-2.  **Validation Set (15%)**: Used to tune the "Learning Rate" and "Tree Depth" during training.
-3.  **Test Set (15%)**: **Hidden** from the model during training. This is the final exam used to generate the 0.88+ accuracy reports.
-
-#### **Addressing Class Imbalance**
-In clinical datasets, "High Risk" cases are much rarer than "Low Risk" cases. To prevent the model from ignoring the rare cases, we use:
-- **`scale_pos_weight`**: We tell the model to pay ~4x more attention to a High Risk mistake than a Low Risk mistake.
-
----
-
-### 📈 4. Phase 3: Risk Escalation (Model B)
-
-Model B predicts if a child will **escalate** to High Risk in the future.
-
-- **Data Preparation**: The system looks at "Cycle 1" and "Cycle 2."
-- **Labeling**: If a child was Low Risk in Cycle 1 but became High Risk in Cycle 2, they are marked as an "Escalation Case."
-- **Predictive Power**: By learning the patterns that lead to escalation (e.g., a dropping Language DQ), the model can warn clinicians *before* the child reaches the high-risk tier.
-
----
-
-### 📊 5. Evaluation & Quality Control
-
-Every training run generates an evaluation report in `ml/evaluation/`. We track:
-
-1.  **ROC-AUC**: The "Gold Standard" of accuracy. Our target is > 0.88.
-2.  **Sensitivity (Recall)**: How many of the *actual* High Risk children did we catch? (Target > 0.85).
-3.  **Calibration Plot**: Does a "70% risk" prediction actually mean 7 out of 10 such children have autism? We use **Platt Scaling** to ensure the answer is Yes.
-
----
-
-### 💾 6. Model Persistence (Deployment)
+### 💾 7. Model Persistence (Deployment)
 
 Once a model passes all quality checks:
 1.  **Serialization**: The model is "pickled" into a `.pkl` file in `ml/models/saved/`.
