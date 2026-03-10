@@ -29,12 +29,24 @@ graph TD
 ---
 
 ### 🟡 Level 2: Random Forest (The Wisdom of the Crowd)
-**The Concept**: To fix the "stubbornness" of a single tree, we use **Bagging** (Bootstrap Aggregating). We build 100+ trees, but we give each tree a different "perspective."
+**The Concept**: To fix the "stubbornness" of a single tree, we use **Bagging (Bootstrap Aggregating)**. Instead of one expert, we create a committee of 100+ trees, each trained on a slightly different version of the same clinical data.
 
-#### **2.1 Diversity of Opinion (Feature Randomness)**
-If every tree looks at the same data, they will all make the same mistake. To prevent this:
-1.  **Data Sampling**: Each tree only sees a random 60% of the children.
-2.  **Feature Blindness**: Each tree is only allowed to see a random subset of symptoms (e.g., Tree A sees DQ scores, Tree B sees Nutritional data).
+#### **2.1 What is Bagging? (Bootstrap + Aggregating)**
+Bagging is a two-step process that ensures the "Forest" is smarter than any single "Tree":
+
+1.  **Bootstrapping (The "Diverse Perspectives")**:
+    - Imagine you have 1,000 child assessment records.
+    - We don't give the *same* 1,000 records to every tree.
+    - Instead, for each tree, we "randomly pick" 1,000 records with replacement. This means some children might appear twice for one tree and not at all for another.
+    - **Clinical Result**: Each tree sees a slightly different "slice" of the patient population, making them specialized in different patterns.
+
+2.  **Aggregating (The "Final Vote")**:
+    - Once all 100+ trees have made their individual predictions, we **Aggregate** them.
+    - For risk classification, we take a **Majority Vote**. If 80 trees say "High Risk" and 20 say "Low Risk," the system outputs "High Risk."
+    - **Clinical Result**: This cancels out the "noise" or "unusual errors" of individual trees, leading to a stable and reliable diagnosis.
+
+#### **2.2 Diversity of Feature Choice**
+In addition to Bagging, we use **Feature Randomness**: Each tree is only allowed to look at a random subset of symptoms (e.g., Tree A looks at Language & Motor, Tree B looks at Social & Nutrition). This prevents a single dominant symptom from "masking" other important clinical signs.
 
 #### **2.2 The Architecture (Parallel Voting)**
 ```mermaid
@@ -55,30 +67,44 @@ graph TD
 ---
 
 ### 🔴 Level 3: XGBoost (The Sequential Master)
-**The Concept**: XGBoost is the "Extreme" version of **Gradient Boosting**. While Random Forest trees work at the same time, XGBoost trees work in a **Master-Apprentice chain**.
+**The Concept**: XGBoost is the "Extreme" version of **Gradient Boosting**. While Random Forest trees work at the same time, XGBoost trees work in a **Master-Apprentice chain**, where each tree "learns" from the mistakes (the **Gradients**) of its predecessors.
 
-#### **3.1 The "Residual" Learning Logic (The Error Fixer)**
-This is the most critical part of RISE. We don't just vote; we **perfect**.
-1.  **Initial Prediction**: The model starts by assuming every child has a 50% risk.
-2.  **Tree 1**: Tries to predict the risk. It gets most children right but misses 10 children.
-3.  **The "Residual"**: The 10 missed children are the "Error" (Residual).
-4.  **Tree 2**: Its *entire job* is to find those 10 children and fix the error.
-5.  **Tree 3**: Fixes the tiny errors left by Tree 2.
+#### **3.1 What is Gradient Boosting?**
+Gradient Boosting is a sequential optimization process where each new tree aims to reduce the remaining "clinical error" (the **Residual**) left by the previous trees.
+
+1.  **Start with a Base Guess**: We begin with a simple baseline (e.g., 50% risk for all children).
+2.  **Analyze the Gradient (The Error Map)**: We calculate the **Residuals** (actual risk minus our guess). This "Error Map" tells us which children we missed.
+3.  **Correct the Mistakes (Sequential Learning)**: Tree 1 is built to predict these Residuals. Tree 2 is then built to fix the errors still left by Tree 1.
+4.  **Learning Rate (The "Brake")**: We don't just add the full correction of each tree; we multiply it by a small **Learning Rate** (e.g., 0.03). This ensures the model slowly and carefully "converges" on the true diagnosis rather than jumping to wild conclusions.
+5.  **Final Accumulation**: $Final Result = Initial Guess + (Tree 1 * \eta) + (Tree 2 * \eta) + ...$
 
 #### **3.2 The Architecture (Sequential Improvement)**
+Below is a detailed representation of the RISE sequential logic:
+
 ```mermaid
 graph LR
-    Start(Base: 0.5) --> T1[Tree 1: Finds major delays]
-    T1 --> R1(Residual Error 1)
-    R1 --> T2[Tree 2: Finds subtle social cues]
-    T2 --> R2(Residual Error 2)
-    R2 --> T3[Tree 3: Adjusts for nutrition]
-    T3 --> Final[Final Precise Score]
+    subgraph "The Gradient Boosting Process"
+    Start[1. Initial Case: ID #402] --> Guess[2. Baseline Estimate: 0.5]
+    Guess --> Res1{3. Calculate Errors}
+    Res1 --> T1[4. Tree 1: Focuses on major Language delay]
+    T1 --> Update1[5. Updated Estimate: 0.58]
+    Update1 --> Res2{6. Recalculate Errors}
+    Res2 --> T2[7. Tree 2: Focuses on subtle Social markers]
+    T2 --> Update2[8. Updated Estimate: 0.65]
+    Update2 --> More[9. ... Repeat 300 times ...]
+    More --> Final[10. Final Precision Prediction: 0.72]
+    end
+
+    style T1 fill:#e1f5fe,stroke:#01579b
+    style T2 fill:#e1f5fe,stroke:#01579b
+    style Update1 fill:#fff9c4,stroke:#fbc02d
+    style Update2 fill:#fff9c4,stroke:#fbc02d
+    style Final fill:#c8e6c9,stroke:#2e7d32,stroke-width:4px
 ```
 
 #### **3.3 The "Extreme" Features in RISE**
 - **Regularization (The Pruning Shears)**: It automatically "cuts" branches that don't add enough value. This ensures the model stays simple and doesn't get confused by "noise."
-- **Learning Rate (Wisdom)**: Each tree only contributes a small amount (e.g., 3%) to the final score. This "slow learning" prevents the model from overreacting to a single symptom.
+- **Efficiency**: XGBoost uses parallel processing to analyze features simultaneously while keeping the tree-building process sequential, making it hundreds of times faster than older boosting methods.
 
 ---
 
