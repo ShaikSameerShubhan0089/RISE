@@ -1,89 +1,71 @@
-# RISE - Machine Learning Training Pipeline
-## Knowledge Transfer: Data to Deployment
+# RISE - Machine Learning Training: Deep Dive Technical Manual
+## Complete Code & Logic Breakdown for Developers
 
-This document explains how the RISE "Intelligence Engine" is trained, from raw clinical data to the final optimized models.
-
----
-
-### 📋 1. Training Pipeline Overview
-
-The training process is automated via the `ml/train_models.py` script. It follows a 6-step rigorous scientific workflow:
-
-1.  **Data Loading**: Ingesting cleaned clinical assessment records.
-2.  **Feature Engineering**: Transforming raw scores into clinical indices (SCII, NSI, etc.).
-3.  **Data Partitioning**: Splitting data into Train, Validation, and Test sets.
-4.  **Model Training (Model A)**: Training the Autism Risk Classifier (XGBoost).
-5.  **Longitudinal Processing**: Preparing "Delta" features for escalation prediction.
-6.  **Model Training (Model B)**: Training the Risk Escalation Predictor.
+This document provides an exhaustive explanation of the entire RISE training codebase. It is designed for engineers who need to maintain, update, or audit the system's "Intelligence Engine."
 
 ---
 
-### 🧪 2. Phase 1: Feature Engineering (The Clinical Lens)
-Before the model sees any data, we translate raw scores into meaningful clinical indices using the `FeatureEngineer` class in `ml/feature_engineering.py`.
+### 📂 1. `ml/train_models.py` (The Orchestrator)
+This is the main entry point for Phase 1. It automates the training of both Model A and Model B in one go.
 
-#### **Key Clinical Indices Calculated:**
-- **SCII (Social Communication Impairment Index)**: 
-    - *Formula*: $0.4 \cdot (100 - Language\_DQ) + 0.45 \cdot (100 - SE\_DQ) + 0.15 \cdot Behavior\_Score$
-    - *Purpose*: Captures the core deficits of autism.
-- **NSI (Neurodevelopmental Severity Index)**:
-    - *Formula*: $1 - (Composite\_DQ / 100)$
-    - *Purpose*: Measures the global delay burden.
-- **DBS (Delay Burden Score)**:
-    - *Formula*: $Delayed\_Domains / 5$
-    - *Purpose*: Quantifies how many functional areas are affected.
-
-#### **Longitudinal Deltas (Growth Tracking):**
-For children with multiple assessments, we calculate **Deltas**:
-- `dq_delta`: Did the overall score improve or decline?
-- `behavior_delta`: Is behavior becoming more challenging?
-- `delay_delta`: Are new delays appearing over time?
+- **`train_model_pipeline()`**: 
+    - **Directory Setup**: Automatically creates folders for data, models, and evaluation to ensure a clean workspace.
+    - **Sequential Logic**: It ensures that `Model A` (Risk Classifier) is trained first, as its outputs (Risk Status) are often required to label data for `Model B` (Escalation Predictor).
+- **`prepare_escalation_data()`**:
+    - This is a critical helper function that iterates through every child's history. It looks for "State Transitions"—specifically children who move from a "Low Risk" (0) state to a "High Risk" (1) state.
 
 ---
 
-### 🏗️ 3. Phase 2: The Training Logic (Model A)
+### 📂 2. `ml/train_classifier.py` (Advanced Training for Model A)
+This script handles the "heavy lifting" for the primary Risk Classifier. It includes advanced data science techniques to ensure clinical safety.
 
-The `AutismRiskClassifier` (Model A) uses **XGBoost** with specific clinical optimizations.
-
-#### **Data Splitting Strategy**
-We use a triple-split to ensure the model is truly accurate and hasn't just "memorized" the data:
-1.  **Training Set (70%)**: Used to teach the model patterns.
-2.  **Validation Set (15%)**: Used to tune the "Learning Rate" and "Tree Depth" during training.
-3.  **Test Set (15%)**: **Hidden** from the model during training. This is the final exam used to generate the 0.88+ accuracy reports.
-
-#### **Addressing Class Imbalance**
-In clinical datasets, "High Risk" cases are much rarer than "Low Risk" cases. To prevent the model from ignoring the rare cases, we use:
-- **`scale_pos_weight`**: We tell the model to pay ~4x more attention to a High Risk mistake than a Low Risk mistake.
+- **SMOTE (Synthetic Minority Over-sampling Technique)**:
+    - **The Problem**: High-risk cases are rare. Without SMOTE, the model might "ignore" them to achieve easy accuracy.
+    - **The Solution**: SMOTE creates "synthetic" high-risk children by interpolating between existing ones, ensuring the model has enough data to learn the markers of autism.
+- **Threshold Optimization**:
+    - **Code Logic**: The script doesn't just use a standard 0.5 threshold. It scans the `precision_recall_curve` to find a threshold that guarantees at least **75% Recall** (Sensitivity).
+    - **Clinical Goal**: We would rather have a "False Alarm" (Higher Precision cost) than miss a child with autism (High Recall priority).
+- **Learning Curves**: Generates plots for `logloss`, `auc`, and `error` to detect if the model is learning too fast or stalling.
 
 ---
 
-### 📈 4. Phase 3: Risk Escalation (Model B)
+### 📂 3. `ml/train_escalation.py` (Predictive Warning System)
+Focuses specifically on the longitudinal aspect of the project.
 
-Model B predicts if a child will **escalate** to High Risk in the future.
-
-- **Data Preparation**: The system looks at "Cycle 1" and "Cycle 2."
-- **Labeling**: If a child was Low Risk in Cycle 1 but became High Risk in Cycle 2, they are marked as an "Escalation Case."
-- **Predictive Power**: By learning the patterns that lead to escalation (e.g., a dropping Language DQ), the model can warn clinicians *before* the child reaches the high-risk tier.
+- **Longitudinal Extracter**: Scans for "Patterns of Decline." It focuses on children with at least 2 cycles of data.
+- **Validation Constraints**: If the dataset doesn't have enough longitudinal data, the script is designed to "Fail Gracefully"—logging a warning but keeping the system stable.
 
 ---
 
-### 📊 5. Evaluation & Quality Control
+### 📂 4. `ml/feature_engineering.py` (The Domain Logic)
+This is where clinical expertise is converted into math.
 
-Every training run generates an evaluation report in `ml/evaluation/`. We track:
-
-1.  **ROC-AUC**: The "Gold Standard" of accuracy. Our target is > 0.88.
-2.  **Sensitivity (Recall)**: How many of the *actual* High Risk children did we catch? (Target > 0.85).
-3.  **Calibration Plot**: Does a "70% risk" prediction actually mean 7 out of 10 such children have autism? We use **Platt Scaling** to ensure the answer is Yes.
-
----
-
-### 💾 6. Model Persistence (Deployment)
-
-Once a model passes all quality checks:
-1.  **Serialization**: The model is "pickled" into a `.pkl` file in `ml/models/saved/`.
-2.  **Versioning**: Every model is tagged (e.g., `v1.0`) to ensure we can track performance over time.
-3.  **Integration**: The FastAPI backend loads these `.pkl` files on startup to provide instant predictions to the frontend.
+- **`FeatureEngineer` Class**:
+    - **SCII (Social Index)**: Uses weighted logic where Socio-Emotional markers (45%) and Language (40%) are given high priority.
+    - **NSI (Severity Index)**: Inverts the Composite DQ so that a **higher** NSI means a **worse** clinical state ($1 - DQ/100$).
+    - **Longitudinal Deltas**: Calculates the "Speed of Change." A child whose DQ drops by 10 points in 6 months is flagged much more aggressively than a child whose DQ is stable.
 
 ---
 
-### 🛠️ Summary for the Technical Team
-"The training process is a closed-loop system. We take raw data, apply clinical domain knowledge through **Feature Engineering**, train an **XGBoost** model with **Class Weighting**, and verify everything with **Calibration** and **SHAP explanations**. This ensures our AI is not just fast, but clinically sound."
+### 📂 5. `ml/models/autism_risk_classifier.py` (The Classifier Brain)
+The definition of our XGBoost wrapper.
+
+- **`_calibrate_model`**: Uses **Platt Scaling** (`CalibratedClassifierCV`). This ensures that if the model says "80% Risk," it actually means the child has an 8 in 10 chance based on the training data.
+- **`explain_prediction`**: The bridge to **SHAP**. It takes the raw math from the trees and converts it into clinical interpretations (e.g., "Language DQ is 15% below threshold").
+
+---
+
+### 📂 6. `ml/models/risk_escalation_predictor.py` (The Escalation Brain)
+Similar to the classifier, but optimized for "Trend Analysis."
+
+- **Feature Selection**: It ignores "Static" features (like Gender) and focuses on "Dynamic" features (like `dq_delta` and `behavior_delta`).
+- **Clinical Action Mapping**: While the Classifier maps to "Risk Tiers," this model maps to "Urgency of Follow-up."
+
+---
+
+### 🛠️ The RISE Training "Golden Rules"
+1.  **Always use `stratify=y`**: When splitting data, we must ensure the percentage of high-risk cases is the same in both Train and Test sets.
+2.  **Pickle with Metadata**: We don't just save the model; we save the **`scaler`** (to normalize new data) and the **`feature_names`** to ensure the API never gets confused.
+3.  **Audit Logs**: Every training run generates a `training.log` file. If accuracy drops, developers can look back to see if the data distribution changed.
+
+**Summary**: The RISE training suite is built for **Clinical Integrity**. It uses advanced balancing (SMOTE), safety-first thresholding (75% Recall), and explainable AI (SHAP) to ensure that every prediction is both accurate and justifiable to a specialist.
