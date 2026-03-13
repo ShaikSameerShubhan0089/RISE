@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import { Activity, Globe } from 'lucide-react';
-import companyLogo from '../../../logo/logo-3.png';
+import companyLogo from '../../../logo/logo-3.jpeg';
 import riseLogo from '../../../logo/logo.png';
 
 const Login = () => {

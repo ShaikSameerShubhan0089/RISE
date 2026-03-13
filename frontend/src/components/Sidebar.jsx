@@ -15,7 +15,7 @@ import {
     ChevronDown
 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
-import companyLogo from '../../../logo/logo-3.png';
+import companyLogo from '../../../logo/logo-3.jpeg';
 import riseLogo from '../../../logo/logo.png';
 
 const Sidebar = () => {
