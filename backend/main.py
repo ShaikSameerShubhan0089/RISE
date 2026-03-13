@@ -3,9 +3,9 @@ FastAPI Main Application
 RISE - Risk Identification System for Early Detection
 """
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 import os
 import sys
@@ -92,6 +92,16 @@ app.include_router(dashboard.router, prefix="/api/dashboard", tags=["Dashboard"]
 
 # Serve SPA static files (frontend build)
 app.mount("/", StaticFiles(directory="static", html=True), name="static")
+
+# SPA fallback route (serves index.html for client-side routes)
+@app.get("/{full_path:path}")
+async def spa_fallback(full_path: str):
+    # Avoid catching API routes
+    if full_path.startswith("api"):
+        raise HTTPException(status_code=404, detail="Not Found")
+
+    index_path = Path("static") / "index.html"
+    return FileResponse(index_path)
 
 
 # Global exception handler
