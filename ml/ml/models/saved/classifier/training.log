@@ -1,0 +1,20 @@
+2026-03-11 17:18:46,957 [INFO] ============================================================
+2026-03-11 17:18:46,957 [INFO] TRAINING STARTED: Autism Risk Classifier (Model A)
+2026-03-11 17:18:46,958 [INFO] ============================================================
+2026-03-11 17:18:46,958 [ERROR] Data file ml/data/cleaned_client_data.csv not found. Run clean_dataset.py first.
+2026-03-11 17:20:18,682 [INFO] ============================================================
+2026-03-11 17:20:18,682 [INFO] TRAINING STARTED: Autism Risk Classifier (Model A)
+2026-03-11 17:20:18,682 [INFO] ============================================================
+2026-03-11 17:20:18,682 [ERROR] Data file ml/data/cleaned_client_data.csv not found. Run clean_dataset.py first.
+2026-03-11 17:21:32,815 [INFO] ============================================================
+2026-03-11 17:21:32,815 [INFO] TRAINING STARTED: Autism Risk Classifier (Model A)
+2026-03-11 17:21:32,816 [INFO] ============================================================
+2026-03-11 17:21:32,816 [ERROR] Data file ml\data\cleaned_client_data.csv not found. Run clean_dataset.py first.
+2026-03-11 17:21:45,973 [INFO] ============================================================
+2026-03-11 17:21:45,974 [INFO] TRAINING STARTED: Autism Risk Classifier (Model A)
+2026-03-11 17:21:45,974 [INFO] ============================================================
+2026-03-11 17:21:45,974 [ERROR] Data file ml\data\cleaned_client_data.csv not found. Run clean_dataset.py first.
+2026-03-11 17:22:15,160 [INFO] ============================================================
+2026-03-11 17:22:15,161 [INFO] TRAINING STARTED: Autism Risk Classifier (Model A)
+2026-03-11 17:22:15,161 [INFO] ============================================================
+2026-03-11 17:22:15,161 [ERROR] Data file ml/data/cleaned_client_data.csv not found. Run clean_dataset.py first.
