@@ -93,15 +93,16 @@ app.include_router(dashboard.router, prefix="/api/dashboard", tags=["Dashboard"]
 # Serve SPA static files (frontend build)
 app.mount("/", StaticFiles(directory="static", html=True), name="static")
 
-# SPA fallback route (serves index.html for client-side routes)
-@app.get("/{full_path:path}")
-async def spa_fallback(full_path: str):
-    # Avoid catching API routes
-    if full_path.startswith("api"):
-        raise HTTPException(status_code=404, detail="Not Found")
 
-    index_path = Path("static") / "index.html"
-    return FileResponse(index_path)
+# Custom 404 handler to support client-side routing
+from starlette.exceptions import HTTPException as StarletteHTTPException
+
+@app.exception_handler(StarletteHTTPException)
+async def custom_404_handler(request: Request, exc: StarletteHTTPException):
+    # Serve index.html for client-side routes (non-API paths)
+    if exc.status_code == 404 and not request.url.path.startswith("/api"):
+        return FileResponse(Path("static") / "index.html")
+    return JSONResponse(status_code=exc.status_code, content={"detail": exc.detail})
 
 
 # Global exception handler
