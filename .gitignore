@@ -1,0 +1,8 @@
+*.sql
+docs/*.pptx
+docs/*.mp4
+__pycache__/
+*.pyc
+node_modules/
+.env
+*.log
