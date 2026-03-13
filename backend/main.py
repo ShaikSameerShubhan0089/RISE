@@ -6,6 +6,7 @@ RISE - Risk Identification System for Early Detection
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
 import os
 import sys
 from pathlib import Path
@@ -88,6 +89,9 @@ app.include_router(predictions.router, prefix="/api/predictions", tags=["Risk Pr
 app.include_router(referrals.router, prefix="/api/referrals", tags=["Referrals"])
 app.include_router(interventions.router, prefix="/api/interventions", tags=["Interventions"])
 app.include_router(dashboard.router, prefix="/api/dashboard", tags=["Dashboard"])
+
+# Serve SPA static files (frontend build)
+app.mount("/", StaticFiles(directory="static", html=True), name="static")
 
 
 # Global exception handler
