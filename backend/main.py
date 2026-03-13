@@ -96,7 +96,8 @@ static_dir = backend_dir / "static"
 # Log static directory presence at startup
 print(f"Static dir: {static_dir} - exists: {static_dir.exists()}")
 
-app.mount("/", StaticFiles(directory=str(static_dir), html=True), name="static")
+if static_dir.exists():
+    app.mount("/", StaticFiles(directory=str(static_dir), html=True), name="static")
 
 
 # Custom 404 handler to support client-side routing
@@ -105,8 +106,13 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 @app.exception_handler(StarletteHTTPException)
 async def custom_404_handler(request: Request, exc: StarletteHTTPException):
     # Serve index.html for client-side routes (non-API paths)
-    if exc.status_code == 404 and not request.url.path.startswith("/api"):
-        return FileResponse(static_dir / "index.html")
+    index_file = static_dir / "index.html"
+    if (
+        exc.status_code == 404
+        and not request.url.path.startswith("/api")
+        and index_file.exists()
+    ):
+        return FileResponse(index_file)
     return JSONResponse(status_code=exc.status_code, content={"detail": exc.detail})
 
 
