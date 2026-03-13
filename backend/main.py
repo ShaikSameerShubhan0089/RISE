@@ -91,7 +91,12 @@ app.include_router(interventions.router, prefix="/api/interventions", tags=["Int
 app.include_router(dashboard.router, prefix="/api/dashboard", tags=["Dashboard"])
 
 # Serve SPA static files (frontend build)
-app.mount("/", StaticFiles(directory="static", html=True), name="static")
+static_dir = backend_dir / "static"
+
+# Log static directory presence at startup
+print(f"Static dir: {static_dir} - exists: {static_dir.exists()}")
+
+app.mount("/", StaticFiles(directory=str(static_dir), html=True), name="static")
 
 
 # Custom 404 handler to support client-side routing
@@ -101,7 +106,7 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 async def custom_404_handler(request: Request, exc: StarletteHTTPException):
     # Serve index.html for client-side routes (non-API paths)
     if exc.status_code == 404 and not request.url.path.startswith("/api"):
-        return FileResponse(Path("static") / "index.html")
+        return FileResponse(static_dir / "index.html")
     return JSONResponse(status_code=exc.status_code, content={"detail": exc.detail})
 
 
