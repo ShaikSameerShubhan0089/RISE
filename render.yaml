@@ -16,7 +16,7 @@ services:
   - type: web
     name: rise-api
     runtime: python
-    buildCommand: cd frontend && npm install && npm run build && cd .. && mkdir -p backend/static && cp -r frontend/dist/* backend/static/ && pip install -r requirements.txt
+    buildCommand: cd frontend && npm install && npm run build && cd .. && mkdir -p backend/static && (cp -r frontend/dist/* backend/static/ || true) && pip install -r requirements.txt && if [ ! -f backend/static/index.html ]; then echo '<!doctype html><html><body><h1>Build not available</h1><p>The frontend build is missing.</p></body></html>' > backend/static/index.html; fi
     startCommand: cd backend && uvicorn main:app --host 0.0.0.0 --port $PORT
     plan: standard
     envVars:
